@@ -1,0 +1,7 @@
+# macOS
+.DS_Store
+
+# GEÇİCİ: DNS ayarları tamamlanana kadar CNAME yayına dahil edilmiyor.
+# Wix'te DNS kayıtları girilip yayıldıktan sonra bu satır silinecek,
+# CNAME commit'lenecek ve Pages ayarlarında custom domain yazılacak.
+CNAME
