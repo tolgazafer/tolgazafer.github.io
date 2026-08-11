@@ -207,6 +207,11 @@
   .vw-media{border-radius:3px;overflow:hidden;background:color-mix(in srgb,var(--ink) 6%,transparent)}
   .vw-media iframe,.vw-media img,.vw-media video{width:100%;display:block;border:0}
   .vw-media iframe{aspect-ratio:16/9;height:auto}
+  /* Spotify çerçevesi 16/9 DEĞİL: kendi sabit boyu var. Parçada tek satır,
+     albümde parça listesi görünsün diye daha uzun. Genel kural onu
+     eziyor ve oynatıcıyı yassı bir şeride çeviriyordu. */
+  .vw-media iframe.vw-spotify{aspect-ratio:auto;height:152px}
+  .vw-media iframe.vw-spotify.albüm{height:352px}
   .vw-media audio{width:100%;margin:1rem 0}
   .vw-stub{display:grid;place-items:center;gap:.7rem;padding:3.4rem 1rem;text-align:center;
     font-size:.86rem;letter-spacing:.05em;color:var(--ink-soft);line-height:2}
@@ -215,6 +220,13 @@
   .vw-link{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
     text-decoration:none;color:var(--ink);margin-top:.4rem}
   .vw-link:hover{opacity:.7}
+  /* Videosu olan kayıtlarda oynatıcının yanına eklenen Spotify bağlantısı. */
+  .vw-dinle{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+    text-decoration:none;color:var(--ink-soft);margin-top:.5rem;
+    border:1px solid var(--ink-faint);border-radius:2px;padding:.4em .8em;
+    align-self:flex-start;transition:color .2s,border-color .2s}
+  .vw-dinle:hover,.vw-dinle:focus-visible{color:var(--ink);border-color:var(--ink);outline:none}
+  .vw-dinle[hidden]{display:none}
 
   .controls{position:fixed;bottom:1.9rem;right:2.4rem;z-index:7;display:flex;gap:1.4rem}
   .ctrl{background:none;border:none;cursor:pointer;color:var(--ink-soft);font:inherit;
@@ -380,19 +392,107 @@
      içinde çerçeve olarak açılıyor. Kendi koyu arayüzü var, ona dokunmuyoruz;
      yalnızca çerçevesi ağacın kâğıdı.
 
-     ÖLÇÜ TÜNELDEN FARKLI, sebebi ölçüldü: uygulama beşliler çemberini kendi
-     genişliğine göre büyütüp aşağıya çapalıyor. Tünelin geniş kutusunda
-     (1086×548) çemberin altı kesiliyor, üstte boşluk kalıyordu. Uygulama tek
-     başına denendi: 1086×548 kesiyor, 820×690 payı çok az, 700×760 (oran ~0.92)
-     tam oturuyor. Bu yüzden kutu dikey ve oranı sabit: yükseklik ekrandan
-     geliyor, genişlik aspect-ratio ile ondan türüyor — böylece her ekran
-     boyunda içerik oranı ~0.91 kalıyor. Ölçüyü değiştirirsen çember kesilir. */
-  .pencere.tritonet{width:auto;max-width:86vw;
-    height:min(820px,82vh);aspect-ratio:0.86}
+     ÖLÇÜ: Likya Dede ile aynı. Eskiden 700×814'lük dar dikey bir kutuydu ve
+     "ölçüyü değiştirirsen çember kesilir" diye not düşülmüştü — o not YANLIŞ.
+     Denendi: kesen şey büyüklük değil, GENİŞ VE BASIK kutu (1086×548'de
+     çemberin altı kesiliyordu). 1120×1077 gibi kareye yakın büyük bir kutuda
+     çember tamamen görünüyor ve çok daha okunur oluyor. */
+  .pencere.tritonet{width:min(1120px,90vw);height:min(1140px,92vh)}
   @media (max-width:760px){
     /* Telefonda tam kaplama: uygulamanın kendi telefon yerleşimi var. */
-    .pencere.tritonet{aspect-ratio:auto;width:calc(100vw - 1.8rem);max-width:none}
+    .pencere.tritonet{width:calc(100vw - 1.8rem);max-width:none}
   }
+  /* ── Tritonet penceresinin yedi sayfası ──
+     Uygulama, ÜRETİLEN metin sayfalarının kardeşi; onların içine
+     konmuyor. Sebebi: bir <iframe> DOM'da yer değiştirince yeniden
+     yükleniyor, dil değişiminde sayfalar da yeniden üretiliyor —
+     ikisi bir araya gelince çalgı her dil değişiminde sıfırlanırdı.
+     Uygulama kutusu bir kez kuruluyor ve bir daha ona dokunulmuyor;
+     sayfa değişimi yalnızca hangisinin görüneceğini seçiyor. */
+  .tri-kagit{position:relative;flex:1 1 auto;min-height:0;display:flex}
+  .tri-kagit.uygulamada .tri-sayfalar{display:none}
+  .tri-kagit:not(.uygulamada) > .tritonet-govde{display:none}
+
+  .tri-sayfalar{flex:1 1 auto;min-height:0;overflow:hidden;
+    display:grid;grid-template-rows:minmax(0,1fr);justify-items:center;
+    padding:1.5rem clamp(1.4rem,4vw,3rem);
+    background:var(--paper);border-radius:2px}
+  .tri-sayfa{display:none;position:relative;width:100%;min-height:0;
+    color:var(--ink-soft);font-size:1rem;line-height:1.75}
+  .tri-sayfa.acik{display:block;animation:ldGir .45s ease}
+  .tri-sayfa p{margin:0 0 1rem}
+  .tri-sayfa b,.tri-sayfa strong{color:var(--ink);font-weight:600}
+  .tri-sayfa em{font-style:italic}
+  .tri-arabaslik{margin:1.8rem 0 .6rem;font-size:.72rem;font-weight:600;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--evren)}
+  .tri-kucuk{font-size:.86rem;line-height:1.7;color:var(--ink-faint)}
+  .tri-em{font-style:italic;color:var(--ink)}
+  .tri-siir{white-space:pre-line;color:var(--ink);margin:0 0 1.2rem}
+
+  /* ozet — ilk sayfa: altı satır, ortada, büyük */
+  .tri-sayfa.tri-d-ozet.acik{display:flex;flex-direction:column;
+    justify-content:center;align-items:center;text-align:center;max-width:60ch;
+    margin:0 auto}
+  .tri-d-ozet .tri-siir{font-size:1.3rem;line-height:2.1;letter-spacing:.01em}
+  .tri-d-ozet .tri-kucuk{max-width:46ch;margin-top:1.4rem}
+
+  /* dar — okunur tek sütun, dikeyde ortalanmış */
+  .tri-sayfa.tri-d-dar{max-width:62ch;margin:0 auto}
+  .tri-sayfa.tri-d-dar.acik{display:flex;flex-direction:column;justify-content:center}
+  .tri-d-dar .tri-siir{margin:1.4rem 0;padding-left:1.1rem;
+    border-left:1px solid var(--ink-faint);color:var(--ink)}
+
+  /* sutun — uzun metin iki sütuna; pencere yüksek değil, yana yayılıyor */
+  .tri-sayfa.tri-d-sutun.acik{display:block;columns:2;column-gap:2.8rem;
+    font-size:.92rem;line-height:1.72}
+  .tri-d-sutun p,.tri-d-sutun h4{break-inside:avoid}
+  .tri-d-sutun .tri-arabaslik{margin-top:0}
+
+  /* parca — dört bileşen, ikişerli ızgara, her biri şekil + metin */
+  .tri-sayfa.tri-d-parca.acik{display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem 2.4rem;
+    align-content:center}
+  .tri-parca{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);
+    gap:1.1rem;align-items:start}
+  .tri-sekil{width:104px;color:var(--evren)}
+  .tri-sekil svg{width:100%;height:auto;display:block}
+  /* min-width:0 — ızgara öğesinin kendiliğinden en küçük boyu içeriği
+     kadardır; bunu sıfırlamadan sütun daralamıyor ve satır taşıyor. */
+  .tri-parca figcaption{min-width:0;font-size:.86rem;line-height:1.65}
+  /* Parçanın ADI yalnızca kendi sınıfıyla biçimleniyor. `figcaption b`
+     yazılınca metnin içindeki vurgular da (sağa, sola, yükselirse…)
+     büyük harfli birer başlığa dönüşüyordu. */
+  .tri-parca-ad{display:block;font-size:.72rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink);margin-bottom:.4rem}
+
+  /* kitap — iki baskı yan yana */
+  .tri-sayfa.tri-d-kitap.acik{display:flex;flex-direction:column;
+    justify-content:center;gap:1.6rem}
+  .tri-d-kitap .tri-kitaplar{display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:2.4rem}
+  .tri-kitap{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);
+    gap:1.2rem;align-items:start}
+  .tri-kitap img{width:150px;height:auto;display:block;border-radius:2px;
+    box-shadow:0 4px 18px rgba(0,0,0,.3)}
+  .tri-kitap figcaption{min-width:0;font-size:.86rem;line-height:1.6}
+  .tri-kitap-ad{display:block;color:var(--ink);font-size:.95rem;
+    font-weight:600;margin-bottom:.35rem}
+  .tri-kitap figcaption > span{display:block;color:var(--ink-faint);font-size:.76rem}
+  .tri-baglar{margin-top:.8rem;display:flex;flex-wrap:wrap;gap:.45rem}
+  /* Bağlantı adı bölünmüyor: "Google Books" iki satıra düşünce alttaki
+     satırın üstüne biniyordu. */
+  .tri-baglar a{white-space:nowrap;
+    font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-soft);text-decoration:none;
+    border:1px solid var(--ink-faint);border-radius:2px;padding:.35em .7em;
+    transition:color .2s,border-color .2s}
+  .tri-baglar a:hover,.tri-baglar a:focus-visible{color:var(--ink);
+    border-color:var(--ink);outline:none}
+  @media (max-width:720px){
+    .tri-sayfa.tri-d-sutun.acik{columns:1}
+    .tri-sayfa.tri-d-parca.acik,.tri-d-kitap .tri-kitaplar{grid-template-columns:1fr}
+  }
+
   .tritonet-govde{flex:1 1 auto;min-height:0;position:relative;
     background:#090909;border-radius:2px;overflow:hidden}
   .tritonet-govde iframe{position:absolute;inset:0;width:100%;height:100%;
@@ -1514,7 +1614,7 @@
   <!-- Başlangıç etiketi <html lang="tr"> ile aynı; DIL.uygula() açılışta
        kayıtlı dile göre düzeltiyor. -->
   <button class="ctrl" id="lang">TR</button>
-  <span class="ctrl" id="ver" style="cursor:default">v52</span>
+  <span class="ctrl" id="ver" style="cursor:default">v56</span>
 </div>
 
 <nav class="baglar veil" id="baglar" aria-label="İletişim" data-i18n-aria="İletişim">
@@ -1584,6 +1684,7 @@
     <span class="vw-date" id="vwDate"></span>
     <div class="vw-media" id="vwMedia"></div>
     <div class="vw-body" id="vwBody"></div>
+    <a class="vw-dinle" id="vwDinle" target="_blank" rel="noopener" hidden></a>
     <a class="vw-link" id="vwLink">sayfaya git →</a>
   </div>
 </div>
@@ -1618,11 +1719,19 @@
 </div>
 <div class="pencere tritonet" id="tritonetPencere" aria-hidden="true" role="dialog" aria-label="Tritonet denetçisi" data-i18n-aria="Tritonet denetçisi">
   <header class="pencere-bar">
-    <span class="pencere-ad" data-i18n="Tritonet denetçisi">Tritonet denetçisi</span>
+    <span class="pencere-ad" id="tritonetAd">Tritonet</span>
     <a class="pencere-dis" id="tritonetDis" href="https://tritonet.pages.dev/ui/tritonet-controller" target="_blank" rel="noopener" aria-label="Yeni sekmede aç" data-i18n-aria="Yeni sekmede aç" title="Yeni sekmede aç" data-i18n-title="Yeni sekmede aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4 11.5 12.5"/><path d="M18 14.5V19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/></svg></a>
     <button class="pencere-kapat" id="tritonetKapat" aria-label="Ağaca dön" data-i18n-aria="Ağaca dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V10"/><path d="M12 14.4 7.6 9.8"/><path d="M12 12.2 16.4 7.6"/><path d="M7.6 9.8 5.2 6"/><path d="M7.6 9.8 9.2 5.2"/><path d="M16.4 7.6 18.8 4"/><path d="M16.4 7.6 14.9 3.2"/><path d="M8.4 22h7.2"/></svg></button>
   </header>
-  <div class="tritonet-govde">
+  <div class="tri-kagit">
+    <!-- Sayfa okları kâğıdın kenarında, imleç yaklaşınca belirir. -->
+    <button class="sayfa-ok sayfa-ok-sol" id="triGeri" type="button"
+            aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
+    <button class="sayfa-ok sayfa-ok-sag" id="triIleri" type="button"
+            aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
+    <!-- Metin sayfaları burada üretiliyor; dil değişince yeniden kuruluyor. -->
+    <div class="tri-sayfalar" id="triSayfalar"></div>
+  <div class="tritonet-govde" id="triUygulama">
     <!-- Çalgı Web MIDI kullanıyor: çapraz kaynaklı çerçevede allow="midi" olmadan
          navigator.requestMIDIAccess sessizce reddedilir. Ses için de autoplay
          gerekiyor, yoksa çerçevenin içindeki ilk dokunuşa kadar susuyor.
@@ -1630,6 +1739,7 @@
          sayfa açılışında 600 KB'lık uygulama yüklenmesin diye. -->
     <iframe id="tritonetCerceve" title="Tritonet denetçisi" data-i18n-title="Tritonet denetçisi"
             allow="midi; autoplay; fullscreen" loading="lazy"></iframe>
+  </div>
   </div>
 </div>
 
@@ -1827,7 +1937,8 @@ const EN = {
   "Doğaçlamalar": "Improvisations",
   "Ses deneyleri": "Sound experiments",
   "Kısa parçalar": "Short pieces",
-  "Müzik teorisi": "Music theory",
+  "Deneysel": "Experimental",
+  "2022–2026 arası": "between 2022 and 2026",
   "Albümler": "Albums",
   "Basılı işler": "In print",
   "Kimim": "Who I am",
@@ -1845,6 +1956,21 @@ const EN = {
   "Tritonet günlüğü": "Tritonet diary",
   "Likya Dede arşivi": "Likya Dede archive",
   "Luka'ya mektuplar": "Letters to Luka",
+  "Spotify’da dinle": "Listen on Spotify",
+  "Kardeş Türküler + Tolga Zafer": "Kardeş Türküler + Tolga Zafer",
+  "Komische Oper Berlin siparişi · sanat yönetmenliği, beste, düzenleme": "Commissioned by Komische Oper Berlin · artistic direction, composition, arrangement",
+  "Kardeş Türküler + Tolga Zafer · Komische Oper Berlin siparişi. Albüm beklemede.":
+    "Kardeş Türküler + Tolga Zafer · commissioned by Komische Oper Berlin. The album is pending.",
+  "Solo albümler": "Solo albums",
+  "Katkıda bulunduklarım": "Contributions",
+  "Kendi adıma çıkardığım albümler.": "Albums released under my own name.",
+  "Solo albümlerim ve katkıda bulunduğum işler.": "My solo albums and the work I contributed to.",
+  "Sanat yönetmenliği, beste, düzenleme · albüm olarak yayımlanmadı": "Artistic direction, composition, arrangement · never released as an album",
+  "Komische Oper Berlin. Albüm beklemede.": "Komische Oper Berlin. The album is pending.",
+  "Nederlands Blazers Ensemble · Atilla Özdemiroğlu — “Davet”": "Nederlands Blazers Ensemble · Atilla Özdemiroğlu — “Davet”",
+  "Nederlands Blazers Ensemble · Taksim Trio — “Gitti de gitti”": "Nederlands Blazers Ensemble · Taksim Trio — “Gitti de gitti”",
+  "Nederlands Blazers Ensemble · Kinan Azmeh — “Wedding”": "Nederlands Blazers Ensemble · Kinan Azmeh — “Wedding”",
+  "Rumeli Band Live Project · “Yan Bari”": "Rumeli Band Live Project · “Yan Bari”",
   "Albümü dinle": "Listen to the album",
   "Albümü dinle — Apple Music": "Listen to the album — Apple Music",
   "Etkileşimli müzik sistemleri": "Interactive music systems",
@@ -1898,6 +2024,9 @@ const EN = {
 
   /* ── roller ── */
   "8 kayıt": "8 entries",
+  "2 kayıt": "2 entries",
+  "1 kayıt": "1 entries",
+  "25 kayıt": "25 entries",
   "22 kayıt": "22 entries",
   "3 kayıt": "3 entries",
   "12 kayıt": "12 entries",
@@ -2267,8 +2396,8 @@ const EN = {
   "Bir oturuşta yazılıp kaydedilmiş küçük şeyler.":
     "Small things written and recorded in one sitting.",
   "ham miks": "rough mix",
-  "Armoniyi ekranda gösterme denemeleri. Kanalımdaki en çok izlenen işler bunlar.":
-    "Attempts at showing harmony on screen. These are the most-watched things on my channel.",
+  "Armoniyi ekranda göstermeye ve çalınabilir hâle getirmeye çalıştığım denemeler. Kanalımdaki en çok izlenen işler bunlar.":
+    "Attempts at showing harmony on screen and making it playable. These are the most-watched things on my channel.",
   "John Coltrane": "John Coltrane",
   "NASA kayıtları üzerine": "On NASA recordings",
   "Bestelediğim, düzenlediğim ya da çaldığım albümler.":
@@ -2673,7 +2802,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v52 · 2026-08-09';
+const SURUM = 'v56 · 2026-08-11';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2699,7 +2828,7 @@ let W = 0, H = 0, DPR = 1;
    0 px. Sırayı bozan bir ekleme yapılırsa dengeyi yeniden aramak gerekir
    (scratchpad/agac-ara.py bütün sıralamaları deneyip en iyisini bulur).
 
-   Aramanın uyması gereken bir kısıt var: İşler'de "Müzik teorisi" EN SONDA
+   Aramanın uyması gereken bir kısıt var: İşler'de "Deneysel" EN SONDA
    kalır (Tolga'nın kararı). Panellerin (_data/*.yml) sırası ayrıdır ve
    editoryaldir — panel sırasını ağaca uygulamak dengeyi sol 164 / sağ 39
    yapıyor, o yüzden ikisi bilerek ayrı tutuluyor. */
@@ -3421,7 +3550,8 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/im-wagen-dritter-klasse/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2021-01",
-        "blurb": "Komische Oper Berlin, Almanya"
+        "blurb": "Kardeş Türküler + Tolga Zafer",
+        "role": "Komische Oper Berlin siparişi · sanat yönetmenliği, beste, düzenleme"
        },
        {
         "label": "Artık bir davan var",
@@ -4028,16 +4158,16 @@ const STRUCTURE = [
     "date": "2004-01"
    },
    {
-    "label": "Müzik teorisi",
-    "href": "/isler/muzik-teorisi/",
+    "label": "Deneysel",
+    "href": "/isler/deneysel/",
     "trail": "İşler",
-    "blurb": "Armoniyi ekranda gösterme denemeleri. Kanalımdaki en çok izlenen işler bunlar.",
-    "role": "9 kayıt",
+    "blurb": "Armoniyi ekranda göstermeye ve çalınabilir hâle getirmeye çalıştığım denemeler. Kanalımdaki en çok izlenen işler bunlar.",
+    "role": "25 kayıt",
     "children": [
      {
       "label": "Ellipse of Fifths",
-      "href": "/isler/muzik-teorisi/ellipse-of-fifths/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/ellipse-of-fifths/",
+      "trail": "İşler · Deneysel",
       "date": "2013-01",
       "media": {
        "type": "youtube",
@@ -4047,8 +4177,8 @@ const STRUCTURE = [
      },
      {
       "label": "Symmetrical Jazz Scales",
-      "href": "/isler/muzik-teorisi/symmetrical-jazz-scales/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/symmetrical-jazz-scales/",
+      "trail": "İşler · Deneysel",
       "date": "2015-01",
       "media": {
        "type": "youtube",
@@ -4058,8 +4188,8 @@ const STRUCTURE = [
      },
      {
       "label": "Harmonic Analysis of Giant Steps",
-      "href": "/isler/muzik-teorisi/harmonic-analysis-of-giant-steps/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/harmonic-analysis-of-giant-steps/",
+      "trail": "İşler · Deneysel",
       "date": "2019-01",
       "blurb": "John Coltrane",
       "media": {
@@ -4070,8 +4200,8 @@ const STRUCTURE = [
      },
      {
       "label": "Harmonic Analysis of Beethoven Moonlight Sonata",
-      "href": "/isler/muzik-teorisi/harmonic-analysis-of-beethoven-moonlight-sonata/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/harmonic-analysis-of-beethoven-moonlight-sonata/",
+      "trail": "İşler · Deneysel",
       "date": "2017-01",
       "media": {
        "type": "youtube",
@@ -4081,8 +4211,8 @@ const STRUCTURE = [
      },
      {
       "label": "Harmonic Analysis of the Solar System",
-      "href": "/isler/muzik-teorisi/harmonic-analysis-of-the-solar-system/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/harmonic-analysis-of-the-solar-system/",
+      "trail": "İşler · Deneysel",
       "date": "2018-01",
       "blurb": "NASA kayıtları üzerine",
       "media": {
@@ -4093,8 +4223,8 @@ const STRUCTURE = [
      },
      {
       "label": "Realtime Analysis of J.S. Bach Prelude in C",
-      "href": "/isler/muzik-teorisi/realtime-analysis-of-j-s-bach-prelude-in-c/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/realtime-analysis-of-j-s-bach-prelude-in-c/",
+      "trail": "İşler · Deneysel",
       "date": "2020-01",
       "media": {
        "type": "youtube",
@@ -4104,8 +4234,8 @@ const STRUCTURE = [
      },
      {
       "label": "Sibelton — Sibelius with Ableton",
-      "href": "/isler/muzik-teorisi/sibelton-sibelius-with-ableton/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/sibelton-sibelius-with-ableton/",
+      "trail": "İşler · Deneysel",
       "date": "2018-01",
       "media": {
        "type": "youtube",
@@ -4115,8 +4245,8 @@ const STRUCTURE = [
      },
      {
       "label": "Ditonic Comma",
-      "href": "/isler/muzik-teorisi/ditonic-comma/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/ditonic-comma/",
+      "trail": "İşler · Deneysel",
       "date": "2016-01",
       "media": {
        "type": "youtube",
@@ -4126,14 +4256,174 @@ const STRUCTURE = [
      },
      {
       "label": "Combination Scales",
-      "href": "/isler/muzik-teorisi/combination-scales/",
-      "trail": "İşler · Müzik teorisi",
+      "href": "/isler/deneysel/combination-scales/",
+      "trail": "İşler · Deneysel",
       "date": "2016-01",
       "media": {
        "type": "youtube",
        "id": "pwxyDgXdrfI"
       },
       "role": "Birleşim dizileri"
+     },
+     {
+      "label": "Five fingers MPE experiment",
+      "href": "/isler/deneysel/five-fingers-mpe-experiment-l-8ccp/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "L-8cCp1nPZc"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Kontakt Phrase Tool Demo",
+      "href": "/isler/deneysel/kontakt-phrase-tool-demo-jco6vl/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "jCo6vlap7V0"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Kontakt Phrase Tool Demo",
+      "href": "/isler/deneysel/kontakt-phrase-tool-demo-wtrwvg/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "wTrWVGKHOWg"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Kontakt Tools Demo",
+      "href": "/isler/deneysel/kontakt-tools-demo-q7bam1/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "q7BAM1Q0fZ4"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Kontakt Moments Music Demo",
+      "href": "/isler/deneysel/kontakt-moments-music-demo-3d_lov/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "3d_LOvvjJXI"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Moments Sound Demo",
+      "href": "/isler/deneysel/moments-sound-demo-cx7mkn/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "cX7MknwiEtI"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Little Composition",
+      "href": "/isler/deneysel/little-composition-f4otmm/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "F4OtmmGaCNk"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Cyclic Etudes excerpt",
+      "href": "/isler/deneysel/cyclic-etudes-excerpt-kwhvou/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "kWHvOU7nBD4"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "DDSP, Sting, Tritonet",
+      "href": "/isler/deneysel/ddsp-sting-tritonet-hdiwmm/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "HdIwMmv4u5g"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Endless Orchestra",
+      "href": "/isler/deneysel/endless-orchestra-qm99_o/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "Qm99_oB6GKc"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "MIDIFlow",
+      "href": "/isler/deneysel/midiflow-qhchxr/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "QHChxr0-ZwQ"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Farewell Native Instruments",
+      "href": "/isler/deneysel/farewell-native-instruments-gldovw/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "gLDOVwIJbUw"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "For the love of Nikriz",
+      "href": "/isler/deneysel/for-the-love-of-nikriz-1wp-ye/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "1Wp-YeL0Ui4"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Live scaling for Symphony Orchestra",
+      "href": "/isler/deneysel/live-scaling-for-symphony-orchestra-rwa5k5/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "RwA5k516ggI"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Live scaling with string orchestra",
+      "href": "/isler/deneysel/live-scaling-with-string-orchestra-i75by4/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "i75By4g8C4U"
+      },
+      "role": "2022–2026 arası"
+     },
+     {
+      "label": "Texture with MPE",
+      "href": "/isler/deneysel/texture-with-mpe-b4zul_/",
+      "trail": "İşler · Deneysel",
+      "media": {
+       "type": "youtube",
+       "id": "b4zul_eX4kA"
+      },
+      "role": "2022–2026 arası"
      }
     ],
     "date": "2020-01"
@@ -4151,180 +4441,272 @@ const STRUCTURE = [
     "label": "Albümler",
     "href": "/kisisel/albumler/",
     "trail": "Kim",
-    "blurb": "Bestelediğim, düzenlediğim ya da çaldığım albümler.",
-    "role": "18 kayıt",
+    "blurb": "Solo albümlerim ve katkıda bulunduğum işler.",
+    "role": "20 kayıt",
     "children": [
      {
-      "label": "Rüzgar Dinlesin",
-      "href": "/kisisel/albumler/ruzgar-dinlesin/",
+      "label": "Solo albümler",
+      "href": "/kisisel/albumler/solo/",
       "trail": "Kim · Albümler",
+      "blurb": "Kendi adıma çıkardığım albümler.",
+      "role": "2 kayıt",
+      "date": "2024-01",
+      "children": [
+       {
+        "label": "Likya Dede",
+        "href": "/kisisel/albumler/solo/likya-dede/",
+        "trail": "Kim · Albümler · Solo",
+        "date": "2024-01",
+        "role": "Beste"
+       },
+       {
+        "label": "Acoustic Works",
+        "href": "/kisisel/albumler/solo/acoustic-works/",
+        "trail": "Kim · Albümler · Solo",
+        "date": "2018-01",
+        "blurb": "Affordable Escape · Karşılama · Agantha Burina Burinata · Cem · Prulliyas · Karpathia · Thumbnails · Selma ve Gölgesi Suite",
+        "role": "Beste, icra · sekiz parça",
+        "media": {
+         "type": "spotify",
+         "tur": "album",
+         "id": "3wHcAH3w0DJgw8qpjisqZa",
+         "url": "site/assets/img/albumler/acoustic-works.jpg"
+        }
+       }
+      ]
+     },
+     {
+      "label": "Katkıda bulunduklarım",
+      "href": "/kisisel/albumler/katki/",
+      "trail": "Kim · Albümler",
+      "blurb": "Bestelediğim, düzenlediğim ya da çaldığım albümler.",
+      "role": "18 kayıt",
       "date": "2026-01",
-      "blurb": "Esra Kayıkçı · Hakan Kamalı · CDBaby",
-      "role": "Katkı",
-      "media": {
-       "type": "youtube",
-       "id": "dazwHSFOrVc"
-      }
-     },
-     {
-      "label": "Likya Dede",
-      "href": "/kisisel/albumler/likya-dede/",
-      "trail": "Kim · Albümler",
-      "date": "2024-01",
-      "role": "Beste"
-     },
-     {
-      "label": "Im Wagen Dritter Klasse",
-      "href": "/kisisel/albumler/im-wagen-dritter-klasse/",
-      "trail": "Kim · Albümler",
-      "date": "2024-01",
-      "role": "Sanat yönetmenliği, beste, düzenleme"
-     },
-     {
-      "label": "Mesopotamia Suite",
-      "href": "/kisisel/albumler/mesopotamia-suite/",
-      "trail": "Kim · Albümler",
-      "date": "2024-01",
-      "blurb": "Ivan Horvatić · Glazbeni Mostovi",
-      "role": "Beste",
-      "media": {
-       "type": "youtube",
-       "id": "FjYkebtlj1Q"
-      }
-     },
-     {
-      "label": "Zeynebe",
-      "href": "/kisisel/albumler/zeynebe/",
-      "trail": "Kim · Albümler",
-      "date": "2024-01",
-      "blurb": "Orijinal tiyatro müziği",
-      "role": "Beste, icra",
-      "media": {
-       "type": "youtube",
-       "id": "NObkFnCvfnQ"
-      }
-     },
-     {
-      "label": "Dere Kenarında",
-      "href": "/kisisel/albumler/dere-kenarinda/",
-      "trail": "Kim · Albümler",
-      "date": "2023-01",
-      "blurb": "Nevazen · Sibel Demir, Ozan Baysal, Cem Tuncer, Deniz Özdemir, Kemal Yücel, Hasan Karakoç",
-      "role": "Düzenleme, icra",
-      "media": {
-       "type": "youtube",
-       "id": "QkGde2l4tzw"
-      }
-     },
-     {
-      "label": "Karadeniz",
-      "href": "/kisisel/albumler/karadeniz/",
-      "trail": "Kim · Albümler",
-      "date": "2023-01",
-      "blurb": "Yelda Özgen · Müge Hendekli · A.K. Müzik",
-      "role": "Beste",
-      "media": {
-       "type": "youtube",
-       "id": "8K4HdZglbZw"
-      }
-     },
-     {
-      "label": "New Music for Kanun & Piano",
-      "href": "/kisisel/albumler/new-music-for-kanun-piano/",
-      "trail": "Kim · Albümler",
-      "date": "2021-01",
-      "blurb": "Esra Berkman · Lilian Tonella Tüzün · Turkofon Records",
-      "role": "Beste — Ex Orient Lux",
-      "media": {
-       "type": "youtube",
-       "id": "SsYK_d5PUQQ"
-      }
-     },
-     {
-      "label": "Acoustic Works",
-      "href": "/kisisel/albumler/acoustic-works/",
-      "trail": "Kim · Albümler",
-      "date": "2018-01",
-      "blurb": "Affordable Escape · Karşılama · Agantha Burina Burinata · Cem · Prulliyas · Karpathia · Thumbnails · Selma ve Gölgesi Suite",
-      "role": "Beste, icra · sekiz parça"
-     },
-     {
-      "label": "Glazbeni Mostovi",
-      "href": "/kisisel/albumler/glazbeni-mostovi/",
-      "trail": "Kim · Albümler",
-      "date": "2017-01",
-      "blurb": "Ivan Hortavić",
-      "role": "Beste"
-     },
-     {
-      "label": "In Godsnaam",
-      "href": "/kisisel/albumler/in-godsnaam/",
-      "trail": "Kim · Albümler",
-      "date": "2017-01",
-      "blurb": "Netherlands Blazers Ensemble",
-      "role": "Düzenleme"
-     },
-     {
-      "label": "Men Zegt Liefde",
-      "href": "/kisisel/albumler/men-zegt-liefde/",
-      "trail": "Kim · Albümler",
-      "date": "2013-01",
-      "blurb": "Netherlands Blazers Ensemble",
-      "role": "Düzenleme"
-     },
-     {
-      "label": "Atlas",
-      "href": "/kisisel/albumler/atlas/",
-      "trail": "Kim · Albümler",
-      "date": "2012-01",
-      "blurb": "Tolgahan Çoğulu · mikrotonal gitar · Kalan Müzik",
-      "role": "Beste — Shesh-tar · albümün Pisagor akordunda gitar için yazdığım parçası",
-      "media": {
-       "type": "youtube",
-       "id": "c95pBvz84jE"
-      }
-     },
-     {
-      "label": "Serkan Çağrı & Rumeli Band",
-      "href": "/kisisel/albumler/serkan-cagri-rumeli-band/",
-      "trail": "Kim · Albümler",
-      "date": "2011-01",
-      "role": "İcra"
-     },
-     {
-      "label": "Tınıların Zenginliği",
-      "href": "/kisisel/albumler/tinilarin-zenginligi/",
-      "trail": "Kim · Albümler",
-      "date": "2008-01",
-      "blurb": "Duo Mares",
-      "role": "Beste"
-     },
-     {
-      "label": "İplerin Kopuşu",
-      "href": "/kisisel/albumler/i-plerin-kopusu/",
-      "trail": "Kim · Albümler",
-      "date": "2007-01",
-      "blurb": "Mehmet Güreli",
-      "role": "Düzenleme, icra"
-     },
-     {
-      "label": "Kolik Bebek",
-      "href": "/kisisel/albumler/kolik-bebek/",
-      "trail": "Kim · Albümler",
-      "date": "2004-01",
-      "blurb": "Colic Baby · telli çalgılar Orhan Osman",
-      "media": {
-       "type": "youtube",
-       "id": "7AtZlBUGpeI"
-      },
-      "role": "Prodüksiyon"
-     },
-     {
-      "label": "Odamda Yolculuk",
-      "href": "/kisisel/albumler/odamda-yolculuk/",
-      "trail": "Kim · Albümler",
-      "date": "2002-01",
-      "role": "İcra"
+      "children": [
+       {
+        "label": "Rüzgar Dinlesin",
+        "href": "/kisisel/albumler/katki/ruzgar-dinlesin/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2026-01",
+        "blurb": "Esra Kayıkçı · Hakan Kamalı · CDBaby",
+        "role": "Katkı",
+        "media": {
+         "type": "youtube",
+         "id": "dazwHSFOrVc"
+        },
+        "dinle": {
+         "tur": "track",
+         "id": "3uhzTstOhuXJgG9UjiYkvJ"
+        }
+       },
+       {
+        "label": "Im Wagen Dritter Klasse",
+        "href": "/kisisel/albumler/katki/im-wagen-dritter-klasse/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2024-01",
+        "role": "Sanat yönetmenliği, beste, düzenleme · albüm olarak yayımlanmadı",
+        "blurb": "Kardeş Türküler + Tolga Zafer · Komische Oper Berlin siparişi. Albüm beklemede."
+       },
+       {
+        "label": "Mesopotamia Suite",
+        "href": "/kisisel/albumler/katki/mesopotamia-suite/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2024-01",
+        "blurb": "Ivan Horvatić · Glazbeni Mostovi",
+        "role": "Beste",
+        "media": {
+         "type": "youtube",
+         "id": "FjYkebtlj1Q"
+        }
+       },
+       {
+        "label": "Zeynebe",
+        "href": "/kisisel/albumler/katki/zeynebe/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2024-01",
+        "blurb": "Orijinal tiyatro müziği",
+        "role": "Beste, icra",
+        "media": {
+         "type": "youtube",
+         "id": "NObkFnCvfnQ"
+        }
+       },
+       {
+        "label": "Dere Kenarında",
+        "href": "/kisisel/albumler/katki/dere-kenarinda/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2023-01",
+        "blurb": "Nevazen · Sibel Demir, Ozan Baysal, Cem Tuncer, Deniz Özdemir, Kemal Yücel, Hasan Karakoç",
+        "role": "Düzenleme, icra",
+        "media": {
+         "type": "youtube",
+         "id": "QkGde2l4tzw"
+        }
+       },
+       {
+        "label": "Karadeniz",
+        "href": "/kisisel/albumler/katki/karadeniz/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2023-01",
+        "blurb": "Yelda Özgen · Müge Hendekli · A.K. Müzik",
+        "role": "Beste",
+        "media": {
+         "type": "youtube",
+         "id": "8K4HdZglbZw"
+        }
+       },
+       {
+        "label": "50 jaar Nieuwjaarsconcert",
+        "href": "/kisisel/albumler/katki/50-jaar-nieuwjaarsconcert/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2022-01",
+        "blurb": "Nederlands Blazers Ensemble · Kinan Azmeh — “Wedding”",
+        "role": "Düzenleme",
+        "media": {
+         "type": "spotify",
+         "tur": "track",
+         "id": "3pxyjvopt0WkrzzAPShATD",
+         "url": "site/assets/img/albumler/50-jaar-nieuwjaarsconcert.jpg"
+        }
+       },
+       {
+        "label": "New Music for Kanun & Piano",
+        "href": "/kisisel/albumler/katki/new-music-for-kanun-piano/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2021-01",
+        "blurb": "Esra Berkman · Lilian Tonella Tüzün · Turkofon Records",
+        "role": "Beste — Ex Orient Lux",
+        "media": {
+         "type": "youtube",
+         "id": "SsYK_d5PUQQ"
+        }
+       },
+       {
+        "label": "Glazbeni Mostovi",
+        "href": "/kisisel/albumler/katki/glazbeni-mostovi/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2017-01",
+        "blurb": "Ivan Hortavić",
+        "role": "Beste",
+        "media": {
+         "type": "spotify",
+         "tur": "album",
+         "id": "4ppAUFZqSJUnZ0ecHQekaP",
+         "url": "site/assets/img/albumler/glazbeni-mostovi.jpg"
+        }
+       },
+       {
+        "label": "In Godsnaam",
+        "href": "/kisisel/albumler/katki/in-godsnaam/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2017-01",
+        "blurb": "Nederlands Blazers Ensemble · Atilla Özdemiroğlu — “Davet”",
+        "role": "Düzenleme",
+        "media": {
+         "type": "spotify",
+         "tur": "track",
+         "id": "2BjU92AapvwK55USjyBVon",
+         "url": "site/assets/img/albumler/in-godsnaam.jpg"
+        }
+       },
+       {
+        "label": "Voices From The East",
+        "href": "/kisisel/albumler/katki/voices-from-the-east/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2017-01",
+        "blurb": "Nederlands Blazers Ensemble · Taksim Trio — “Gitti de gitti”",
+        "role": "Düzenleme",
+        "media": {
+         "type": "spotify",
+         "tur": "track",
+         "id": "6fhrgNOlfpKt3FjKJ0F4cN",
+         "url": "site/assets/img/albumler/voices-from-the-east.jpg"
+        }
+       },
+       {
+        "label": "Men Zegt Liefde",
+        "href": "/kisisel/albumler/katki/men-zegt-liefde/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2013-01",
+        "blurb": "Netherlands Blazers Ensemble",
+        "role": "Düzenleme"
+       },
+       {
+        "label": "Atlas",
+        "href": "/kisisel/albumler/katki/atlas/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2012-01",
+        "blurb": "Tolgahan Çoğulu · mikrotonal gitar · Kalan Müzik",
+        "role": "Beste — Shesh-tar · albümün Pisagor akordunda gitar için yazdığım parçası",
+        "media": {
+         "type": "youtube",
+         "id": "c95pBvz84jE"
+        },
+        "dinle": {
+         "tur": "track",
+         "id": "3G6UWjyWcPbTGiOt1m5ni3"
+        }
+       },
+       {
+        "label": "Serkan Çağrı & Rumeli Band",
+        "href": "/kisisel/albumler/katki/serkan-cagri-rumeli-band/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2011-01",
+        "role": "İcra",
+        "media": {
+         "type": "youtube",
+         "id": "RC_iX_Y-3u0"
+        },
+        "blurb": "Rumeli Band Live Project · “Yan Bari”"
+       },
+       {
+        "label": "Tınıların Zenginliği",
+        "href": "/kisisel/albumler/katki/tinilarin-zenginligi/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2008-01",
+        "blurb": "Duo Mares",
+        "role": "Beste"
+       },
+       {
+        "label": "İplerin Kopuşu",
+        "href": "/kisisel/albumler/katki/i-plerin-kopusu/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2007-01",
+        "blurb": "Mehmet Güreli",
+        "role": "Düzenleme, icra",
+        "media": {
+         "type": "spotify",
+         "tur": "album",
+         "id": "650EHx14R7wqWmAUhBgR6c",
+         "url": "site/assets/img/albumler/iplerin-kopusu.jpg"
+        }
+       },
+       {
+        "label": "Kolik Bebek",
+        "href": "/kisisel/albumler/katki/kolik-bebek/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2004-01",
+        "blurb": "Colic Baby · telli çalgılar Orhan Osman",
+        "media": {
+         "type": "youtube",
+         "id": "7AtZlBUGpeI"
+        },
+        "role": "Prodüksiyon"
+       },
+       {
+        "label": "Odamda Yolculuk",
+        "href": "/kisisel/albumler/katki/odamda-yolculuk/",
+        "trail": "Kim · Albümler · Katkı",
+        "date": "2002-01",
+        "role": "İcra",
+        "media": {
+         "type": "spotify",
+         "tur": "album",
+         "id": "6yQN8J846efrZblrhJnKVS",
+         "url": "site/assets/img/albumler/odamda-yolculuk.jpg"
+        }
+       }
+      ]
      }
     ],
     "date": "2002-01"
@@ -5266,6 +5648,14 @@ function vwMetniYaz(n){
   document.getElementById('vwRole').textContent  = DIL.T(n.meta.role);
   document.getElementById('vwBody').textContent  = DIL.T(
     (n.meta.media && n.meta.media.type === 'text') ? n.meta.media.body : (n.meta.blurb || ''));
+  /* Videosu olan kayıtlarda Spotify bağlantısı oynatıcının yerine geçmiyor,
+     metnin altına bir bağlantı olarak ekleniyor — ikisi de kalsın. */
+  const dinle = document.getElementById('vwDinle');
+  if (n.meta && n.meta.dinle){
+    dinle.href = 'https://open.spotify.com/' + n.meta.dinle.tur + '/' + n.meta.dinle.id;
+    dinle.textContent = DIL.T('Spotify’da dinle');
+    dinle.hidden = false;
+  } else dinle.hidden = true;
   const link = document.getElementById('vwLink');
   link.href = n.href;
   link.dataset.i18n = 'sayfaya git →';
@@ -5301,6 +5691,19 @@ function openViewer(n){
       vwMedia.innerHTML = '<div class="vw-stub">' + DIL.T('YouTube gömülü oynatıcı buraya gelecek') +
         '<br>' + DIL.T('gerçek video kimliğini veri dosyasına yaz') + '</div>';
     }
+  } else if (m && m.type === 'spotify'){
+    /* Spotify çerçevesi — Likya Dede'nin çalarıyla aynı gömme adresi.
+       Ağaç, YouTube'da olduğu gibi ancak GERÇEKTEN çalmaya başlayınca
+       çekiliyor; bunun için IFrame API'sinin `playback_update`i
+       dinleniyor. API zaten albüm çaları için yükleniyor, ikinci kez
+       indirilmiyor. */
+    const f = document.createElement('iframe');
+    f.src = 'https://open.spotify.com/embed/' + (m.tur || 'album') + '/' + m.id;
+    f.className = 'vw-spotify' + (m.tur === 'album' ? ' albüm' : '');
+    f.allow = 'clipboard-write; encrypted-media; picture-in-picture';
+    f.loading = 'lazy';
+    vwMedia.appendChild(f);
+    spIzle(f);
   } else if (m && m.type === 'image'){
     const i = document.createElement('img');
     i.src = m.url || placeholderImg(); i.alt = DIL.T(n.name);
@@ -5324,9 +5727,39 @@ function openViewer(n){
   document.getElementById('vwClose').focus();
 }
 
+/* Kart içindeki Spotify çerçevesini izler: çalarken ağaç çekilir,
+   durunca geri gelir. API yoksa (ağ yok, engelli) sessizce vazgeçer —
+   oynatıcı yine çalışır, yalnızca ağaç kısılmaz. */
+function spIzle(cerceve){
+  const bagla = (API) => {
+    try {
+      API.createController(cerceve, {}, (ctrl) => {
+        ctrl.addListener('playback_update', e => {
+          const d = e && e.data; if (!d) return;
+          duck(!d.isPaused && d.position > 0);
+        });
+      });
+    } catch(err){ /* çerçeve yine de çalar */ }
+  };
+  if (window.__spotifyAPI){ bagla(window.__spotifyAPI); return; }
+  const oncekiHazir = window.onSpotifyIframeApiReady;
+  window.onSpotifyIframeApiReady = (API) => {
+    window.__spotifyAPI = API;
+    if (oncekiHazir) oncekiHazir(API);
+    bagla(API);
+  };
+  if (!document.querySelector('script[src*="embed/iframe-api"]')){
+    const sc = document.createElement('script');
+    sc.src = 'https://open.spotify.com/embed/iframe-api/v1';
+    sc.async = true;
+    document.head.appendChild(sc);
+  }
+}
+
 function closeViewer(){
   vw.classList.remove('on');
   vw.setAttribute('aria-hidden','true');
+  duck(false);                       // Spotify çalıyorduysa ağaç geri gelsin
   setTimeout(() => { vwMedia.innerHTML = ''; ytPlayer = null; }, 380);   // oynatmayı durdurur
   duck(false);                                          // ağaç yavaşça geri gelir
 }
@@ -6549,6 +6982,166 @@ const triEl = document.getElementById('tritonetPencere');
 const triCerceve = document.getElementById('tritonetCerceve');
 let triAcik = false;
 
+/* ── Tritonet penceresinin yedi sayfası ──
+   Metinler Tritonet belgesinin "CONCEPT Long" bölümünden SEÇİLDİ; yeniden
+   yazılmadı, kısaltıldı. Türkçesi kitabın kendi terimleriyle kuruldu:
+   Masa · Ufuk · Gece · Pusula · "Sağ gerer, sol çözer".
+   Şekiller sitenin çizgi dilinde, canvas sembolleriyle aynı ailede. */
+/* ── Ek sayfalar ŞİMDİLİK KAPALI ──
+   Yedi sayfa hazır (Nedir · Neden zor · Manzara · İki kuvvet · Dört parça ·
+   Kitap) ama Tolga bunlara yeniden bakacak. Veri, düzenler, diyagramlar ve
+   üretici olduğu yerde duruyor; açmak için tek yapılacak şey aşağıdaki
+   satırı `true` yapmak. Kapalıyken pencere yalnızca çalgıyı gösteriyor,
+   oklar kendiliğinden sönüyor (tek sayfada ikisi de devre dışı). */
+const TRI_EK_SAYFALAR = false;
+const TRI_ICERIK_TUM = [
+  { ad:{tr:'Denetçi', en:'The controller'}, duzen:'uygulama', blok:[
+    
+  ]},
+
+  { ad:{tr:'Nedir', en:'What it is'}, duzen:'ozet', blok:[
+    {t:'siir', tr:'Masa alanı verir.\nUfuk çalan sesleri seçer.\nGüneş ve Ay derecelerini değiştirir.\nPusula akorları kurar.\nSağ gerer.\nSol çözer.', en:'The Table gives the field.\nThe Horizon selects the active tones.\nSun and Moon change their degrees.\nThe Compass forms chords.\nRight tightens.\nLeft resolves.'},
+    {t:'em', tr:'Tritonet’in özü bu.', en:'This is the core Tritonet scheme.'},
+    {t:'kucuk', tr:'Beşliler Çemberi üzerine kurulmuş bir armonik gezinme sistemi. Armoniyi ezberlenecek kurallar yığını olmaktan çıkarıp görülebilir ve çalınabilir bir hareket alanına çeviriyor.', en:'A harmonic navigation system built on the Circle of Fifths. It turns harmony from a set of memorized rules into a visible and playable field of movement.'}
+  ]},
+
+  { ad:{tr:'Neden zor', en:'Why it feels hard'}, duzen:'dar', blok:[
+    {t:'p', tr:'Çoğu müzisyen armoni yeteneklerini aştığı için zorlanmıyor. Armoni onlara, ilişkiler sistemi olarak yaşatılmadan önce tanımlar dili olarak sunulduğu için zorlanıyorlar.', en:'Most musicians do not struggle because harmony is beyond their ability. They struggle because harmony is usually introduced as a language of definitions before it is experienced as a system of relationships.'},
+    {t:'p', tr:'Armoni öğrenmek çoğu zaman, kutunun üstündeki resmi hiç görmeden yapboz kurmaya benziyor.', en:'Learning harmony often feels like assembling a puzzle without ever seeing the image on the box.'},
+    {t:'p', tr:'Buradan yaygın bir yanılgı doğuyor: deneyimli müzisyenlerin daha çok kural bildiği sanılıyor. Oysa deneyimli müzisyen daha çok <b>ilişki</b> görüyor. Artık tek tek akorları düşünmüyor; hareketi tanıyor, yönü sezinliyor, dengeyi ve dengesizliği hissediyor.', en:'People begin to believe that experienced musicians know more rules. In reality, experienced musicians usually perceive more relationships. They no longer think about isolated chords. They recognize movement. They anticipate direction. They feel balance and imbalance.'},
+    {t:'siir', tr:'Tritonet “bu akor hangisi?” diye sormaz.\nÖnce “neredeyim?” diye sorar.\n\n“Sıradaki kural ne?” diye sormaz.\n“Buradan nereye gidebilirim?” diye sorar.', en:'Tritonet does not ask, “What chord is this?”\nIt first asks, “Where am I?”\n\nIt does not ask, “What rule comes next?”\nIt asks, “Where can I move from here?”'}
+  ]},
+
+  { ad:{tr:'Manzara', en:'A landscape'}, duzen:'sutun', blok:[
+    {t:'p', tr:'Müzisyenler armoniden söz ederken farkında olmadan coğrafyanın dilini kullanır. Bir tondan <em>uzaklaşmak</em>. <em>Eve dönmek</em>. Tonaliteler arasında <em>yol almak</em>. Bir merkeze doğru <em>çözülmek</em>.', en:'When musicians talk about harmony, they often use the language of geography without realizing it. We speak about moving away from a key. Returning home. Travelling through tonalities. Resolving toward a center.'},
+    {t:'p', tr:'Bunlar matematiksel değil, <b>uzamsal</b> tariflerdir. Yani müzisyen armoniyi zaten bir tür arazi olarak yaşıyor. Tritonet bu sezgiyi ciddiye alıyor.', en:'These are not mathematical descriptions. They are spatial descriptions. They suggest that, somewhere beneath the terminology, musicians already experience harmony as a kind of landscape. Tritonet takes this intuition seriously.'},
+    {t:'p', tr:'Haritanın amacı müzisyene ne yapması gerektiğini söylemek değil. Harita yolculuğu buyurmaz; yalnızca olasılıkları gösterir. Aynı yerde duran iki müzisyen bambaşka yollar seçebilir.', en:'The purpose of the map is not to tell musicians what they must do. A map does not dictate a journey. A map simply reveals possibilities. Two musicians may stand at the same location and choose entirely different paths.'},
+    {t:'h', tr:'Unutulmuş harita', en:'The forgotten map'},
+    {t:'p', tr:'Beşliler Çemberi yüzyıllardır kullanılıyor. Ders kitaplarında, konservatuvarlarda, stüdyo duvarlarında. Çoğu müzisyen onu hemen tanır. Pek azı her gün kullanır.', en:'For centuries, musicians have used the Circle of Fifths. It appears in textbooks, classrooms, conservatories, software applications and studio walls. Most musicians recognize it immediately. Few use it daily.'},
+    {t:'p', tr:'Çünkü ona bir <b>başvuru çizelgesi</b> gibi bakılıyor — oysa o bir <b>ilişkiler haritası</b>. Her konum, öbür konumlarla ilişkisi sayesinde var. Uzaklık önemli. Yön önemli. Komşuluk önemli. Hareket önemli.', en:'The Circle of Fifths is not merely a catalogue of keys. It is a map of relationships. Every position exists because of its relationship to every other position. Distance matters. Direction matters. Neighbourhood matters. Movement matters.'},
+    {t:'p', tr:'Zor olan yeni bir harita çizmek değil. Zor olan, önümüzde duranı okumayı öğrenmek.', en:'The challenge is not creating a new map. The challenge is learning how to read the one that has been in front of us all along.'}
+  ]},
+
+  { ad:{tr:'İki kuvvet', en:'Two forces'}, duzen:'dar', blok:[
+    {t:'p', tr:'Armoni bir arazi ise, o arazideki hareket tarafsız değildir. Her adımın bir sonucu var. Kimi hareket beklenti yaratır, kimi rahatlama. Kimi basıncı artırır, kimi azaltır.', en:'If harmony is a landscape, then movement within that landscape is not neutral. Every step creates a consequence. Some movements create expectation. Others create release. Some increase pressure. Others reduce it.'},
+    {t:'p', tr:'Bu duygular keyfî değil. Beşliler Çemberi’nin içinde saklı bir <b>yön asimetrisinden</b> doğuyorlar. Bir yöne gidince armonik enerji birikiyor, ters yöne gidince gevşiyor.', en:'These experiences are not arbitrary. They emerge from a directional asymmetry hidden inside the Circle of Fifths. Move in one direction and harmonic energy tends to accumulate. Move in the opposite direction and harmonic energy tends to relax.'},
+    {t:'p', tr:'Yerçekimi gibi: düşen bir cismin yasayı öğrenmesi gerekmez, hareketi onu zaten gösterir. Armonik hareket de kendi eğilimini gösterir.', en:'The relationship is similar to gravity. A falling object does not need to learn the laws of gravity. Its motion reveals them. Likewise, harmonic movement reveals its own tendencies.'},
+    {t:'siir', tr:'Sağ gerer.\nSol çözer.', en:'Right tightens.\nLeft resolves.'},
+    {t:'p', tr:'Cümle bilerek basit. Armoni basit olduğu için değil — işe yarayan haritalar çoğu zaman basit bir gözlemle başladığı için. Pusula bir kıtayı anlatmaz; yalnızca kuzeyin nerede olduğunu söyler.', en:'The phrase is intentionally simple. Not because harmony is simple, but because useful maps often begin with simple observations. A compass does not describe an entire continent. It only tells you where north is.'},
+    {t:'p', tr:'Yön duygusu doğunca soru değişiyor. Artık “bu akor ne?” değil, <b>“bu akor ne yapmak istiyor?”</b>', en:'Once orientation exists, navigation becomes possible. The question is no longer “What is this chord?” The deeper question becomes “What does this chord want to do?”'}
+  ]},
+
+  { ad:{tr:'Dört parça', en:'Four parts'}, duzen:'parca', blok:[
+    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><g fill="currentColor" stroke="none"><circle cx="-0.0" cy="34.0" r="2.2"/><circle cx="-17.0" cy="29.4" r="2.2"/><circle cx="-29.4" cy="17.0" r="2.2"/><circle cx="-34.0" cy="-0.0" r="2.2"/><circle cx="-29.4" cy="-17.0" r="2.2"/><circle cx="-17.0" cy="-29.4" r="2.2"/><circle cx="0.0" cy="-34.0" r="2.2"/><circle cx="17.0" cy="-29.4" r="2.2"/><circle cx="29.4" cy="-17.0" r="2.2"/><circle cx="34.0" cy="0.0" r="2.2"/><circle cx="29.4" cy="17.0" r="2.2"/><circle cx="17.0" cy="29.4" r="2.2"/></g><path d="M14.5 -44.7A47 47 0 0 1 42.9 -19.1"/><path d="M47.1 -22.1L45.8 -12.7L38.0 -18.0" fill="currentColor"/><path d="M-14.5 -44.7A47 47 0 0 0 -42.9 -19.1"/><path d="M-47.1 -22.1L-45.8 -12.7L-38.0 -18.0" fill="currentColor"/></svg>', ad:{tr:'Masa',en:'The Table'}, tr:'On iki ses, Beşliler Çemberi düzeninde. Hareket yönlü: <b>sağa</b> gitmek üst harmonikleri ekler, gerginlik doğar; <b>sola</b> gitmek alt harmonikleri ekler, çözülme doğar.', en:'All twelve notes in Circle of Fifths fashion. Movement is directional: <b>right</b> adds upper harmonics and creates tension, <b>left</b> adds lower harmonics and creates resolution.'},
+    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><g fill="currentColor" stroke="none"><circle cx="-34.0" cy="-0.0" r="2.8"/><circle cx="-29.4" cy="-17.0" r="2.8"/><circle cx="-17.0" cy="-29.4" r="2.8"/><circle cx="0.0" cy="-34.0" r="2.8"/><circle cx="17.0" cy="-29.4" r="2.8"/><circle cx="29.4" cy="-17.0" r="2.8"/><circle cx="34.0" cy="0.0" r="2.8"/></g><path d="M-46 0H46" stroke-dasharray="5 5"/></svg>', ad:{tr:'Ufuk',en:'The Horizon'}, tr:'Çemberi bölen yatay çizgi; üstte kalan sesler diziyi kurar. Ufuk <b>yükselirse</b> beş sesli diziler, <b>yerindeyse</b> doğal diziler, <b>kaybolursa</b> kristal diziler (8–12 ses).', en:'A horizontal line divides the circle; the notes above it constitute the scale. <b>Raised</b> → pentatonic scales. <b>Default</b> → natural scales. <b>Disappearing</b> → crystal scales of 8–12 notes.'},
+    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><path d="M0 -34 A34 34 0 0 1 0 34 Z" fill="currentColor" fill-opacity=".13" stroke="none"/><path d="M0 -46V46"/><g fill="currentColor" stroke="none"><circle cx="0" cy="-34" r="2.8"/><circle cx="0" cy="34" r="2.8"/></g></svg>', ad:{tr:'Gece',en:'The Night'}, tr:'Çemberi ikiye bölen dikey ayraç: solda kalan sesler diyezlenir, sağda kalanlar bemolleşir. Kutbu merkeze koyup dünyaya yukarıdan bakmak gibi — gündüz ile gecenin kesiştiği yerler tritonların, yani renk seslerinin yeridir.', en:'A vertical divider splits the Circle in two: notes on the left are sharpened, notes on the right are flattened. Imagine the Earth seen from above with the pole at the centre — where day meets night is where the tritones, the colour tones, sit.'},
+    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34" stroke-opacity=".28"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8" stroke-opacity=".28"/><path d="M0 -32V16"/><path d="M-30 -6 0 16 30 -6"/><path d="M-30 -6-36-17M30 -6 36-17"/><g fill="currentColor" stroke="none"><circle cx="0" cy="16" r="3.2"/></g></svg>', ad:{tr:'Pusula',en:'The Compass'}, tr:'Akoru kuran ve hareketini gösteren parça. <b>Uç</b> bas sesi verir. <b>Kanat uçları</b> modal aralıkları (3 ve 6), <b>kanat ortaları</b> melodik aralıkları (2 ve 7), <b>tam altı</b> armonik aralıkları (4 ve 5) taşır. Bir uçak gibi düşün: seçilen sesler bir uçuş yönü öneriyor — istersen izlersin, istersen bilerek kaçarsın.', en:'The part that builds the chord and shows how it behaves. The <b>tip</b> gives the bass note. <b>Wing tips</b> carry the modal intervals (3rd and 6th), <b>wing centres</b> the melodic intervals (2nd and 7th), and <b>directly below</b> the harmonic intervals (4th and 5th). Think of it as an aeroplane: the chosen tones suggest a flight direction you can follow or deliberately avoid.'}
+  ]},
+
+  { ad:{tr:'Kitap', en:'The book'}, duzen:'kitap', blok:[
+    {t:'kitap', url:'site/assets/img/kitaplar/tritonet-en.jpg', baslik:'The Tritonet Approach to Music Theory', kunye:{tr:'Cambridge Scholars Publishing · Birleşik Krallık · 2018 · ISBN 978-1-5275-0377-9',en:'Cambridge Scholars Publishing · United Kingdom · 2018 · ISBN 978-1-5275-0377-9'}, baglar:[['Cambridge Scholars','https://www.cambridgescholars.com/product/978-1-5275-0377-9'],['Google Books','https://books.google.com/books/about/The_Tritonet_Approach_to_Music_Theory.html?id=glWCDwAAQBAJ'],['Amazon','https://www.amazon.com/Tritonet-Approach-Music-Theory/dp/1527503771']]},
+    {t:'kitap', url:'site/assets/img/kitaplar/tritonet-tr.jpg', baslik:'Tritonet: Uyuma Dair', kunye:{tr:'Pan Yayıncılık · Türkiye · 2017 · ISBN 978-605-9646-22-2',en:'Pan Music Publishing · Türkiye · 2017 · ISBN 978-605-9646-22-2'}, baglar:[['Pandora','https://www.pandora.com.tr/kitap/tritonet-uyuma-dair/547720'],['D&R','https://www.dr.com.tr/Kitap/Tritonet-Uyuma-Dair/Sanat-Tasarim/Muzik/urunno=0001691470001'],['Amazon','https://www.amazon.com.tr/Tritonet-Uyuma-Dair-Tolga-Zafer-%C3%96zdemir/dp/6059646220']]},
+    {t:'kucuk', tr:'Kuramsal çerçeve önce Türkçe, bir yıl sonra genişletilmiş hâliyle İngilizce yayımlandı.', en:'The theoretical framework was published first in Turkish, then a year later in an expanded English edition.'}
+  ]}
+];
+/* Uygulamanın kaçıncı sayfa olduğu veriden geliyor, elle yazılmıyor. */
+const TRI_ICERIK = TRI_EK_SAYFALAR
+  ? TRI_ICERIK_TUM
+  : TRI_ICERIK_TUM.filter(x => x.duzen === 'uygulama');
+const TRI_UYGULAMA = TRI_ICERIK.findIndex(x => x.duzen === 'uygulama') + 1;
+let triSayfa = 1;
+
+function triSayfalariKur(){
+  const kap = document.getElementById('triSayfalar');
+  const d = DIL.get() === 'en' ? 'en' : 'tr';
+  kap.innerHTML = '';
+  TRI_ICERIK.forEach((sayfa, i) => {
+    if (sayfa.duzen === 'uygulama') return;      // uygulama kendi kutusunda
+    const sec = document.createElement('section');
+    sec.className = 'tri-sayfa tri-d-' + sayfa.duzen;
+    sec.dataset.s = String(i + 1);
+    sec.setAttribute('aria-label', sayfa.ad[d]);
+    let h = '', kitaplar = '';
+    for (const b of sayfa.blok){
+      if (b.t === 'p')          h += '<p>' + b[d] + '</p>';
+      else if (b.t === 'em')    h += '<p class="tri-em">' + b[d] + '</p>';
+      else if (b.t === 'kucuk') h += '<p class="tri-kucuk">' + b[d] + '</p>';
+      else if (b.t === 'h')     h += '<h4 class="tri-arabaslik">' + b[d] + '</h4>';
+      else if (b.t === 'siir')  h += '<p class="tri-siir">' + b[d] + '</p>';
+      else if (b.t === 'parca')
+        h += '<figure class="tri-parca"><div class="tri-sekil">' + b.svg + '</div>' +
+             '<figcaption><b class="tri-parca-ad">' + b.ad[d] + '</b>' + b[d] +
+             '</figcaption></figure>';
+      else if (b.t === 'kitap')
+        /* İki baskı yan yana; ayrı bir sarmalayıcıda toplanıyorlar ki
+           altlarındaki not sütunlara bölünmesin. */
+        kitaplar += '<figure class="tri-kitap">' +
+             '<img src="' + b.url + '" alt="' + b.baslik + '" loading="lazy">' +
+             '<figcaption><b class="tri-kitap-ad">' + b.baslik + '</b>' +
+             '<span>' + b.kunye[d] + '</span>' +
+             '<span class="tri-baglar">' + b.baglar.map(
+               ([a,u]) => '<a href="' + u + '" target="_blank" rel="noopener">' + a + '</a>'
+             ).join('') + '</span></figcaption></figure>';
+    }
+    if (kitaplar) h = '<div class="tri-kitaplar">' + kitaplar + '</div>' + h;
+    sec.innerHTML = h;
+    kap.appendChild(sec);
+  });
+}
+
+function triSayfaAc(no){
+  triSayfa = Math.max(1, Math.min(TRI_ICERIK.length, no));
+  const uygulamada = (triSayfa === TRI_UYGULAMA);
+  document.querySelector('.tri-kagit').classList.toggle('uygulamada', uygulamada);
+  document.querySelectorAll('#triSayfalar .tri-sayfa').forEach(sec =>
+    sec.classList.toggle('acik', Number(sec.dataset.s) === triSayfa));
+  document.getElementById('triGeri').disabled  = (triSayfa === 1);
+  document.getElementById('triIleri').disabled = (triSayfa === TRI_ICERIK.length);
+  triAdiYaz();
+  /* Çalgı 600 KB: ancak o sayfaya gelindiğinde yükleniyor. */
+  if (uygulamada) triCerceveyiYukle();
+}
+
+function triAdiYaz(){
+  const d = DIL.get() === 'en' ? 'en' : 'tr';
+  const sayfa = TRI_ICERIK[triSayfa - 1];
+  /* Tek sayfa varken sayfa adını eklemek gereksiz — eski davranış. */
+  const ad = TRI_ICERIK.length < 2
+    ? DIL.T('Tritonet denetçisi')
+    : 'Tritonet' + (sayfa ? ' · ' + sayfa.ad[d] : '');
+  document.getElementById('tritonetAd').textContent = ad;
+  triEl.setAttribute('aria-label', ad);
+}
+
+function triCerceveyiYukle(){
+  if (triCerceve.getAttribute('src')){ cerceveyeOdaklan(); return; }
+  triEl.classList.add('yukleniyor');
+  triCerceve.addEventListener('load', () => {
+    triEl.classList.remove('yukleniyor');
+    cerceveyeOdaklan();
+  }, { once:true });
+  triCerceve.src = TRITONET_ADRES;
+}
+
+let triKuruldu = false;
+function triKur(){
+  if (triKuruldu) return;
+  triKuruldu = true;
+  triSayfalariKur();
+  const geri = document.getElementById('triGeri');
+  const ileri = document.getElementById('triIleri');
+  geri.addEventListener('click', () => triSayfaAc(triSayfa - 1));
+  ileri.addEventListener('click', () => triSayfaAc(triSayfa + 1));
+  okYakinlikKur(document.querySelector('.tri-kagit'), geri, ileri);
+  /* Dil değişince metin sayfaları yeniden üretiliyor; uygulama kutusuna
+     dokunulmadığı için çalgı sıfırlanmıyor. */
+  DIL.dinle(() => {
+    if (!triKuruldu) return;
+    triSayfalariKur();
+    triSayfaAc(triSayfa);
+  });
+}
+
 function openTritonet(){
   if (tunelAcik) closeTunnel();     // pencereler birlikte durmaz
   if (basvuruAcik) closeBasvuru();
@@ -6559,16 +7152,8 @@ function openTritonet(){
   triEl.setAttribute('aria-hidden','false');
   pencereAcilirken();
   duck(true);
-  if (!triCerceve.getAttribute('src')){
-    triEl.classList.add('yukleniyor');
-    triCerceve.addEventListener('load', () => {
-      triEl.classList.remove('yukleniyor');
-      cerceveyeOdaklan();
-    }, { once:true });
-    triCerceve.src = TRITONET_ADRES;
-  } else {
-    cerceveyeOdaklan();
-  }
+  triKur();
+  triSayfaAc(triSayfa);
 }
 
 /* ── Çalgıya klavye odağı ──
@@ -6596,6 +7181,8 @@ function closeTritonet(){
   triEl.classList.remove('on');
   triEl.setAttribute('aria-hidden','true');
   triEl.classList.remove('yukleniyor');
+  /* Çalgı kapanınca boşaltılıyor: arkada MIDI/ses tutmasın. Metin
+     sayfaları kalıyor, açılınca kaldığın sayfadan devam ediyorsun. */
   triCerceve.removeAttribute('src');
   duck(false);
   prev = performance.now();          // ağaç zamanı kaldığı yerden akmasın
@@ -6605,7 +7192,12 @@ addEventListener('keydown', e => {
   /* Odak çerçevenin içindeyken tuşlar buraya hiç düşmez — çapraz kaynaklı
      çerçeve kendi klavyesini tutar. Bu yüzden yazılı kapatma düğmesi şart,
      Escape yalnızca ek bir kolaylık. */
-  if (e.key === 'Escape' && triAcik) closeTritonet();
+  if (!triAcik) return;
+  if (e.key === 'Escape'){ closeTritonet(); return; }
+  /* Sol/sağ ok sayfa çeviriyor. Odak çerçevenin İÇİNDEYSE bu tuşlar zaten
+     buraya düşmez — çalgıyı çalarken sayfa kaymasın diye bu iyi. */
+  if (e.key === 'ArrowLeft')  triSayfaAc(triSayfa - 1);
+  if (e.key === 'ArrowRight') triSayfaAc(triSayfa + 1);
 });
 
 /* ── Başvuru penceresi: üçüncü pencere ──
