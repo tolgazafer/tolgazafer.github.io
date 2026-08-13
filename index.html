@@ -132,6 +132,17 @@
     padding-right:1rem}
   .menu::-webkit-scrollbar{width:3px}
   .menu::-webkit-scrollbar-thumb{background:var(--ink-faint);border-radius:2px}
+  /* Telefonda panel ekranın çoğunu kaplıyor ve ağacın dalları yazının
+     içinden geçiyor: harf hâlesi bu yoğunlukta yetmiyor. Sola yaslı,
+     sağa doğru sönen bir kâğıt perdesi — kutu değil, geçiş. */
+  @media (max-width:760px){
+    .menu{background:linear-gradient(to right,
+      color-mix(in srgb,var(--paper) 94%,transparent) 0%,
+      color-mix(in srgb,var(--paper) 90%,transparent) 72%,
+      transparent 100%);
+      padding-left:1rem;margin-left:-1rem;
+      -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+  }
   .menu ul{list-style:none;margin:0;padding:0}
   .menu ul ul{margin-left:.5rem;padding-left:.6rem;
     border-left:1px solid var(--ink-faint);
@@ -914,7 +925,15 @@
     max-height:100%;overflow:auto;scrollbar-width:none}
   .ld-tirat::-webkit-scrollbar{display:none}
   .ld-sahne:not(.ld-metinli) .ld-tirat{display:none}
-  @media (max-width:720px){ .ld-sahne.ld-metinli{grid-template-columns:1fr} }
+  @media (max-width:720px){
+    /* Telefonda görsel ve tirat alt alta. Satır boyları AÇIKÇA veriliyor:
+       `.ld-perde{height:100%}` kendiliğinden boyutlanan bir satırda sıfıra
+       çöküyor ve çizim 30 px'lik bir leke oluyordu. */
+    .ld-sahne.ld-metinli{grid-template-columns:1fr;
+      grid-template-rows:minmax(30vh,34vh) minmax(0,1fr);gap:1.1rem}
+    .ld-sahne:not(.ld-metinli){grid-template-rows:minmax(0,1fr)}
+    .ld-tirat{font-size:.95rem}
+  }
 
   .ld-arabaslik{margin:1rem 0 .35rem;font-size:.85rem;font-weight:600;color:var(--ink)}
   .ld-kucuk{font-size:.88rem;line-height:1.75;color:var(--ink-soft)}
@@ -1614,7 +1633,7 @@
   <!-- Başlangıç etiketi <html lang="tr"> ile aynı; DIL.uygula() açılışta
        kayıtlı dile göre düzeltiyor. -->
   <button class="ctrl" id="lang">TR</button>
-  <span class="ctrl" id="ver" style="cursor:default">v57</span>
+  <span class="ctrl" id="ver" style="cursor:default"></span>
 </div>
 
 <nav class="baglar veil" id="baglar" aria-label="İletişim" data-i18n-aria="İletişim">
@@ -1685,7 +1704,6 @@
     <div class="vw-media" id="vwMedia"></div>
     <div class="vw-body" id="vwBody"></div>
     <a class="vw-dinle" id="vwDinle" target="_blank" rel="noopener" hidden></a>
-    <a class="vw-link" id="vwLink">sayfaya git →</a>
   </div>
 </div>
 
@@ -2841,8 +2859,24 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v57 · 2026-08-13';
+const SURUM = 'v58 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
+/* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
+   için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
+   konsolda duruyor. Tarih SURUM'un içinden okunuyor — tek yerde. */
+(() => {
+  const el = document.getElementById('ver');
+  const g = SURUM.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (!el || !g) return;
+  const yaz = () => {
+    const ay = DIL.ay(Number(g[2]) - 1);
+    el.textContent = DIL.get() === 'en'
+      ? Number(g[3]) + ' ' + ay + ' ' + g[1]
+      : Number(g[3]) + ' ' + ay + ' ' + g[1];
+    el.title = SURUM;
+  };
+  yaz(); DIL.dinle(yaz);
+})();
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let W = 0, H = 0, DPR = 1;
@@ -4824,7 +4858,7 @@ const STRUCTURE = [
     "children": [
      {
       "label": "Tritonet",
-      "href": "/kisisel/kitaplar/tritonet/",
+      "href": "/kisisel/kitaplar/tritonet-2018/",
       "trail": "Kim · Kitaplar",
       "date": "2018-01",
       "blurb": "Cambridge Scholars Publishing, Birleşik Krallık",
@@ -4847,7 +4881,7 @@ const STRUCTURE = [
      },
      {
       "label": "Tritonet",
-      "href": "/kisisel/kitaplar/tritonet/",
+      "href": "/kisisel/kitaplar/tritonet-2017/",
       "trail": "Kim · Kitaplar",
       "date": "2017-01",
       "blurb": "Pan Müzik Yayınları, Türkiye",
@@ -4860,10 +4894,10 @@ const STRUCTURE = [
     "label": "Kimim",
     "href": "/kisisel/kimim/",
     "trail": "Kim",
-    "blurb": "Kendi sözlerimle.",
+    "blurb": "Kendi sözlerimle. Fotoğraf: Umut Özbek, 2025.",
     "media": {
-     "type": "text",
-     "body": "Diyarbakırlı bir baba ile Elazığlı bir annenin çocuğu olarak 1975'te Ankara'da doğdum, Antalya'da büyüdüm, uzun seneler İstanbul'da yaşadım. Şehrin bilumum sahnelerinde piştim; Faris Akarsu, Kamran İnce ve İlhan Usmanbaş ustalarından ise adap öğrendim.\nBilgi Üniversitesi Müzik Bölümü'nde uzun yıllar hocalık yaptım. Bu süre içinde armoni öğrenmeyi sadeleştirmek amacıyla Beşliler Çemberi üzerinden yeni bir metot geliştirdim ve bir ders kitabı olarak yayımladım. Ardından, aynı yöntemi temel alan bir yazılım geliştirerek Tritonet adını verdiğim bir müzikal hesap makinesi yaptım.\nSon yıllarda notadan ziyade kod yazmaya odaklandım; müziklerim hâlen dünyanın farklı yerlerinde duyuluyor. Bu aralar müzikal maceramı bir kurum bünyesinde dijital enstrümanlar ve kompozisyon araçları tasarlayarak sürdürüyorum."
+     "type": "image",
+     "url": "site/assets/img/portre/tolga-2.jpg"
     },
     "children": []
    },
@@ -5833,10 +5867,6 @@ function vwMetniYaz(n){
     dinle.textContent = DIL.T('Spotify’da dinle');
     dinle.hidden = false;
   } else dinle.hidden = true;
-  const link = document.getElementById('vwLink');
-  link.href = n.href;
-  link.dataset.i18n = 'sayfaya git →';
-  link.textContent = DIL.T('sayfaya git →');
 }
 
 function openViewer(n){
