@@ -1614,7 +1614,7 @@
   <!-- Başlangıç etiketi <html lang="tr"> ile aynı; DIL.uygula() açılışta
        kayıtlı dile göre düzeltiyor. -->
   <button class="ctrl" id="lang">TR</button>
-  <span class="ctrl" id="ver" style="cursor:default">v56</span>
+  <span class="ctrl" id="ver" style="cursor:default">v57</span>
 </div>
 
 <nav class="baglar veil" id="baglar" aria-label="İletişim" data-i18n-aria="İletişim">
@@ -1922,7 +1922,7 @@ const EN = {
   /* ── bölgeler ve yapısal başlıklar ── */
   "İşler": "Work",
   "Kim": "Who",
-  "Güçler": "Forces",
+  "Güçler": "Ideas",
   "Yazılım": "Software",
   "CV": "CV",
   "Özet": "Profile",
@@ -1957,6 +1957,45 @@ const EN = {
   "Likya Dede arşivi": "Likya Dede archive",
   "Luka'ya mektuplar": "Letters to Luka",
   "Spotify’da dinle": "Listen on Spotify",
+  "14 kayıt": "14 entries",
+  "16 kayıt": "16 entries",
+  "29 kayıt": "29 entries",
+  "363 kayıt": "363 entries",
+  "Single": "Single",
+  "Single’lar": "Singles",
+  "Sunumlar": "Talks and demos",
+  "Konserler": "Concerts",
+  "Kendi adıma çıkardığım tekli kayıtlar.": "Singles released under my own name.",
+  "Eserlerimin seslendirildiği konserler.": "Concerts where my work was performed.",
+  "Tritonet’i anlattığım okullar, stüdyolar ve topluluklar.": "Schools, studios and collectives where I presented Tritonet.",
+  "Tritonet telif hakkı": "Tritonet copyright",
+  "Acar Patent · 1 Eylül 2014": "Acar Patent · 1 September 2014",
+  "Bilim, Sanayi ve Teknoloji Bakanlığı — başarı belgesi": "Ministry of Science, Industry and Technology — certificate of achievement",
+  "22 Ekim 2014": "22 October 2014",
+  "Milliyet — röportaj": "Milliyet — interview",
+  "23 Ağustos 2014": "23 August 2014",
+  "Sunum — TOBB, Ankara, 25 Kasım 2014": "Paper — TOBB, Ankara, 25 November 2014",
+  "Konuşma — Tritonet · ICONEA Konferansı, 11 Aralık 2014": "Talk — Tritonet · ICONEA Conference, 11 December 2014",
+  "Poster — Singapur, 13 Şubat 2015": "Poster — Singapore, 13 February 2015",
+  "Müzik performansı ve kompozisyonunda matematik ve hesaplama": "Mathematics and computation in music performance and composition",
+  "Tritonet sunumu — 28 Mayıs 2015": "Tritonet talk — 28 May 2015",
+  "Amsterdam · 30 Mayıs 2015": "Amsterdam · 30 May 2015",
+  "İstanbul Kongre Merkezi · 22 Nisan 2014": "Istanbul Congress Centre · 22 April 2014",
+  "Mimar Sinan Üniversitesi Devlet Konservatuvarı": "Mimar Sinan University State Conservatory",
+  "Anadolu Üniversitesi Devlet Konservatuvarı": "Anadolu University State Conservatory",
+  "Sakarya Üniversitesi Devlet Konservatuvarı": "Sakarya University State Conservatory",
+  "Boğaziçi Gösteri Sanatları Topluluğu": "Boğaziçi Performing Arts Ensemble",
+  "Dijital Deneyimler Kollektifi — Bilgi Üniversitesi": "Digital Experiences Collective — Bilgi University",
+  "Türkiye Girişimi — Boğaziçi Üniversitesi": "Türkiye Initiative — Boğaziçi University",
+  "21 Ekim 2014": "21 October 2014",
+  "9 Aralık 2014": "9 December 2014",
+  "10 Aralık 2014": "10 December 2014",
+  "21 Aralık 2014": "21 December 2014",
+  "12 Şubat 2015": "12 February 2015",
+  "24 Mart 2015": "24 March 2015",
+  "4 Mayıs 2015": "4 May 2015",
+  "16 Mayıs 2015": "16 May 2015",
+  "28 Mayıs 2015": "28 May 2015",
   "Kardeş Türküler + Tolga Zafer": "Kardeş Türküler + Tolga Zafer",
   "Komische Oper Berlin siparişi · sanat yönetmenliği, beste, düzenleme": "Commissioned by Komische Oper Berlin · artistic direction, composition, arrangement",
   "Kardeş Türküler + Tolga Zafer · Komische Oper Berlin siparişi. Albüm beklemede.":
@@ -2138,7 +2177,7 @@ const EN = {
   "Tiyatro müziği · albüm olarak da yayımlandı":
     "Theatre music · also released as an album",
   "Bale · eserin tamamı Güçler bandındaki Likya Dede sütununda":
-    "Ballet · the complete work sits under Likya Dede in the Forces band",
+    "Ballet · the complete work sits under Likya Dede in the Ideas band",
 
   "Doğaçlama · bilgisayar": "Improvisation · computer",
   "Doğaçlama · Anadolu'nun seslerine odaklanan konser dizisinden":
@@ -2802,7 +2841,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v56 · 2026-08-11';
+const SURUM = 'v57 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2950,7 +2989,7 @@ const STRUCTURE = [
     "href": "/isler/cv/",
     "trail": "İşler",
     "blurb": "Özet geçmiş, ödüller ve hibeler.",
-    "role": "22 kayıt",
+    "role": "29 kayıt",
     "children": [
      {
       "label": "Özet",
@@ -3000,8 +3039,20 @@ const STRUCTURE = [
       "href": "/isler/cv/akademi-ve-konusmalar/",
       "trail": "İşler · CV",
       "blurb": "Ders verdiğim kurumlar ve Tritonet'i anlattığım konferanslar.",
-      "role": "12 kayıt",
+      "role": "14 kayıt",
       "children": [
+       {
+        "label": "Prodüksiyon Kafaları #9",
+        "href": "/isler/cv/akademi-ve-konusmalar/produksiyon-kafalari-9/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2025-01",
+        "blurb": "Gerçek Dorman",
+        "role": "Söyleşi — akor ve armoni anlayışı üzerine, iki saatlik canlı yayın",
+        "media": {
+         "type": "youtube",
+         "id": "l2Gxe0i_9-I"
+        }
+       },
        {
         "label": "İstanbul Bilgi Üniversitesi",
         "href": "/isler/cv/akademi-ve-konusmalar/i-stanbul-bilgi-universitesi/",
@@ -3012,6 +3063,57 @@ const STRUCTURE = [
          "type": "text",
          "body": "Doçent — kompozisyon, armoni, orkestrasyon, müzik teknolojisi ve prodüksiyon"
         }
+       },
+       {
+        "label": "Yaşam Okulu Sohbetleri",
+        "href": "/isler/cv/akademi-ve-konusmalar/yasam-okulu-sohbetleri/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2020-01",
+        "blurb": "Çamtepe Ekolojik Yaşam Merkezi · moderatör: Güneşin Aydemir",
+        "role": "Söyleşi — Schumann rezonansı ve gezegenle uyum üzerine",
+        "media": {
+         "type": "youtube",
+         "id": "WuCF-ZZsEAs"
+        }
+       },
+       {
+        "label": "Conservatorium van Amsterdam",
+        "href": "/isler/cv/akademi-ve-konusmalar/conservatorium-van-amsterdam/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "blurb": "Hollanda",
+        "role": "Tritonet sunumu — 28 Mayıs 2015",
+        "date": "2015-05"
+       },
+       {
+        "label": "Mathemusical Conversations",
+        "href": "/isler/cv/akademi-ve-konusmalar/mathemusical-conversations/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "blurb": "Müzik performansı ve kompozisyonunda matematik ve hesaplama",
+        "role": "Poster — Singapur, 13 Şubat 2015",
+        "date": "2015-02"
+       },
+       {
+        "label": "University of Oxford",
+        "href": "/isler/cv/akademi-ve-konusmalar/university-of-oxford/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "blurb": "“Arithmetical subjectivism or unconscious knowledge — Harmonic Scale and Heptatonicism in Ancient Near Eastern Music”",
+        "role": "Konuşma — Tritonet · ICONEA Konferansı, 11 Aralık 2014",
+        "date": "2014-12"
+       },
+       {
+        "label": "3rd International Conference on Complex Dynamical Systems",
+        "href": "/isler/cv/akademi/complex-dynamical-systems/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2014-11",
+        "role": "Sunum — TOBB, Ankara, 25 Kasım 2014",
+        "blurb": "“New Mathematical Concepts and Applications in Life Sciences”"
+       },
+       {
+        "label": "Milliyet — röportaj",
+        "href": "/isler/cv/akademi/milliyet-roportaj/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2014-08",
+        "role": "23 Ağustos 2014"
        },
        {
         "label": "Akdeniz Üniversitesi",
@@ -3026,20 +3128,6 @@ const STRUCTURE = [
         "trail": "İşler · CV · Akademi ve konuşmalar",
         "blurb": "ABD",
         "role": "Araştırma görevlisi — temel müzik dersleri"
-       },
-       {
-        "label": "University of Oxford",
-        "href": "/isler/cv/akademi-ve-konusmalar/university-of-oxford/",
-        "trail": "İşler · CV · Akademi ve konuşmalar",
-        "blurb": "Birleşik Krallık",
-        "role": "Konuşma — Tritonet"
-       },
-       {
-        "label": "Mathemusical Conversations",
-        "href": "/isler/cv/akademi-ve-konusmalar/mathemusical-conversations/",
-        "trail": "İşler · CV · Akademi ve konuşmalar",
-        "blurb": "Singapur",
-        "role": "Konuşma — müzik performansı ve kompozisyonunda matematik ve hesaplama"
        },
        {
         "label": "SOAS University of London",
@@ -3063,42 +3151,11 @@ const STRUCTURE = [
         "role": "Konuşma"
        },
        {
-        "label": "Conservatorium van Amsterdam",
-        "href": "/isler/cv/akademi-ve-konusmalar/conservatorium-van-amsterdam/",
-        "trail": "İşler · CV · Akademi ve konuşmalar",
-        "blurb": "Hollanda",
-        "role": "Konuşma"
-       },
-       {
         "label": "The Rattle",
         "href": "/isler/cv/akademi-ve-konusmalar/the-rattle/",
         "trail": "İşler · CV · Akademi ve konuşmalar",
         "blurb": "Birleşik Krallık",
         "role": "Konuşma"
-       },
-       {
-        "label": "Yaşam Okulu Sohbetleri",
-        "href": "/isler/cv/akademi-ve-konusmalar/yasam-okulu-sohbetleri/",
-        "trail": "İşler · CV · Akademi ve konuşmalar",
-        "date": "2020-01",
-        "blurb": "Çamtepe Ekolojik Yaşam Merkezi · moderatör: Güneşin Aydemir",
-        "role": "Söyleşi — Schumann rezonansı ve gezegenle uyum üzerine",
-        "media": {
-         "type": "youtube",
-         "id": "WuCF-ZZsEAs"
-        }
-       },
-       {
-        "label": "Prodüksiyon Kafaları #9",
-        "href": "/isler/cv/akademi-ve-konusmalar/produksiyon-kafalari-9/",
-        "trail": "İşler · CV · Akademi ve konuşmalar",
-        "date": "2025-01",
-        "blurb": "Gerçek Dorman",
-        "role": "Söyleşi — akor ve armoni anlayışı üzerine, iki saatlik canlı yayın",
-        "media": {
-         "type": "youtube",
-         "id": "l2Gxe0i_9-I"
-        }
        }
       ],
       "date": "2020-01"
@@ -3108,7 +3165,7 @@ const STRUCTURE = [
       "href": "/isler/cv/oduller/",
       "trail": "İşler · CV",
       "blurb": "Aldığım ödüller, burslar ve konuk bestecilikler.",
-      "role": "7 kayıt",
+      "role": "9 kayıt",
       "children": [
        {
         "label": "Guthman Musical Instrument Competition",
@@ -3125,6 +3182,20 @@ const STRUCTURE = [
         "date": "2017-01",
         "blurb": "İsveç · 2010, 2017",
         "role": "Konuk besteci"
+       },
+       {
+        "label": "Bilim, Sanayi ve Teknoloji Bakanlığı — başarı belgesi",
+        "href": "/isler/cv/oduller/bakanlik-basari-belgesi/",
+        "trail": "İşler · CV · Ödüller",
+        "date": "2014-10",
+        "role": "22 Ekim 2014"
+       },
+       {
+        "label": "Tritonet telif hakkı",
+        "href": "/isler/cv/oduller/tritonet-telif/",
+        "trail": "İşler · CV · Ödüller",
+        "date": "2014-09",
+        "role": "Acar Patent · 1 Eylül 2014"
        },
        {
         "label": "Bilim, Sanayi ve Teknoloji Bakanlığı",
@@ -3168,6 +3239,30 @@ const STRUCTURE = [
        }
       ],
       "date": "2004-01"
+     },
+     {
+      "label": "Konserler",
+      "href": "/isler/cv/konserler/",
+      "trail": "İşler · CV",
+      "blurb": "Eserlerimin seslendirildiği konserler.",
+      "role": "2 kayıt",
+      "date": "2015-05",
+      "children": [
+       {
+        "label": "Holland Festival",
+        "href": "/isler/cv/konserler/holland-festival/",
+        "trail": "İşler · CV · Konserler",
+        "date": "2015-05",
+        "role": "Amsterdam · 30 Mayıs 2015"
+       },
+       {
+        "label": "In Memoriam",
+        "href": "/isler/cv/konserler/in-memoriam/",
+        "trail": "İşler · CV · Konserler",
+        "date": "2014-04",
+        "role": "İstanbul Kongre Merkezi · 22 Nisan 2014"
+       }
+      ]
      }
     ],
     "date": "1999-01"
@@ -4476,11 +4571,40 @@ const STRUCTURE = [
       ]
      },
      {
+      "label": "Single’lar",
+      "href": "/kisisel/albumler/single/",
+      "trail": "Kim · Albümler",
+      "blurb": "Kendi adıma çıkardığım tekli kayıtlar.",
+      "role": "2 kayıt",
+      "date": "2024-01",
+      "children": [
+       {
+        "label": "Zeynebe",
+        "href": "/kisisel/albumler/single/zeynebe/",
+        "trail": "Kim · Albümler · Single",
+        "date": "2024-01",
+        "blurb": "Orijinal tiyatro müziği",
+        "role": "Beste, icra",
+        "media": {
+         "type": "youtube",
+         "id": "NObkFnCvfnQ"
+        }
+       },
+       {
+        "label": "Once a Void",
+        "href": "/kisisel/albumler/single/once-a-void/",
+        "trail": "Kim · Albümler · Single",
+        "date": "2022-01",
+        "role": "Beste, icra"
+       }
+      ]
+     },
+     {
       "label": "Katkıda bulunduklarım",
       "href": "/kisisel/albumler/katki/",
       "trail": "Kim · Albümler",
       "blurb": "Bestelediğim, düzenlediğim ya da çaldığım albümler.",
-      "role": "18 kayıt",
+      "role": "16 kayıt",
       "date": "2026-01",
       "children": [
        {
@@ -4517,18 +4641,6 @@ const STRUCTURE = [
         "media": {
          "type": "youtube",
          "id": "FjYkebtlj1Q"
-        }
-       },
-       {
-        "label": "Zeynebe",
-        "href": "/kisisel/albumler/katki/zeynebe/",
-        "trail": "Kim · Albümler · Katkı",
-        "date": "2024-01",
-        "blurb": "Orijinal tiyatro müziği",
-        "role": "Beste, icra",
-        "media": {
-         "type": "youtube",
-         "id": "NObkFnCvfnQ"
         }
        },
        {
@@ -4622,14 +4734,6 @@ const STRUCTURE = [
          "id": "6fhrgNOlfpKt3FjKJ0F4cN",
          "url": "site/assets/img/albumler/voices-from-the-east.jpg"
         }
-       },
-       {
-        "label": "Men Zegt Liefde",
-        "href": "/kisisel/albumler/katki/men-zegt-liefde/",
-        "trail": "Kim · Albümler · Katkı",
-        "date": "2013-01",
-        "blurb": "Netherlands Blazers Ensemble",
-        "role": "Düzenleme"
        },
        {
         "label": "Atlas",
@@ -4799,7 +4903,7 @@ const STRUCTURE = [
     "href": "/evren/tritonet/",
     "trail": "Güçler",
     "blurb": "Ableton Live için gerçek zamanlı armonik gezinme sistemi. Sabit MIDI malzemesini, armonik duruma göre yeniden şekillenen canlı bir davranışa çevirir. 2013'ten beri geliştiriyorum; kuramsal temeli 2018'de Cambridge Scholars Publishing'den kitap olarak çıktı.",
-    "role": "351 kayıt",
+    "role": "363 kayıt",
     "float": "tri",
     "children": [
      {
@@ -4961,6 +5065,79 @@ const STRUCTURE = [
         "href": "/evren/tritonet/neler-yapiyorum/beste-ve-orkestrasyon/",
         "trail": "Güçler · Tritonet · Neler yapıyorum",
         "role": "Orkestra, oda müziği, elektronik, tiyatro ve medya"
+       }
+      ]
+     },
+     {
+      "label": "Sunumlar",
+      "href": "/evren/tritonet/sunumlar/",
+      "trail": "Güçler · Tritonet",
+      "blurb": "Tritonet’i anlattığım okullar, stüdyolar ve topluluklar.",
+      "role": "9 kayıt",
+      "date": "2015-05",
+      "children": [
+       {
+        "label": "Conservatorium van Amsterdam",
+        "href": "/evren/tritonet/sunumlar/conservatorium-van-amsterdam/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2015-05",
+        "role": "28 Mayıs 2015"
+       },
+       {
+        "label": "Dijital Deneyimler Kollektifi — Bilgi Üniversitesi",
+        "href": "/evren/tritonet/sunumlar/dijital-deneyimler-kollektifi-bilgi-universitesi/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2015-05",
+        "role": "16 Mayıs 2015"
+       },
+       {
+        "label": "Sakarya Üniversitesi Devlet Konservatuvarı",
+        "href": "/evren/tritonet/sunumlar/sakarya-universitesi-devlet-konservatuvar/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2015-05",
+        "role": "4 Mayıs 2015"
+       },
+       {
+        "label": "Anadolu Üniversitesi Devlet Konservatuvarı",
+        "href": "/evren/tritonet/sunumlar/anadolu-universitesi-devlet-konservatuvar/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2015-03",
+        "role": "24 Mart 2015"
+       },
+       {
+        "label": "Boğaziçi Gösteri Sanatları Topluluğu",
+        "href": "/evren/tritonet/sunumlar/bogazici-gosteri-sanatlar-toplulugu/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2015-02",
+        "role": "12 Şubat 2015"
+       },
+       {
+        "label": "Türkiye Girişimi — Boğaziçi Üniversitesi",
+        "href": "/evren/tritonet/sunumlar/turkiye-girisimi-bogazici-universitesi/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2014-12",
+        "role": "21 Aralık 2014"
+       },
+       {
+        "label": "Surrey University",
+        "href": "/evren/tritonet/sunumlar/surrey-university/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2014-12",
+        "role": "10 Aralık 2014"
+       },
+       {
+        "label": "Walter Fabeck — IceBreaker Studios",
+        "href": "/evren/tritonet/sunumlar/walter-fabeck-icebreaker-studios/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2014-12",
+        "role": "9 Aralık 2014"
+       },
+       {
+        "label": "Mimar Sinan Üniversitesi Devlet Konservatuvarı",
+        "href": "/evren/tritonet/sunumlar/mimar-sinan-universitesi-devlet-konservatuvar/",
+        "trail": "Güçler · Tritonet · Sunumlar",
+        "date": "2014-10",
+        "role": "21 Ekim 2014"
        }
       ]
      }
