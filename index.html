@@ -240,6 +240,21 @@
   .vw-dinle[hidden]{display:none}
 
   .controls{position:fixed;bottom:1.9rem;right:2.4rem;z-index:7;display:flex;gap:1.4rem}
+  /* Dil seçici: düğme kumandaların içinde, liste YUKARI açılıyor —
+     köşede aşağıda yer yok. */
+  .dilsec{position:relative}
+  .dil-liste{position:absolute;bottom:calc(100% + .7rem);right:0;z-index:9;
+    margin:0;padding:.35rem 0;list-style:none;min-width:8.5rem;
+    background:var(--cerceve);border:1px solid var(--ink-faint);border-radius:3px;
+    box-shadow:0 10px 30px rgba(0,0,0,.32)}
+  .dil-liste[hidden]{display:none}
+  .dil-liste li{padding:.42em .9em;cursor:pointer;color:var(--ink-soft);
+    font-size:.8rem;letter-spacing:.04em;white-space:nowrap;
+    transition:color .15s,background .15s}
+  .dil-liste li:hover,.dil-liste li:focus-visible{color:var(--ink);
+    background:color-mix(in srgb,var(--ink) 7%,transparent);outline:none}
+  .dil-liste li[aria-selected="true"]{color:var(--evren)}
+  .dil-liste li[aria-selected="true"]::after{content:' ·';opacity:.6}
   .ctrl{background:none;border:none;cursor:pointer;color:var(--ink-soft);font:inherit;
     font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;padding:.4em 0;transition:color .2s}
   .ctrl:hover,.ctrl:focus-visible{color:var(--ink);outline:none}
@@ -1632,7 +1647,10 @@
   </label>
   <!-- Başlangıç etiketi <html lang="tr"> ile aynı; DIL.uygula() açılışta
        kayıtlı dile göre düzeltiyor. -->
-  <button class="ctrl" id="lang">TR</button>
+  <div class="dilsec" id="dilsec">
+    <button class="ctrl" id="lang" aria-haspopup="listbox" aria-expanded="false">TR</button>
+    <ul class="dil-liste" id="dilListe" role="listbox" hidden></ul>
+  </div>
   <span class="ctrl" id="ver" style="cursor:default"></span>
 </div>
 
@@ -2695,12 +2713,634 @@ const EN = {
    Seçim kalıcı: bir kez İngilizce'ye geçen ziyaretçi her açılışta
    tekrar Türkçe karşılanmasın. İlk gelişte tarayıcının dili karar
    veriyor — Türkçe değilse İngilizce açılır. */
+/* ── Öbür diller ──
+   EN sözlüğü tam (542 girdi); bunlar şimdilik ÇEKİRDEK arayüz dizeleri.
+   Eksik bir karşılık Türkçeye DEĞİL İngilizceye düşüyor (aşağıdaki T).
+   Böylece bir dil parça parça doldurulabiliyor ve yarım hâli de
+   kullanılabilir kalıyor: Almanca menü + İngilizce düzyazı, Türkçe
+   serpiştirilmiş bir sayfadan iyidir.
+   Eksikleri araclar/dil-denetle.js listeliyor. */
+const DILLER = {
+  de: {
+    "Akademi ve konuşmalar": "Lehre und Vorträge",
+    "Albümler": "Alben",
+    "Ağaca dön": "Zurück zum Baum",
+    "Basılı işler": "Publikationen",
+    "Beni bir yere ışınla": "Beam mich irgendwohin",
+    "Besteler": "Kompositionen",
+    "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.": "Diese Seite klingt. Zweige tönen unter dem Zeiger, Knoten werden gezupft.",
+    "CV": "Lebenslauf",
+    "Deneysel": "Experimentell",
+    "Dizin": "Verzeichnis",
+    "Dizini kapat": "Verzeichnis schließen",
+    "Doğaçlamalar": "Improvisationen",
+    "Duyma üzerine": "Über das Hören",
+    "Düzenlemeler": "Arrangements",
+    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Funktioniert am besten am Desktop, in Chrome.",
+    "Eser": "Das Werk",
+    "Eğitim": "Ausbildung",
+    "Güçler": "Ideen",
+    "Kapat": "Schließen",
+    "Karadeniz — basılı nota": "Karadeniz — gedruckte Noten",
+    "Katkıda bulunduklarım": "Mitwirkungen",
+    "Kilitli belge": "Verschlossenes Dokument",
+    "Kilitli bölüm": "Verschlossener Bereich",
+    "Kim": "Wer",
+    "Kimim": "Wer ich bin",
+    "Konserler": "Konzerte",
+    "Kısa parçalar": "Kurze Stücke",
+    "Likya Dede arşivi": "Likya-Dede-Archiv",
+    "Luka'nın kilidi": "Lukas Schloss",
+    "Luka'ya mektuplar": "Briefe an Luka",
+    "Müzik": "Musik",
+    "Ne yapar": "Was es tut",
+    "Neler yapıyorum": "Was ich mache",
+    "Parola": "Passwort",
+    "Parçada ilerle": "Im Titel springen",
+    "Sahne müzikleri": "Bühnenmusik",
+    "Ses deneyleri": "Klangexperimente",
+    "Ses düzeyi": "Lautstärke",
+    "Single’lar": "Singles",
+    "Siparişler": "Auftragswerke",
+    "Site haritası": "Sitemap",
+    "Solo albümler": "Soloalben",
+    "Sonraki parça": "Nächster Titel",
+    "Sonraki sayfa": "Nächste Seite",
+    "Spotify’da aç": "Auf Spotify öffnen",
+    "Sunumlar": "Vorträge und Demos",
+    "Tritonet denetçisi": "Tritonet-Controller",
+    "Tritonet günlüğü": "Tritonet-Tagebuch",
+    "Yazılar": "Texte",
+    "Yazılım": "Software",
+    "aç": "öffnen",
+    "ağaca dokun": "den Baum berühren",
+    "dizin": "verzeichnis",
+    "mektup": "Briefe",
+    "mod": "modus",
+    "müzisyen": "Musiker",
+    "parola": "passwort",
+    "sen biliyorsun": "du weißt es",
+    "yolculuğa dönmek için bir yön tuşu": "eine Pfeiltaste, um zur Reise zurückzukehren",
+    "Çal": "Abspielen",
+    "Ödüller": "Auszeichnungen",
+    "Önceki parça": "Vorheriger Titel",
+    "Önceki sayfa": "Vorherige Seite",
+    "Özet": "Profil",
+    "İletişim": "Kontakt",
+    "İşler": "Arbeit",
+    "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır": "↑ schneller · ↓ langsamer · ← → im Tunnel steuern · flieg zu einem Brief, er öffnet sich von selbst"
+  },
+  fr: {
+    "Akademi ve konuşmalar": "Enseignement et conférences",
+    "Albümler": "Albums",
+    "Ağaca dön": "Retour à l’arbre",
+    "Basılı işler": "Publications",
+    "Beni bir yere ışınla": "Téléporte-moi quelque part",
+    "Besteler": "Compositions",
+    "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.": "Cette page sonne. Les branches résonnent sous le curseur, les nœuds se pincent.",
+    "CV": "CV",
+    "Deneysel": "Expérimental",
+    "Dizin": "Index",
+    "Dizini kapat": "Fermer l’index",
+    "Doğaçlamalar": "Improvisations",
+    "Duyma üzerine": "Sur l’écoute",
+    "Düzenlemeler": "Arrangements",
+    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Fonctionne mieux sur ordinateur, dans Chrome.",
+    "Eser": "L’œuvre",
+    "Eğitim": "Formation",
+    "Güçler": "Idées",
+    "Kapat": "Fermer",
+    "Karadeniz — basılı nota": "Karadeniz — partition imprimée",
+    "Katkıda bulunduklarım": "Contributions",
+    "Kilitli belge": "Document verrouillé",
+    "Kilitli bölüm": "Section verrouillée",
+    "Kim": "Qui",
+    "Kimim": "Qui je suis",
+    "Konserler": "Concerts",
+    "Kısa parçalar": "Pièces courtes",
+    "Likya Dede arşivi": "Archives Likya Dede",
+    "Luka'nın kilidi": "Le verrou de Luka",
+    "Luka'ya mektuplar": "Lettres à Luka",
+    "Müzik": "Musique",
+    "Ne yapar": "Ce qu’il fait",
+    "Neler yapıyorum": "Ce que je fais",
+    "Parola": "Mot de passe",
+    "Parçada ilerle": "Naviguer dans la piste",
+    "Sahne müzikleri": "Musique de scène",
+    "Ses deneyleri": "Expériences sonores",
+    "Ses düzeyi": "Volume",
+    "Single’lar": "Singles",
+    "Siparişler": "Commandes",
+    "Site haritası": "Plan du site",
+    "Solo albümler": "Albums solo",
+    "Sonraki parça": "Piste suivante",
+    "Sonraki sayfa": "Page suivante",
+    "Spotify’da aç": "Ouvrir dans Spotify",
+    "Sunumlar": "Présentations et démos",
+    "Tritonet denetçisi": "Contrôleur Tritonet",
+    "Tritonet günlüğü": "Journal Tritonet",
+    "Yazılar": "Écrits",
+    "Yazılım": "Logiciels",
+    "aç": "ouvrir",
+    "ağaca dokun": "toucher l’arbre",
+    "dizin": "index",
+    "mektup": "lettres",
+    "mod": "mode",
+    "müzisyen": "musicien",
+    "parola": "mot de passe",
+    "sen biliyorsun": "tu le sais",
+    "yolculuğa dönmek için bir yön tuşu": "une touche fléchée pour reprendre le voyage",
+    "Çal": "Lecture",
+    "Ödüller": "Distinctions",
+    "Önceki parça": "Piste précédente",
+    "Önceki sayfa": "Page précédente",
+    "Özet": "Profil",
+    "İletişim": "Contact",
+    "İşler": "Travaux",
+    "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır": "↑ accélérer · ↓ ralentir · ← → diriger dans le tunnel · approche-toi d’une lettre, elle s’ouvre seule"
+  },
+  es: {
+    "Akademi ve konuşmalar": "Docencia y conferencias",
+    "Albümler": "Álbumes",
+    "Ağaca dön": "Volver al árbol",
+    "Basılı işler": "Publicaciones",
+    "Beni bir yere ışınla": "Teletranspórtame",
+    "Besteler": "Composiciones",
+    "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.": "Esta página suena. Las ramas resuenan bajo el cursor; los nudos se pulsan.",
+    "CV": "CV",
+    "Deneysel": "Experimental",
+    "Dizin": "Índice",
+    "Dizini kapat": "Cerrar el índice",
+    "Doğaçlamalar": "Improvisaciones",
+    "Duyma üzerine": "Sobre el oír",
+    "Düzenlemeler": "Arreglos",
+    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Funciona mejor en escritorio, con Chrome.",
+    "Eser": "La obra",
+    "Eğitim": "Formación",
+    "Güçler": "Ideas",
+    "Kapat": "Cerrar",
+    "Karadeniz — basılı nota": "Karadeniz — partitura impresa",
+    "Katkıda bulunduklarım": "Colaboraciones",
+    "Kilitli belge": "Documento cerrado",
+    "Kilitli bölüm": "Sección cerrada",
+    "Kim": "Quién",
+    "Kimim": "Quién soy",
+    "Konserler": "Conciertos",
+    "Kısa parçalar": "Piezas breves",
+    "Likya Dede arşivi": "Archivo de Likya Dede",
+    "Luka'nın kilidi": "El candado de Luka",
+    "Luka'ya mektuplar": "Cartas a Luka",
+    "Müzik": "Música",
+    "Ne yapar": "Qué hace",
+    "Neler yapıyorum": "Qué hago",
+    "Parola": "Contraseña",
+    "Parçada ilerle": "Buscar en la pista",
+    "Sahne müzikleri": "Música escénica",
+    "Ses deneyleri": "Experimentos sonoros",
+    "Ses düzeyi": "Volumen",
+    "Single’lar": "Sencillos",
+    "Siparişler": "Encargos",
+    "Site haritası": "Mapa del sitio",
+    "Solo albümler": "Álbumes en solitario",
+    "Sonraki parça": "Pista siguiente",
+    "Sonraki sayfa": "Página siguiente",
+    "Spotify’da aç": "Abrir en Spotify",
+    "Sunumlar": "Charlas y demos",
+    "Tritonet denetçisi": "Controlador Tritonet",
+    "Tritonet günlüğü": "Diario de Tritonet",
+    "Yazılar": "Escritos",
+    "Yazılım": "Software",
+    "aç": "abrir",
+    "ağaca dokun": "toca el árbol",
+    "dizin": "índice",
+    "mektup": "cartas",
+    "mod": "modo",
+    "müzisyen": "músico",
+    "parola": "contraseña",
+    "sen biliyorsun": "tú lo sabes",
+    "yolculuğa dönmek için bir yön tuşu": "una tecla de flecha para volver al viaje",
+    "Çal": "Reproducir",
+    "Ödüller": "Premios",
+    "Önceki parça": "Pista anterior",
+    "Önceki sayfa": "Página anterior",
+    "Özet": "Perfil",
+    "İletişim": "Contacto",
+    "İşler": "Trabajo",
+    "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır": "↑ acelerar · ↓ frenar · ← → dirigir en el túnel · acércate a una carta y se abre sola"
+  },
+  it: {
+    "Akademi ve konuşmalar": "Docenza e conferenze",
+    "Albümler": "Album",
+    "Ağaca dön": "Torna all’albero",
+    "Basılı işler": "Pubblicazioni",
+    "Beni bir yere ışınla": "Teletrasportami",
+    "Besteler": "Composizioni",
+    "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.": "Questa pagina suona. I rami risuonano sotto il cursore, i nodi si pizzicano.",
+    "CV": "CV",
+    "Deneysel": "Sperimentale",
+    "Dizin": "Indice",
+    "Dizini kapat": "Chiudi l’indice",
+    "Doğaçlamalar": "Improvvisazioni",
+    "Duyma üzerine": "Sull’udire",
+    "Düzenlemeler": "Arrangiamenti",
+    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Funziona meglio su desktop, in Chrome.",
+    "Eser": "L’opera",
+    "Eğitim": "Formazione",
+    "Güçler": "Idee",
+    "Kapat": "Chiudi",
+    "Karadeniz — basılı nota": "Karadeniz — partitura a stampa",
+    "Katkıda bulunduklarım": "Collaborazioni",
+    "Kilitli belge": "Documento bloccato",
+    "Kilitli bölüm": "Sezione bloccata",
+    "Kim": "Chi",
+    "Kimim": "Chi sono",
+    "Konserler": "Concerti",
+    "Kısa parçalar": "Brani brevi",
+    "Likya Dede arşivi": "Archivio Likya Dede",
+    "Luka'nın kilidi": "Il lucchetto di Luka",
+    "Luka'ya mektuplar": "Lettere a Luka",
+    "Müzik": "Musica",
+    "Ne yapar": "Cosa fa",
+    "Neler yapıyorum": "Cosa faccio",
+    "Parola": "Password",
+    "Parçada ilerle": "Scorri il brano",
+    "Sahne müzikleri": "Musiche di scena",
+    "Ses deneyleri": "Esperimenti sonori",
+    "Ses düzeyi": "Volume",
+    "Single’lar": "Singoli",
+    "Siparişler": "Commissioni",
+    "Site haritası": "Mappa del sito",
+    "Solo albümler": "Album solisti",
+    "Sonraki parça": "Traccia successiva",
+    "Sonraki sayfa": "Pagina successiva",
+    "Spotify’da aç": "Apri su Spotify",
+    "Sunumlar": "Interventi e demo",
+    "Tritonet denetçisi": "Controller Tritonet",
+    "Tritonet günlüğü": "Diario di Tritonet",
+    "Yazılar": "Scritti",
+    "Yazılım": "Software",
+    "aç": "apri",
+    "ağaca dokun": "tocca l’albero",
+    "dizin": "indice",
+    "mektup": "lettere",
+    "mod": "modo",
+    "müzisyen": "musicista",
+    "parola": "password",
+    "sen biliyorsun": "lo sai",
+    "yolculuğa dönmek için bir yön tuşu": "un tasto freccia per tornare al viaggio",
+    "Çal": "Riproduci",
+    "Ödüller": "Riconoscimenti",
+    "Önceki parça": "Traccia precedente",
+    "Önceki sayfa": "Pagina precedente",
+    "Özet": "Profilo",
+    "İletişim": "Contatti",
+    "İşler": "Lavori",
+    "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır": "↑ accelera · ↓ rallenta · ← → sterza nel tunnel · avvicinati a una lettera, si apre da sola"
+  },
+  ru: {
+    "Akademi ve konuşmalar": "Преподавание и доклады",
+    "Albümler": "Альбомы",
+    "Ağaca dön": "Назад к дереву",
+    "Basılı işler": "Публикации",
+    "Beni bir yere ışınla": "Перенеси меня",
+    "Besteler": "Сочинения",
+    "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.": "Эта страница звучит. Ветви откликаются на курсор, узлы щиплются.",
+    "CV": "Резюме",
+    "Deneysel": "Эксперименты",
+    "Dizin": "Указатель",
+    "Dizini kapat": "Закрыть указатель",
+    "Doğaçlamalar": "Импровизации",
+    "Duyma üzerine": "О слухе",
+    "Düzenlemeler": "Аранжировки",
+    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Лучше всего работает на компьютере, в Chrome.",
+    "Eser": "Произведение",
+    "Eğitim": "Образование",
+    "Güçler": "Идеи",
+    "Kapat": "Закрыть",
+    "Karadeniz — basılı nota": "Karadeniz — печатные ноты",
+    "Katkıda bulunduklarım": "Участие",
+    "Kilitli belge": "Закрытый документ",
+    "Kilitli bölüm": "Закрытый раздел",
+    "Kim": "Кто",
+    "Kimim": "Кто я",
+    "Konserler": "Концерты",
+    "Kısa parçalar": "Короткие пьесы",
+    "Likya Dede arşivi": "Архив Likya Dede",
+    "Luka'nın kilidi": "Замок Луки",
+    "Luka'ya mektuplar": "Письма Луке",
+    "Müzik": "Музыка",
+    "Ne yapar": "Что он делает",
+    "Neler yapıyorum": "Чем занимаюсь",
+    "Parola": "Пароль",
+    "Parçada ilerle": "Перемотка",
+    "Sahne müzikleri": "Музыка для сцены",
+    "Ses deneyleri": "Звуковые опыты",
+    "Ses düzeyi": "Громкость",
+    "Single’lar": "Синглы",
+    "Siparişler": "Заказы",
+    "Site haritası": "Карта сайта",
+    "Solo albümler": "Сольные альбомы",
+    "Sonraki parça": "Следующий трек",
+    "Sonraki sayfa": "Следующая страница",
+    "Spotify’da aç": "Открыть в Spotify",
+    "Sunumlar": "Доклады и демо",
+    "Tritonet denetçisi": "Контроллер Tritonet",
+    "Tritonet günlüğü": "Дневник Tritonet",
+    "Yazılar": "Тексты",
+    "Yazılım": "Программы",
+    "aç": "открыть",
+    "ağaca dokun": "коснуться дерева",
+    "dizin": "указатель",
+    "mektup": "письма",
+    "mod": "лад",
+    "müzisyen": "музыкант",
+    "parola": "пароль",
+    "sen biliyorsun": "ты знаешь",
+    "yolculuğa dönmek için bir yön tuşu": "любая стрелка — вернуться в путь",
+    "Çal": "Играть",
+    "Ödüller": "Награды",
+    "Önceki parça": "Предыдущий трек",
+    "Önceki sayfa": "Предыдущая страница",
+    "Özet": "Профиль",
+    "İletişim": "Контакты",
+    "İşler": "Работы",
+    "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır": "↑ быстрее · ↓ медленнее · ← → поворот в тоннеле · подлети к письму — оно откроется само"
+  },
+  zh: {
+    "Akademi ve konuşmalar": "教学与讲座",
+    "Albümler": "专辑",
+    "Ağaca dön": "返回树",
+    "Basılı işler": "出版物",
+    "Beni bir yere ışınla": "把我传送走",
+    "Besteler": "作曲",
+    "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.": "这个页面会发声。树枝在指针下鸣响，节点被拨动。",
+    "CV": "简历",
+    "Deneysel": "实验",
+    "Dizin": "目录",
+    "Dizini kapat": "关闭目录",
+    "Doğaçlamalar": "即兴",
+    "Duyma üzerine": "论听觉",
+    "Düzenlemeler": "编曲",
+    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "在桌面端的 Chrome 中效果最佳。",
+    "Eser": "作品",
+    "Eğitim": "教育",
+    "Güçler": "构想",
+    "Kapat": "关闭",
+    "Karadeniz — basılı nota": "Karadeniz — 印刷乐谱",
+    "Katkıda bulunduklarım": "参与作品",
+    "Kilitli belge": "加锁文档",
+    "Kilitli bölüm": "加锁部分",
+    "Kim": "关于",
+    "Kimim": "我是谁",
+    "Konserler": "音乐会",
+    "Kısa parçalar": "小品",
+    "Likya Dede arşivi": "Likya Dede 档案",
+    "Luka'nın kilidi": "Luka 的锁",
+    "Luka'ya mektuplar": "给 Luka 的信",
+    "Müzik": "音乐",
+    "Ne yapar": "它做什么",
+    "Neler yapıyorum": "我在做什么",
+    "Parola": "密码",
+    "Parçada ilerle": "跳转",
+    "Sahne müzikleri": "舞台音乐",
+    "Ses deneyleri": "声音实验",
+    "Ses düzeyi": "音量",
+    "Single’lar": "单曲",
+    "Siparişler": "委约",
+    "Site haritası": "站点地图",
+    "Solo albümler": "个人专辑",
+    "Sonraki parça": "下一曲",
+    "Sonraki sayfa": "下一页",
+    "Spotify’da aç": "在 Spotify 打开",
+    "Sunumlar": "讲座与演示",
+    "Tritonet denetçisi": "Tritonet 控制器",
+    "Tritonet günlüğü": "Tritonet 日志",
+    "Yazılar": "文章",
+    "Yazılım": "软件",
+    "aç": "打开",
+    "ağaca dokun": "触碰这棵树",
+    "dizin": "目录",
+    "mektup": "信",
+    "mod": "调式",
+    "müzisyen": "音乐家",
+    "parola": "密码",
+    "sen biliyorsun": "你知道的",
+    "yolculuğa dönmek için bir yön tuşu": "按方向键继续旅程",
+    "Çal": "播放",
+    "Ödüller": "奖项",
+    "Önceki parça": "上一曲",
+    "Önceki sayfa": "上一页",
+    "Özet": "简介",
+    "İletişim": "联系",
+    "İşler": "作品",
+    "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır": "↑ 加速 · ↓ 减速 · ← → 在隧道中转向 · 飞近一封信，它会自己打开"
+  },
+  ja: {
+    "Akademi ve konuşmalar": "教育と講演",
+    "Albümler": "アルバム",
+    "Ağaca dön": "木に戻る",
+    "Basılı işler": "出版物",
+    "Beni bir yere ışınla": "どこかへ飛ばして",
+    "Besteler": "作曲",
+    "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.": "このページは音を出します。枝はカーソルで鳴り、節は弾かれます。",
+    "CV": "経歴",
+    "Deneysel": "実験",
+    "Dizin": "索引",
+    "Dizini kapat": "索引を閉じる",
+    "Doğaçlamalar": "即興",
+    "Duyma üzerine": "聴くことについて",
+    "Düzenlemeler": "編曲",
+    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "デスクトップの Chrome で最もよく動きます。",
+    "Eser": "作品",
+    "Eğitim": "学歴",
+    "Güçler": "アイデア",
+    "Kapat": "閉じる",
+    "Karadeniz — basılı nota": "Karadeniz — 印刷楽譜",
+    "Katkıda bulunduklarım": "参加作品",
+    "Kilitli belge": "施錠された文書",
+    "Kilitli bölüm": "施錠された領域",
+    "Kim": "プロフィール",
+    "Kimim": "私について",
+    "Konserler": "演奏会",
+    "Kısa parçalar": "小品",
+    "Likya Dede arşivi": "Likya Dede アーカイブ",
+    "Luka'nın kilidi": "ルカの錠",
+    "Luka'ya mektuplar": "ルカへの手紙",
+    "Müzik": "音楽",
+    "Ne yapar": "何をするか",
+    "Neler yapıyorum": "何をしているか",
+    "Parola": "パスワード",
+    "Parçada ilerle": "シーク",
+    "Sahne müzikleri": "舞台音楽",
+    "Ses deneyleri": "音の実験",
+    "Ses düzeyi": "音量",
+    "Single’lar": "シングル",
+    "Siparişler": "委嘱作品",
+    "Site haritası": "サイトマップ",
+    "Solo albümler": "ソロアルバム",
+    "Sonraki parça": "次の曲",
+    "Sonraki sayfa": "次のページ",
+    "Spotify’da aç": "Spotify で開く",
+    "Sunumlar": "講演とデモ",
+    "Tritonet denetçisi": "Tritonet コントローラー",
+    "Tritonet günlüğü": "Tritonet 日誌",
+    "Yazılar": "文章",
+    "Yazılım": "ソフトウェア",
+    "aç": "開く",
+    "ağaca dokun": "木にふれる",
+    "dizin": "索引",
+    "mektup": "手紙",
+    "mod": "モード",
+    "müzisyen": "音楽家",
+    "parola": "パスワード",
+    "sen biliyorsun": "きみは知っている",
+    "yolculuğa dönmek için bir yön tuşu": "矢印キーで旅に戻る",
+    "Çal": "再生",
+    "Ödüller": "受賞",
+    "Önceki parça": "前の曲",
+    "Önceki sayfa": "前のページ",
+    "Özet": "概要",
+    "İletişim": "連絡先",
+    "İşler": "仕事",
+    "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır": "↑ 加速 · ↓ 減速 · ← → トンネル内で方向転換 · 手紙に近づくと自動で開く"
+  }
+};
+const AYLAR_EK = {
+ "de": [
+  "januar",
+  "februar",
+  "märz",
+  "april",
+  "mai",
+  "juni",
+  "juli",
+  "august",
+  "september",
+  "oktober",
+  "november",
+  "dezember"
+ ],
+ "fr": [
+  "janvier",
+  "février",
+  "mars",
+  "avril",
+  "mai",
+  "juin",
+  "juillet",
+  "août",
+  "septembre",
+  "octobre",
+  "novembre",
+  "décembre"
+ ],
+ "es": [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre"
+ ],
+ "it": [
+  "gennaio",
+  "febbraio",
+  "marzo",
+  "aprile",
+  "maggio",
+  "giugno",
+  "luglio",
+  "agosto",
+  "settembre",
+  "ottobre",
+  "novembre",
+  "dicembre"
+ ],
+ "ru": [
+  "января",
+  "февраля",
+  "марта",
+  "апреля",
+  "мая",
+  "июня",
+  "июля",
+  "августа",
+  "сентября",
+  "октября",
+  "ноября",
+  "декабря"
+ ],
+ "zh": [
+  "一月",
+  "二月",
+  "三月",
+  "四月",
+  "五月",
+  "六月",
+  "七月",
+  "八月",
+  "九月",
+  "十月",
+  "十一月",
+  "十二月"
+ ],
+ "ja": [
+  "1月",
+  "2月",
+  "3月",
+  "4月",
+  "5月",
+  "6月",
+  "7月",
+  "8月",
+  "9月",
+  "10月",
+  "11月",
+  "12月"
+ ]
+};
+const DIL_ADI = {"tr": "Türkçe", "en": "English", "de": "Deutsch", "fr": "Français", "es": "Español", "it": "Italiano", "ru": "Русский", "zh": "中文", "ja": "日本語"};
+
+const DILLER_HEPSI = ['tr','en'].concat(Object.keys(DILLER));
+
+/* Ziyaretçinin dilini tahmin et.
+   Ana kaynak `navigator.languages` — tarayıcının kendi tercih listesi.
+   Klavye düzeni EK bir ipucu: Chromium'da `navigator.keyboard` harflerin
+   yerini veriyor, oradan AZERTY (fr) ve QWERTZ (de) ayırt edilebiliyor.
+   Rusça/Çince/Japonca AYIRT EDİLEMEZ — hepsi QWERTY + IME kullanıyor,
+   o yüzden klavye yalnızca dil listesi bir şey söylemediğinde bakılıyor. */
+function tahmin(){
+  const liste = (navigator.languages && navigator.languages.length)
+    ? navigator.languages : [navigator.language || 'tr'];
+  for (const l of liste){
+    const k = String(l).toLowerCase().split('-')[0];
+    if (DILLER_HEPSI.indexOf(k) > -1) return k;
+  }
+  return 'en';
+}
+function klavyeIpucu(sonra){
+  try {
+    if (!navigator.keyboard || !navigator.keyboard.getLayoutMap) return;
+    navigator.keyboard.getLayoutMap().then(m => {
+      const q = m.get('KeyQ'), y = m.get('KeyY');
+      if (q === 'a') sonra('fr');            // AZERTY
+      else if (y === 'z') sonra('de');       // QWERTZ
+    }).catch(() => {});
+  } catch(e){}
+}
+
 let dil = 'tr';
 try {
   const kayit = localStorage.getItem('dil');
-  if (kayit === 'tr' || kayit === 'en') dil = kayit;
-  else if (!(navigator.language || 'tr').toLowerCase().startsWith('tr')) dil = 'en';
-} catch (e) { /* localStorage kapalı olabilir: file:// + gizli pencere */ }
+  if (kayit && DILLER_HEPSI.indexOf(kayit) > -1) dil = kayit;
+  else dil = tahmin();
+} catch (e) { dil = tahmin(); }
 
 const dinleyiciler = [];
 
@@ -2713,9 +3353,14 @@ const AYLAR = {
 
 /* Metnin kendisi anahtar. Karşılığı yoksa Türkçesi görünür —
    eser adları da bu yüzden özgün hâlinde kalıyor. */
+/* Çeviri zinciri: istenen dil → İngilizce → Türkçe (metnin kendisi).
+   Türkçede hiç sözlüğe bakılmıyor: anahtar zaten Türkçe metin. */
 function T(s){
   if (!s) return s || '';
-  return (dil === 'en' && EN[s]) ? EN[s] : s;
+  if (dil === 'tr') return s;
+  const d = DILLER[dil];
+  if (d && d[s]) return d[s];
+  return EN[s] || s;
 }
 
 /* "İşler · Müzik · Besteler" — parça parça çevrilir, böylece her
@@ -2725,11 +3370,17 @@ function Tyol(s){
   return String(s).split(' · ').map(T).join(' · ');
 }
 
-function ay(i){ return (AYLAR[dil] || AYLAR.tr)[i] || ''; }
+function ay(i){
+  const t = AYLAR[dil] || AYLAR_EK[dil] || AYLAR.en;
+  return t[i] || '';
+}
 
 /* "3 yıl 2 ay önce" · "3 years 2 months ago" */
 function once(yil, aySay, gun){
-  if (dil === 'en'){
+  /* Yalnızca TR ve EN elle yazıldı. Öbür diller İngilizceye düşüyor:
+     çoğul kuralları (özellikle Rusça'nın 1 / 2-4 / 5+ ayrımı) yanlış
+     yazılmış bir çeviriden iyi. */
+  if (dil !== 'tr'){
     const y = yil + (yil === 1 ? ' year' : ' years');
     const a = aySay + (aySay === 1 ? ' month' : ' months');
     if (yil > 0) return y + (aySay > 0 ? ' ' + a : '') + ' ago';
@@ -2764,7 +3415,7 @@ function uygula(){
 }
 
 function ayarla(yeni){
-  if (yeni !== 'tr' && yeni !== 'en') return;
+  if (DILLER_HEPSI.indexOf(yeni) < 0) return;
   dil = yeni;
   try { localStorage.setItem('dil', dil); } catch (e) {}
   uygula();
@@ -2774,6 +3425,9 @@ return {
   get:      () => dil,
   ayarla:   ayarla,
   degistir: () => ayarla(dil === 'tr' ? 'en' : 'tr'),
+  diller:   () => DILLER_HEPSI.slice(),
+  adi:      k => DIL_ADI[k] || k,
+  klavye:   klavyeIpucu,
   T:        T,
   Tyol:     Tyol,
   ay:       ay,
@@ -2859,7 +3513,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v58 · 2026-08-13';
+const SURUM = 'v59 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8462,11 +9116,59 @@ sesUygula();
 
    aria-label görünen yazıyla başlıyor (WCAG "Label in Name"): ekran okuyucu
    kullanan biri "TR" duyup ardından ne olacağını öğreniyor. */
+/* ── Dil seçici ──
+   İki dil varken düğme yeterliydi; dokuz dilde bir liste gerekiyor.
+   Düğme geçerli dilin kodunu gösteriyor, tıklayınca liste açılıyor.
+   Liste kumandaların üstünde açılıyor — köşede aşağı yer yok. */
 const langBtn = document.getElementById('lang');
-langBtn.addEventListener('click', () => DIL.degistir());
+const dilListe = document.getElementById('dilListe');
+function dilListesiniKur(){
+  dilListe.innerHTML = '';
+  DIL.diller().forEach(k => {
+    const li = document.createElement('li');
+    li.setAttribute('role','option');
+    li.tabIndex = 0;
+    li.textContent = DIL.adi(k);
+    li.dataset.k = k;
+    const sec = () => { DIL.ayarla(k); dilKapat(); };
+    li.addEventListener('click', sec);
+    li.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); sec(); }
+    });
+    dilListe.appendChild(li);
+  });
+}
+function dilIsaretle(){
+  [...dilListe.children].forEach(li =>
+    li.setAttribute('aria-selected', String(li.dataset.k === DIL.get())));
+}
+function dilKapat(){
+  dilListe.hidden = true;
+  langBtn.setAttribute('aria-expanded','false');
+}
+dilListesiniKur();
+langBtn.addEventListener('click', () => {
+  const acik = dilListe.hidden;
+  dilListe.hidden = !acik;
+  langBtn.setAttribute('aria-expanded', String(acik));
+  if (acik){ dilIsaretle(); dilListe.firstChild && dilListe.firstChild.focus(); }
+});
+addEventListener('pointerdown', e => {
+  if (!document.getElementById('dilsec').contains(e.target)) dilKapat();
+});
+addEventListener('keydown', e => { if (e.key === 'Escape') dilKapat(); });
+/* Klavye düzeni yalnızca EK ipucu ve yalnızca kullanıcı henüz seçim
+   yapmamışken: tarayıcının dil listesi bir şey söylemediyse AZERTY/QWERTZ
+   bakılıyor. Seçim kaydedilmişse hiç çalışmıyor. */
+try {
+  if (!localStorage.getItem('dil')) DIL.klavye(k => {
+    if (!localStorage.getItem('dil')) DIL.ayarla(k);
+  });
+} catch(e){}
 
 DIL.dinle(dil => {
-  langBtn.textContent = (dil === 'tr') ? 'TR' : 'EN';
+  langBtn.textContent = dil.toUpperCase();
+  dilIsaretle();
   langBtn.setAttribute('aria-label',
     dil === 'tr' ? 'TR — İngilizceye geç' : 'EN — switch to Turkish');
   sesUygula();                                  // "kapalı" / "muted"
