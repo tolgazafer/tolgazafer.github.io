@@ -186,14 +186,19 @@
     transition:color .18s}
   .menu-kapat:hover,.menu-kapat:focus-visible{color:var(--ink);outline:none}
   /* Dokunmatikte paneli açacak bir tutamak: hover olmadığı için şart. */
-  .dizin-ac{position:fixed;top:5.6rem;left:2.4rem;z-index:8;
-    background:none;border:1px solid var(--ink-faint);border-radius:2px;
-    cursor:pointer;color:var(--ink-soft);font:inherit;
-    font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
-    padding:.5em .8em;display:none}
+  /* Dokunmatikte paneli açan tek şey bu düğme. SOL ÜST KÖŞEDE ve
+     çerçevesiz: ortada duran "INDEX" kutusu ekranın göbeğini işgal
+     ediyordu. ≡ simgesi yazıdan az yer kaplıyor ve dil bilmiyor. */
+  .dizin-ac{position:fixed;top:1rem;left:1rem;z-index:9;
+    background:none;border:0;border-radius:2px;
+    cursor:pointer;color:var(--ink-soft);
+    width:2.6rem;height:2.6rem;display:none;place-items:center;
+    font-size:1.5rem;line-height:1;padding:0;
+    transition:color .2s}
+  .dizin-ac:hover,.dizin-ac:focus-visible{color:var(--ink);outline:none}
   @media (hover:none),(pointer:coarse){
-    .dizin-ac{display:block}
-    .menu{top:5rem;left:1.2rem;width:calc(100vw - 2.4rem);max-width:none}
+    .dizin-ac{display:grid}
+    .menu{top:4rem;left:1rem;width:calc(100vw - 2rem);max-width:none}
     .menu-kapat{font-size:1.9rem}
   }
   .menu li[data-zone="isler"]{--mc:var(--isler)}
@@ -242,6 +247,9 @@
   .controls{position:fixed;bottom:1.9rem;right:2.4rem;z-index:7;display:flex;gap:1.4rem}
   /* Dil seçici: düğme kumandaların içinde, liste YUKARI açılıyor —
      köşede aşağıda yer yok. */
+  /* Dokunmatikte kartın sabit yeri: üstte, ≡ düğmesinin sağında. */
+  .preview.ust{position:fixed;left:4.4rem;right:1rem;top:1rem;width:auto;
+    max-width:none;transform:none}
   .dilsec{position:relative}
   .dil-liste{position:absolute;bottom:calc(100% + .7rem);right:0;z-index:9;
     margin:0;padding:.35rem 0;list-style:none;min-width:8.5rem;
@@ -1634,7 +1642,8 @@
 <!-- Yazılı metin bir <span data-i18n> içinde: kaynağı orada durduğu için
      dil ileri geri çevrilebiliyor. Kardeş <b>'ler dokunulmadan kalıyor. -->
 <div class="wordmark veil" id="wordmark"><b>Tolga Zafer Özdemir</b><span data-i18n="müzisyen">müzisyen</span></div>
-<button class="dizin-ac" id="dizinAc" aria-expanded="false" aria-controls="menu" data-i18n="dizin">dizin</button>
+<button class="dizin-ac" id="dizinAc" aria-expanded="false" aria-controls="menu"
+        aria-label="Dizin" data-i18n-aria="Dizin">≡</button>
 <nav class="menu veil" id="menu" aria-label="Dizin" data-i18n-aria="Dizin"><button class="menu-kapat" id="menuKapat" aria-label="Dizini kapat" data-i18n-aria="Dizini kapat">×</button></nav>
 <div class="modebar veil" id="modebar"><span data-i18n="mod">mod</span> <b id="modename">—</b></div>
 <div class="controls veil" id="controls">
@@ -3513,7 +3522,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v59 · 2026-08-13';
+const SURUM = 'v60 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8256,6 +8265,15 @@ function showPreview(n){
   /* Ölçüyü karttan al, tahmin etme: CSS 330px genişlik veriyor ama burada
      268 varsayılıyordu, yüksekliği de içerik belirliyor — kart sağ kenardan
      taşıyordu. Kart gizliyken de yerleşimi hesaplanıyor, ölçmek güvenli. */
+  /* Dokunmatikte kart parmağın yanına değil, ekranın ÜSTÜNDEKİ BOŞLUĞA
+     sabitleniyor: parmak zaten ağacın üstünde duruyor ve kartı örtüyordu,
+     üstelik her node'da yer değiştirmesi okumayı zorlaştırıyordu. */
+  if (DOKUNMATIK){
+    pv.classList.add('on','ust');
+    pv.style.left = ''; pv.style.top = '';
+    return;
+  }
+  pv.classList.remove('ust');
   const r = pv.getBoundingClientRect();
   const w = r.width || 330, h = r.height || 176, m = 18, bosluk = 26;
   const nx = (n.x || W/2), ny = (n.y || H/2);
@@ -8564,7 +8582,7 @@ function pencereninIcinde(x, y){
 addEventListener('mousemove', e => {
   if (pencereninIcinde(e.clientX, e.clientY)) return;
   pointer(e.clientX, e.clientY);
-  veil(e.clientX, e.clientY);
+  if (!DOKUNMATIK) veil(e.clientX, e.clientY);
   grazeBuds(e.clientX, e.clientY);
   idle = performance.now();
 });
@@ -8603,10 +8621,64 @@ addEventListener('pointerdown', e => {
   }
   ring(e.clientX, e.clientY, 1.6);
 });
+/* ══ DOKUNMATİK ETKİLEŞİM ══
+   Farede model şu: imleç bir node'a değince kart açılır, tıklayınca içeri
+   girilir; köşelere yaklaşınca menü belirir. Parmakta ikisi de bozuluyor —
+   "değmek" ile "tıklamak" aynı hareket, ve ekranın sol üstüne her dokunuş
+   menüyü açıyordu.
+
+   Parmakta ayrı bir model:
+     · parmak SÜRÜKLENİRKEN  → en yakın node seçilir, kartı görünür
+     · parmak bir node ÜZERİNDE kalkarsa → o node açılır
+     · ağacın dışında kalkarsa → hiçbir şey olmaz, kart olduğu gibi kalır
+     · menü YALNIZCA ≡ düğmesiyle açılır (veil dokunmatikte hiç çalışmaz)
+
+   Node'lar 5–13 px: parmakla tam üstüne basmak imkânsız. O yüzden
+   "üzerinde" demek, YARIÇAP kadar yakınında demek. */
+let DOKUNMATIK = matchMedia('(hover:none), (pointer:coarse)').matches;
+const DOKUNUS_R = 34;              // parmak bu kadar yakındaki node'u seçer
+let dokunulan = null;              // parmağın o an seçtiği node
+
+function enYakinNode(x, y, r){
+  let en = null, enD = r * r;
+  for (const n of nodes){
+    if (n.x == null) continue;
+    const dx = n.x - x, dy = n.y - y, d = dx*dx + dy*dy;
+    if (d < enD){ enD = d; en = n; }
+  }
+  return en;
+}
+function dokunGez(x, y){
+  const n = enYakinNode(x, y, DOKUNUS_R);
+  if (n === dokunulan) return;
+  if (dokunulan) setTrace(dokunulan, false);
+  dokunulan = n;
+  if (n){
+    pluck(n, 1, true);
+    setTrace(n, true);
+    if (!n.floater) showPreview(n);
+  }
+}
+addEventListener('touchstart', e => {
+  DOKUNMATIK = true;
+  const t = e.touches[0];
+  if (!t || pencereninIcinde(t.clientX, t.clientY)) return;
+  pointer(t.clientX, t.clientY);
+  dokunGez(t.clientX, t.clientY);
+}, {passive:true});
 addEventListener('touchmove', e => {
   const t = e.touches[0];
   if (!t || pencereninIcinde(t.clientX, t.clientY)) return;
-  pointer(t.clientX, t.clientY); veil(t.clientX, t.clientY);
+  pointer(t.clientX, t.clientY);
+  dokunGez(t.clientX, t.clientY);
+}, {passive:true});
+addEventListener('touchend', e => {
+  const t = e.changedTouches && e.changedTouches[0];
+  if (!t || pencereninIcinde(t.clientX, t.clientY)) return;
+  /* Parmak bir node'un üzerinde kalktıysa AÇ. Boşlukta kalktıysa hiçbir
+     şey yapma — kart açık kalsın, okunmaya devam edilsin. */
+  const n = enYakinNode(t.clientX, t.clientY, DOKUNUS_R);
+  if (n) openViewer(n);
 }, {passive:true});
 
 /* metinler yalnız köşelerine yaklaşınca belirir */
