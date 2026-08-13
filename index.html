@@ -220,21 +220,26 @@
     .dizin-ac{display:grid}
     /* Dizin TAM EKRAN: telefonda yarım panel hem dar kalıyor hem
        arkasındaki dallar yazının içinden geçiyor. Kendi kâğıdı var. */
+    /* Üstteki boşluk 4.2rem'di: × düğmesi 0.8rem'de duruyor, arada bir
+       avuç boş kâğıt kalıyordu. 2.9rem × ile ilk satır arasında yalnızca
+       nefes bırakıyor. */
     .menu{top:0;left:0;right:0;bottom:0;width:auto;max-width:none;
-      padding:4.2rem 1.4rem 2rem;background:var(--paper);
+      padding:2.9rem 1.4rem 2rem;background:var(--paper);
       backdrop-filter:none;-webkit-backdrop-filter:none}
     .menu-kapat{font-size:2.1rem;top:.8rem;right:1rem}
   }
   /* Dizin açıkken ≡ kalkar: × ile aynı köşede çakışıyordu. */
   html:has(.menu.on) .dizin-ac{display:none}
-  /* KÖŞE ÖĞELERİ DOKUNMATİKTE HEP AÇIK.
-     `.veil` imleç köşeye yaklaşınca beliriyor; parmakta imleç diye bir
-     şey yok, o yüzden dil seçici, ses, iletişim ve fikir kilidi telefonda
-     HİÇ görünmüyordu — var oldukları bile anlaşılmıyordu. Ağacın üstünde
-     gezinmek onları açmamalı da: sabit dursunlar.
-     `.wordmark` dışarıda: sol üstte ≡ ile aynı köşeyi paylaşıyor. */
+  /* KÖŞE ÖĞELERİ DOKUNMATİKTE: bir tur sabit tutuldu, geri alındı.
+     Hep açık durunca ağacın alt şeridini sıkıştırıyorlardı ve fikir
+     kilidi — gizli olması gereken şey — sürekli ortada duruyordu.
+     Şimdi masaüstündeki kuralın aynısı, imleç yerine PARMAKLA:
+     `veilDokun()` parmağın konumuna bakıyor. Bir kez belirdiklerinde
+     parmak kalkınca kaybolmuyorlar, yoksa düğmeye basmak imkânsız olur.
+     Ayrıca açılışta üç saniye görünüyorlar: yoksa varlıkları hiç
+     bilinmezdi. `.wordmark` ve dizin bu işin dışında — dizinin tek
+     kapısı sol üstteki ≡. */
   @media (hover:none),(pointer:coarse){
-    .controls,.baglar,.kilit,.modebar{opacity:1;pointer-events:auto}
     /* Dizin ya da bir pencere açıkken köşeler kâğıdın altında kalmasın. */
     html:has(.menu.on) .controls,html:has(.menu.on) .baglar,
     html:has(.menu.on) .kilit,html:has(.menu.on) .modebar,
@@ -1294,6 +1299,27 @@
   @media (max-width:760px){
     .kilit{right:1.2rem}
     .kilit-form input{width:6.5em}
+  }
+  /* PAROLA KUTUSU DOKUNMATİKTE.
+     İki dert vardı. Birincisi: kutunun zemini yoktu, ağacın dalları
+     yazının içinden geçiyor, ne yazdığın görünmüyordu. Artık kendi
+     kâğıdı var.
+     İkincisi ve asıl olanı: iOS Safari, yazı boyu 16 px'in ALTINDA olan
+     bir alana dokunulduğunda sayfayı kendiliğinden yakınlaştırıyor —
+     ve `user-scalable` serbest bırakıldığı için geri uzaklaşmıyordu.
+     Ağaç yakınlaşmış halde kalıyor, çıkış yolu kalmıyordu. Tek doğru
+     çözüm alanı 16 px yapmak; `maximum-scale` ile yasaklamak parmakla
+     büyütmeyi de öldürürdü. */
+  @media (hover:none),(pointer:coarse){
+    .kilit.acik{background:var(--paper);border:1px solid var(--ink-faint);
+      border-radius:3px;padding:.5rem .6rem}
+    /* Luka'nın şeritteki kilidinin kendi zemini var (pencere kâğıdı),
+       ona dokunulmuyor — ama onun alanı da 16 px olmalı, aynı tuzak. */
+    .kilit-form input,.pencere-kilit .kilit-form input{
+      font-size:16px;letter-spacing:.1em}
+    .kilit-form button{font-size:.8rem}
+    /* Kilit açıkken bandın dışına dokunmak da kapatsın diye JS'te ayrı
+       bir kural var; burada yalnızca okunurluk. */
   }
 
   /* Tünelin şeridindeki kilit — aynı parçalar, şeride sığacak ölçüde.
@@ -3586,7 +3612,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v63 · 2026-08-13';
+const SURUM = 'v64 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8748,21 +8774,41 @@ function dokunGez(x, y){
     hidePreview(null);
   }
 }
+/* AÇILIŞTA BİR SELAM: dokunmatikte köşeler üç saniye görünüp sönüyor.
+   Yoksa dil seçicinin, sesin ya da iletişimin var olduğu hiç
+   anlaşılmıyor — parmakta imleç yok, keşif de yok. Fikir kilidi bu
+   selamın DIŞINDA: orası gizli kalacak. */
+function kaseSelamla(){
+  if (!matchMedia('(hover:none), (pointer:coarse)').matches) return;
+  [mbEl, ctEl, bgEl].forEach(el => el.classList.add('on'));
+  setTimeout(() => [mbEl, ctEl, bgEl].forEach(el => el.classList.remove('on')), 3200);
+}
+
 addEventListener('touchstart', e => {
   DOKUNMATIK = true;
   const t = e.touches[0];
   if (!t || arayuzunUstunde(e) || pencereninIcinde(t.clientX, t.clientY)) return;
   pointer(t.clientX, t.clientY);
   dokunGez(t.clientX, t.clientY);
+  veilDokun(t.clientX, t.clientY);
 }, {passive:true});
 addEventListener('touchmove', e => {
   const t = e.touches[0];
   if (!t || arayuzunUstunde(e) || pencereninIcinde(t.clientX, t.clientY)) return;
   pointer(t.clientX, t.clientY);
   dokunGez(t.clientX, t.clientY);
+  veilDokun(t.clientX, t.clientY);
 }, {passive:true});
 addEventListener('touchend', e => {
   const t = e.changedTouches && e.changedTouches[0];
+  /* Parola alanı açıkken ağacın herhangi bir yerine dokunmak KAPATSIN.
+     Parmakta Escape tuşu yok; kutu açık kalırsa hem ağacı örtüyor hem
+     de fikir kilidi görünür kalmaya devam ediyordu. `arayuzunUstunde`
+     denetiminden ÖNCE değil sonra bakılıyor: kutunun kendisine
+     dokunmak onu kapatmamalı. */
+  if (t && !arayuzunUstunde(e) && kilitEl.classList.contains('acik')){
+    kilidiKapat(); kilitEl.classList.remove('on'); return;
+  }
   if (!t || arayuzunUstunde(e) || pencereninIcinde(t.clientX, t.clientY)) return;
   /* Parmak bir node'un üzerinde kalktıysa AÇ. Boşlukta kalktıysa hiçbir
      şey yapma — kart açık kalsın, okunmaya devam edilsin. */
@@ -8778,6 +8824,24 @@ const wmEl = document.getElementById('wordmark'),
       mbEl = document.getElementById('modebar'),
       ctEl = document.getElementById('controls'),
       bgEl = document.getElementById('baglar');
+/* PARMAK İÇİN KÖŞELER.
+   `veil()`in dokunmatik kardeşi, iki farkla:
+     · DİZİNE dokunmuyor. Dizinin tek kapısı sol üstteki ≡ — ağacın
+       üstünde gezinirken kendiliğinden menüye atlaması bu yüzden hataydı.
+     · Bir kez açılan köşe, parmak uzaklaşınca DEĞİL, başka bir yere
+       dokununca kapanıyor. Parmak kalkınca kapansaydı düğmeye basmak
+       için ikinci bir el gerekirdi. */
+function veilDokun(x,y){
+  const alt = y > H - 150;
+  mbEl.classList.toggle('on', alt && x < W*0.52);
+  ctEl.classList.toggle('on', alt && x > W*0.48);
+  bgEl.classList.toggle('on', x > W-170 && y < 170);
+  /* Fikir kilidi GİZLİ kalmalı: yalnızca sağ kenarın tam ortasına
+     dokunulunca beliriyor, parola alanı açıkken kaybolmuyor. */
+  if (!kilitEl.classList.contains('acik'))
+    kilitEl.classList.toggle('on', x > W-90 && y > H*0.38 && y < H*0.62);
+}
+
 function veil(x,y){
   if (menuPinned) return;            // dokunmayla açıldıysa fare karışmaz
   /* Tetik alanı menünün gerçek genişliğinden okunur — 470px sabiti dar
@@ -9224,6 +9288,7 @@ function enterSite(){
     if (ac && ac.state === 'suspended') ac.resume();
   } catch(e){ console.error('ses başlatılamadı:', e); }
   setTimeout(() => gate.remove(), 950);
+  setTimeout(kaseSelamla, 1100);       // dokunmatikte köşeler bir kez selam versin
   /* iOS Safari ses bağlamını uygulama arkaya alınınca askıya alıyor ve
      bazen perdedeki ilk dokunuşta açmıyor. İki yerden daha uyandırılıyor:
      sayfaya dönüldüğünde ve ilk gerçek dokunuşta. Zararsız — zaten
