@@ -132,17 +132,9 @@
     padding-right:1rem}
   .menu::-webkit-scrollbar{width:3px}
   .menu::-webkit-scrollbar-thumb{background:var(--ink-faint);border-radius:2px}
-  /* Telefonda panel ekranın çoğunu kaplıyor ve ağacın dalları yazının
-     içinden geçiyor: harf hâlesi bu yoğunlukta yetmiyor. Sola yaslı,
-     sağa doğru sönen bir kâğıt perdesi — kutu değil, geçiş. */
-  @media (max-width:760px){
-    .menu{background:linear-gradient(to right,
-      color-mix(in srgb,var(--paper) 94%,transparent) 0%,
-      color-mix(in srgb,var(--paper) 90%,transparent) 72%,
-      transparent 100%);
-      padding-left:1rem;margin-left:-1rem;
-      -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
-  }
+  /* NOT: burada bir zamanlar sola yaslı, sağa sönen bir degrade perde
+     vardı. Dizin telefonda TAM EKRAN olunca gereksizleşti — üstelik
+     aşağıdaki opak kuralı eziyor ve panelin altını saydam bırakıyordu. */
   .menu ul{list-style:none;margin:0;padding:0}
   .menu ul ul{margin-left:.5rem;padding-left:.6rem;
     border-left:1px solid var(--ink-faint);
@@ -198,9 +190,15 @@
   .dizin-ac:hover,.dizin-ac:focus-visible{color:var(--ink);outline:none}
   @media (hover:none),(pointer:coarse){
     .dizin-ac{display:grid}
-    .menu{top:4rem;left:1rem;width:calc(100vw - 2rem);max-width:none}
-    .menu-kapat{font-size:1.9rem}
+    /* Dizin TAM EKRAN: telefonda yarım panel hem dar kalıyor hem
+       arkasındaki dallar yazının içinden geçiyor. Kendi kâğıdı var. */
+    .menu{top:0;left:0;right:0;bottom:0;width:auto;max-width:none;
+      padding:4.2rem 1.4rem 2rem;background:var(--paper);
+      backdrop-filter:none;-webkit-backdrop-filter:none}
+    .menu-kapat{font-size:2.1rem;top:.8rem;right:1rem}
   }
+  /* Dizin açıkken ≡ kalkar: × ile aynı köşede çakışıyordu. */
+  html:has(.menu.on) .dizin-ac{display:none}
   .menu li[data-zone="isler"]{--mc:var(--isler)}
   .menu li[data-zone="kisisel"]{--mc:var(--kisisel)}
   .menu li[data-zone="evren"]{--mc:var(--evren)}
@@ -318,10 +316,17 @@
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:2.2rem;transition:opacity .9s ease}
   .gate.gone{opacity:0;pointer-events:none}
-  .gate h1{font-size:clamp(1.3rem,2.8vw,1.8rem);font-weight:500;
-    letter-spacing:.22em;text-transform:uppercase;text-align:center}
-  .gate p{font-size:.95rem;letter-spacing:.02em;color:var(--ink-soft);
-    text-align:center;max-width:34ch;line-height:1.8}
+  @media (max-width:760px){
+    .gate{gap:clamp(1.1rem,4.2vh,2.2rem);padding:2rem 0}
+  }
+  /* Ad dar ekranda kenara dayanıyordu: harf aralığı ekranla birlikte
+     daralıyor, satır sarması serbest. */
+  .gate h1{font-size:clamp(1.05rem,5.2vw,1.8rem);font-weight:500;
+    letter-spacing:clamp(.1em,1.4vw,.22em);text-transform:uppercase;
+    text-align:center;margin:0;padding:0 1rem;text-wrap:balance}
+  .gate p{font-size:clamp(.86rem,3.6vw,.95rem);letter-spacing:.02em;
+    color:var(--ink-soft);text-align:center;max-width:34ch;line-height:1.8;
+    margin:0;padding:0 1.6rem;text-wrap:pretty}
   .gate button{background:none;color:var(--ink);cursor:pointer;
     border:1px solid var(--ink-faint);border-radius:999px;font:inherit;
     font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;
@@ -433,8 +438,18 @@
      çember tamamen görünüyor ve çok daha okunur oluyor. */
   .pencere.tritonet{width:min(1120px,90vw);height:min(1140px,92vh)}
   @media (max-width:760px){
-    /* Telefonda tam kaplama: uygulamanın kendi telefon yerleşimi var. */
-    .pencere.tritonet{width:calc(100vw - 1.8rem);max-width:none}
+    /* Telefonda bütün pencereler TAM EKRAN. Küçük ekranda paspartu lüks:
+       içerik zaten zor sığıyor, kenar boşluğu okunacak yeri yiyor.
+
+       `html` öneki BİLEREK: pencerelerin kendi ölçüleri (.pencere.likya,
+       .pencere.tritonet) stil sayfasında DAHA SONRA yazılı ve aynı
+       özgüllükte — medya sorgusu içinde olmak öncelik vermiyor, sonra
+       gelen kazanıyordu. Bir sınıf fazlası sorunu bitiriyor. */
+    html .pencere.tritonet, html .pencere.likya,
+    html .pencere.tunel,    html .pencere.basvuru{
+      width:100vw;max-width:none;height:100dvh;max-height:none;
+      inset:0;transform:none;border-radius:0;border-width:0;padding:0}
+    html .pencere.on{transform:none}
   }
   /* ── Tritonet penceresinin yedi sayfası ──
      Uygulama, ÜRETİLEN metin sayfalarının kardeşi; onların içine
@@ -1261,7 +1276,9 @@
      altın olunca başlığın üstünde bir mühür gibi duruyor. */
   /* Logo perdenin ana işareti: büyük ve Tritonet'in mavisi. Eskiden
      güneşin altınıydı ve küçüktü. */
-  .gate-logo{display:block;height:clamp(140px,26vh,260px);width:auto;
+  /* Logo yüksekliği ekranla ölçekleniyor; telefonda 140px taban perdeyi
+     aşağı itip düğmeyi katlanma çizgisine yaklaştırıyordu. */
+  .gate-logo{display:block;height:clamp(96px,22vh,260px);width:auto;
     color:var(--tritonet);margin-bottom:.2rem}
   .gate-logo path{fill:currentColor}
 
@@ -3522,7 +3539,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v60 · 2026-08-13';
+const SURUM = 'v61 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8579,6 +8596,21 @@ function pencereninIcinde(x, y){
   }
   return false;
 }
+
+/* Dokunuş ARAYÜZÜN üstünde mi başladı?
+   `pencereninIcinde` yalnızca dört pencereyi biliyordu; kart (#viewer),
+   önizleme, dizin, kumandalar ve perde onun dışındaydı. Sonuç: kartın
+   kapatma düğmesine dokunmak `touchend`e düşüyor ve en yakın node
+   açılıyordu — üst köşede en yakın node çoğunlukla kaya mezarı olduğu
+   için "kartı kapatınca Likya Dede açılıyor" diye görünüyordu.
+   Hedefe bakmak koordinat kutusundan güvenli: üst üste binen katmanlarda
+   hangisine gerçekten dokunulduğunu tarayıcı biliyor. */
+const ARAYUZ = '#viewer,#preview,.pencere,#menu,#dizinAc,.controls,' +
+               '.baglar,.gate,.kilit,#dilsec,.modebar,.wordmark,.ucus';
+function arayuzunUstunde(e){
+  const t = e.target;
+  return !!(t && t.closest && t.closest(ARAYUZ));
+}
 addEventListener('mousemove', e => {
   if (pencereninIcinde(e.clientX, e.clientY)) return;
   pointer(e.clientX, e.clientY);
@@ -8662,19 +8694,19 @@ function dokunGez(x, y){
 addEventListener('touchstart', e => {
   DOKUNMATIK = true;
   const t = e.touches[0];
-  if (!t || pencereninIcinde(t.clientX, t.clientY)) return;
+  if (!t || arayuzunUstunde(e) || pencereninIcinde(t.clientX, t.clientY)) return;
   pointer(t.clientX, t.clientY);
   dokunGez(t.clientX, t.clientY);
 }, {passive:true});
 addEventListener('touchmove', e => {
   const t = e.touches[0];
-  if (!t || pencereninIcinde(t.clientX, t.clientY)) return;
+  if (!t || arayuzunUstunde(e) || pencereninIcinde(t.clientX, t.clientY)) return;
   pointer(t.clientX, t.clientY);
   dokunGez(t.clientX, t.clientY);
 }, {passive:true});
 addEventListener('touchend', e => {
   const t = e.changedTouches && e.changedTouches[0];
-  if (!t || pencereninIcinde(t.clientX, t.clientY)) return;
+  if (!t || arayuzunUstunde(e) || pencereninIcinde(t.clientX, t.clientY)) return;
   /* Parmak bir node'un üzerinde kalktıysa AÇ. Boşlukta kalktıysa hiçbir
      şey yapma — kart açık kalsın, okunmaya devam edilsin. */
   const n = enYakinNode(t.clientX, t.clientY, DOKUNUS_R);
@@ -9134,6 +9166,16 @@ function enterSite(){
     if (ac && ac.state === 'suspended') ac.resume();
   } catch(e){ console.error('ses başlatılamadı:', e); }
   setTimeout(() => gate.remove(), 950);
+  /* iOS Safari ses bağlamını uygulama arkaya alınınca askıya alıyor ve
+     bazen perdedeki ilk dokunuşta açmıyor. İki yerden daha uyandırılıyor:
+     sayfaya dönüldüğünde ve ilk gerçek dokunuşta. Zararsız — zaten
+     açıksa `resume()` hiçbir şey yapmıyor.
+     NOT: iPhone'un yandaki SESSİZ ANAHTARI açıksa Web Audio hiç
+     duyulmaz; bunu sayfadan aşmanın güvenilir bir yolu yok. */
+  const uyandir = () => { try { if (ac && ac.state === 'suspended') ac.resume(); } catch(e){} };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) uyandir(); });
+  addEventListener('touchstart', uyandir, {passive:true});
+  addEventListener('pointerdown', uyandir);
   modeChord();
   setTimeout(() => ring(W/2, H*0.9, 1.7), 300);
   setTimeout(() => ring(W/2, H*0.66, 1.1), 900);
