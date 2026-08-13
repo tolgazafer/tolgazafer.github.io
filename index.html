@@ -4,6 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tolga Zafer Özdemir</title>
+<!-- Google, açıklama bulamayınca sayfadan kendi kesip çıkarıyordu ve
+     eline geçen ilk okunur metin DİZİN oluyordu: "Work Software Moments
+     — Vocal Clouds…" diye bir liste. Ağacın kendisi tuval, dizin ise
+     gerçek yazı. Açıklamayı burada söylemek o tahmini bitiriyor.
+     Türkçe + İngilizce tek cümlede: arama çoğunlukla İngiltere'den
+     geliyor ama sayfanın dili tr. -->
+<meta name="description" content="Besteci ve müzisyen Tolga Zafer Özdemir — besteler, albümler, sahne müzikleri, yazılar. Composer and musician: compositions, albums, music for stage, writing.">
+<link rel="canonical" href="https://www.tolgazaferozdemir.com/">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Tolga Zafer Özdemir">
+<meta property="og:description" content="Besteci ve müzisyen — besteler, albümler, sahne müzikleri, yazılar. Composer and musician.">
+<meta property="og:url" content="https://www.tolgazaferozdemir.com/">
+<meta property="og:image" content="https://www.tolgazaferozdemir.com/assets/img/portre/tolga-1.jpg">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:locale:alternate" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<!-- Arama motoruna kim olduğunu ayrıca yapılandırılmış olarak söylüyor:
+     bilgi panelindeki "Composer" etiketi buradan da beslenir. -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person",
+ "name":"Tolga Zafer Özdemir","jobTitle":"Composer",
+ "url":"https://www.tolgazaferozdemir.com/",
+ "image":"https://www.tolgazaferozdemir.com/assets/img/portre/tolga-1.jpg",
+ "description":"Besteci, müzisyen ve yazılımcı.",
+ "sameAs":["https://open.spotify.com/artist/6ZbFbUbcSDLwTQErqPKPKF",
+           "https://www.youtube.com/@tolgazaferozdemir",
+           "https://www.instagram.com/tolgazaferozdemir/"]}
+</script>
 <style>
   :root{
     --paper:#EFE7DA; --ink:#2A2622;
@@ -199,6 +227,23 @@
   }
   /* Dizin açıkken ≡ kalkar: × ile aynı köşede çakışıyordu. */
   html:has(.menu.on) .dizin-ac{display:none}
+  /* KÖŞE ÖĞELERİ DOKUNMATİKTE HEP AÇIK.
+     `.veil` imleç köşeye yaklaşınca beliriyor; parmakta imleç diye bir
+     şey yok, o yüzden dil seçici, ses, iletişim ve fikir kilidi telefonda
+     HİÇ görünmüyordu — var oldukları bile anlaşılmıyordu. Ağacın üstünde
+     gezinmek onları açmamalı da: sabit dursunlar.
+     `.wordmark` dışarıda: sol üstte ≡ ile aynı köşeyi paylaşıyor. */
+  @media (hover:none),(pointer:coarse){
+    .controls,.baglar,.kilit,.modebar{opacity:1;pointer-events:auto}
+    /* Dizin ya da bir pencere açıkken köşeler kâğıdın altında kalmasın. */
+    html:has(.menu.on) .controls,html:has(.menu.on) .baglar,
+    html:has(.menu.on) .kilit,html:has(.menu.on) .modebar,
+    html:has(.pencere.on) .controls,html:has(.pencere.on) .baglar,
+    html:has(.pencere.on) .kilit,html:has(.pencere.on) .modebar,
+    html:has(.viewer.on) .controls,html:has(.viewer.on) .baglar,
+    html:has(.viewer.on) .kilit,html:has(.viewer.on) .modebar{
+      opacity:0;pointer-events:none}
+  }
   .menu li[data-zone="isler"]{--mc:var(--isler)}
   .menu li[data-zone="kisisel"]{--mc:var(--kisisel)}
   .menu li[data-zone="evren"]{--mc:var(--evren)}
@@ -332,14 +377,6 @@
     font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;
     padding:1.1em 2.6em;transition:border-color .3s,letter-spacing .3s}
   .gate button:hover,.gate button:focus-visible{border-color:var(--ink);letter-spacing:.32em;outline:none}
-  /* Yalnızca TELEFONDA görünür. Masaüstünde zaten en iyi çalıştığı yer
-     orası; herkese söylemek gereksiz gürültü. */
-  .gate-ipucu{display:none;margin:-1rem 0 0;font-size:.72rem;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--ink-faint);text-align:center;
-    max-width:26ch;line-height:1.7}
-  @media (max-width:760px), (hover:none) and (pointer:coarse){
-    .gate-ipucu{display:block}
-  }
 
   .noscript{position:fixed;inset:0;z-index:60;background:var(--paper);color:var(--ink);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -942,6 +979,19 @@
     text-transform:uppercase;color:var(--ink-soft);white-space:nowrap;
     opacity:0;transition:opacity .18s}
   .ld-bolum-ipucu.on{opacity:1}
+  /* TELEFONDA numaralar başlığın ALTINA, sol kenara dikey iniyor.
+     Üstte yatay dururken dokuz numara + başlık aynı satıra sığmıyor,
+     başlık iki-üç satıra kırılıyor ve sahneye kalan yükseklik eriyordu.
+     Dikey sütun bir rakam eninde: sahne hem yukarı hem yana açılıyor. */
+  @media (max-width:760px){
+    .ld-sayfa.ld-d-bolum.acik{position:relative;padding-left:2.2rem}
+    .ld-bolum-sag{position:absolute;left:0;top:2.4rem;bottom:0;
+      align-items:flex-start;z-index:2}
+    .ld-bolum-gez{flex-direction:column;gap:.34rem}
+    /* İpucu dikey sütunun yanında yatay yer kaplayamaz. */
+    .ld-bolum-ipucu{display:none}
+    .ld-bolum-ust{padding-left:0}
+  }
 
   .ld-sahne{width:100%;height:100%;min-height:0;display:grid;
     justify-items:center;align-items:center;
@@ -1359,6 +1409,10 @@
   transition: opacity 0.8s ease;
 }
 .ucus-ipucu.sonuk { opacity: 0; }
+/* Telefonda kalkıyor: "↑ hızlan · ↓ yavaşla · ← →" bir KLAVYE tarifi,
+   parmakta karşılığı yok. Kumanda zaten sol altta duruyor ve kendini
+   anlatıyor. Alt şeridi boşaltınca tünelin kendisi büyüyor. */
+@media (hover:none),(pointer:coarse){ .ucus-ipucu{display:none} }
 
 /* --- Kart: Instagram gönderisi gibi --- */
 /* Kart, varılan yıldızın yanında açılır. Dikeyde tam boy: içerik ne kadar
@@ -1506,6 +1560,10 @@
 .ucus-tus {
   pointer-events: auto;      /* dokunmatikte şemanın kendisi kumanda olur */
   touch-action: none;
+  /* iOS bunları METİN sanıyordu: uzun basınca "Kopyala / Paylaş" balonu
+     açılıyor, gaz da o anda kesiliyordu. Ok işaretleri yazı değil, tuş. */
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -1955,9 +2013,6 @@
   <h1>Tolga Zafer Özdemir</h1>
   <p data-i18n="Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.">Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.</p>
   <button id="enter" data-i18n="ağaca dokun">ağaca dokun</button>
-  <!-- Ağaç Web Audio, Web MIDI ve WebGL kullanıyor; en dertsiz çalıştığı
-       yer masaüstünde Chrome. Perdeyi meşgul etmesin diye küçük ve soluk. -->
-  <p class="gate-ipucu" data-i18n="En iyi masaüstünde, Chrome ile açıldığında çalışır.">En iyi masaüstünde, Chrome ile açıldığında çalışır.</p>
 </div>
 
 <script>
@@ -2602,7 +2657,6 @@ const EN = {
   "Bu sayfa ses çıkarır. Dallar imleçle tınlar, düğümler çalınır.":
     "This page makes sound. Branches ring under the cursor; nodes are plucked.",
   "ağaca dokun": "touch the tree",
-  "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "This page works best on a desktop, in Chrome.",
   "Bu sayfa çalışmak için JavaScript'e ihtiyaç duyuyor, ama şu an kapalı görünüyor.":
     "This page needs JavaScript to run, but it appears to be turned off.",
   "Bu dosyayı bir mesajlaşma uygulamasından açtıysan:":
@@ -2762,7 +2816,6 @@ const DILLER = {
     "Doğaçlamalar": "Improvisationen",
     "Duyma üzerine": "Über das Hören",
     "Düzenlemeler": "Arrangements",
-    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Funktioniert am besten am Desktop, in Chrome.",
     "Eser": "Das Werk",
     "Eğitim": "Ausbildung",
     "Güçler": "Ideen",
@@ -2831,7 +2884,6 @@ const DILLER = {
     "Doğaçlamalar": "Improvisations",
     "Duyma üzerine": "Sur l’écoute",
     "Düzenlemeler": "Arrangements",
-    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Fonctionne mieux sur ordinateur, dans Chrome.",
     "Eser": "L’œuvre",
     "Eğitim": "Formation",
     "Güçler": "Idées",
@@ -2900,7 +2952,6 @@ const DILLER = {
     "Doğaçlamalar": "Improvisaciones",
     "Duyma üzerine": "Sobre el oír",
     "Düzenlemeler": "Arreglos",
-    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Funciona mejor en escritorio, con Chrome.",
     "Eser": "La obra",
     "Eğitim": "Formación",
     "Güçler": "Ideas",
@@ -2969,7 +3020,6 @@ const DILLER = {
     "Doğaçlamalar": "Improvvisazioni",
     "Duyma üzerine": "Sull’udire",
     "Düzenlemeler": "Arrangiamenti",
-    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Funziona meglio su desktop, in Chrome.",
     "Eser": "L’opera",
     "Eğitim": "Formazione",
     "Güçler": "Idee",
@@ -3038,7 +3088,6 @@ const DILLER = {
     "Doğaçlamalar": "Импровизации",
     "Duyma üzerine": "О слухе",
     "Düzenlemeler": "Аранжировки",
-    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "Лучше всего работает на компьютере, в Chrome.",
     "Eser": "Произведение",
     "Eğitim": "Образование",
     "Güçler": "Идеи",
@@ -3107,7 +3156,6 @@ const DILLER = {
     "Doğaçlamalar": "即兴",
     "Duyma üzerine": "论听觉",
     "Düzenlemeler": "编曲",
-    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "在桌面端的 Chrome 中效果最佳。",
     "Eser": "作品",
     "Eğitim": "教育",
     "Güçler": "构想",
@@ -3176,7 +3224,6 @@ const DILLER = {
     "Doğaçlamalar": "即興",
     "Duyma üzerine": "聴くことについて",
     "Düzenlemeler": "編曲",
-    "En iyi masaüstünde, Chrome ile açıldığında çalışır.": "デスクトップの Chrome で最もよく動きます。",
     "Eser": "作品",
     "Eğitim": "学歴",
     "Güçler": "アイデア",
@@ -3539,7 +3586,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v61 · 2026-08-13';
+const SURUM = 'v63 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -6405,7 +6452,11 @@ const hrefIndex = new Map();          // href → node (her build'de tazelenir)
         menuHot = n;
         setTrace(n, true);        // ağaçta dalı aydınlat
         pluck(n, 1, true);        // notasını çal
-        showPreview(n);           // node'un küçük kartını göster
+        /* Küçük kart YALNIZCA farede. Dokunmatikte dizin tam ekran ve
+           `mouseenter` parmak değince de tetikleniyor; kart dizinin
+           üstünü örtüyor, üstelik listeyi kaydırırken sürekli açılıp
+           kapanıyordu. Parmakta yol tek: satıra bas, büyük kart açılsın. */
+        if (!DOKUNMATIK) showPreview(n);
       });
       u.appendChild(li);
     });
@@ -8689,6 +8740,12 @@ function dokunGez(x, y){
     pluck(n, 1, true);
     setTrace(n, true);
     if (!n.floater) showPreview(n);
+  } else {
+    /* Parmak boşluğa çıktı: kart kapanıyor. Önce "olduğu gibi kalsın"
+       denendi ama kart ekranın üstünde sabit durduğu için hangi node'a
+       ait olduğu anlaşılmıyor, üstelik parmak çekilince ekranda asılı
+       kalıyordu. Boşluk = seçim yok. */
+    hidePreview(null);
   }
 }
 addEventListener('touchstart', e => {
@@ -8711,6 +8768,7 @@ addEventListener('touchend', e => {
      şey yapma — kart açık kalsın, okunmaya devam edilsin. */
   const n = enYakinNode(t.clientX, t.clientY, DOKUNUS_R);
   if (n) openViewer(n);
+  else { dokunulan = null; hidePreview(null); }   // boşlukta bırakıldı
 }, {passive:true});
 
 /* metinler yalnız köşelerine yaklaşınca belirir */
