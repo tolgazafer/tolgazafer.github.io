@@ -223,13 +223,23 @@
     /* Üstteki boşluk 4.2rem'di: × düğmesi 0.8rem'de duruyor, arada bir
        avuç boş kâğıt kalıyordu. 2.9rem × ile ilk satır arasında yalnızca
        nefes bırakıyor. */
+    /* `body{touch-action:none}` ağacın kendi hareketi için konmuştu ve
+       dizinin parmakla kaydırılmasını da öldürüyordu: liste tutuluyor,
+       hiçbir yere gitmiyordu. Dizin kendi kaydırma kabı olduğu için
+       kendi `touch-action`ı geçerli — burada dikey kaydırma serbest.
+       Dizin artık standart bir menü gibi davranıyor. */
     .menu{top:0;left:0;right:0;bottom:0;width:auto;max-width:none;
+      touch-action:pan-y;-webkit-overflow-scrolling:touch;
       padding:2.9rem 1.4rem 2rem;background:var(--paper);
       backdrop-filter:none;-webkit-backdrop-filter:none}
     .menu-kapat{font-size:2.1rem;top:.8rem;right:1rem}
   }
-  /* Dizin açıkken ≡ kalkar: × ile aynı köşede çakışıyordu. */
-  html:has(.menu.on) .dizin-ac{display:none}
+  /* Dizin açıkken ≡ kalkar: × ile aynı köşede çakışıyordu.
+     Bir pencere açıkken de kalkar: pencerenin sayfa okları da sol üst
+     köşede duruyor. Normalde pencere ≡'in üstünde (z 30 > 9) ama
+     Zeytin'in hikâyesi SAYDAM açılıyor ve ≡ oradan sırıtıyordu. */
+  html:has(.menu.on) .dizin-ac,
+  html:has(.pencere.on) .dizin-ac{display:none}
   /* KÖŞE ÖĞELERİ DOKUNMATİKTE: bir tur sabit tutuldu, geri alındı.
      Hep açık durunca ağacın alt şeridini sıkıştırıyorlardı ve fikir
      kilidi — gizli olması gereken şey — sürekli ortada duruyordu.
@@ -314,6 +324,14 @@
   .ctrl{background:none;border:none;cursor:pointer;color:var(--ink-soft);font:inherit;
     font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;padding:.4em 0;transition:color .2s}
   .ctrl:hover,.ctrl:focus-visible{color:var(--ink);outline:none}
+  /* Son güncelleme: köşenin en sessiz bilgisi. Ses ve dilden bir tık
+     küçük, etiketi tarihten de sönük — okumak isteyen okur. */
+  #ver{font-size:.62rem;letter-spacing:.1em;color:var(--ink-soft);
+    display:flex;flex-direction:column;line-height:1.35;text-align:right}
+  /* Etiket tarihten geri çekiliyor: soru "neyin tarihi" idi, cevap bir
+     kez okunuyor; tarihin kendisi okunur kalmalı. */
+  #ver i{font-style:normal;font-size:.54rem;letter-spacing:.14em;
+    color:var(--ink-faint)}
 
   /* ── ses faderi: uzun yatay üçgen ──
      Açık/kapalı düğmesi yerine sürgü. Sola dayadığında ses kapalı sayılır,
@@ -450,6 +468,16 @@
     text-align:center;
     font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
     color:var(--ink-soft)}
+  /* Telefonda mutlak ortalama BIRAKILIYOR: 38 px'lik iki ok solda,
+     kapatma düğmesi sağda, ortada kalan yer %56'dan az kalıyor — ad
+     okların üstüne biniyordu. Akış içinde `flex:1` ile ortalanınca ad
+     kalan boşluğu alıyor ve kimseye değmiyor.
+     (Kural TABANDAN SONRA: medya sorgusu öncelik vermiyor, aynı
+     özgüllükte sonra yazılan kazanıyor.) */
+  @media (max-width:760px){
+    .pencere-ad{position:static;transform:none;flex:1 1 auto;min-width:0;
+      max-width:none;margin:0 .4rem;font-size:.66rem;letter-spacing:.1em}
+  }
   /* "Ağaca dön" artık yazı değil, ana ekrandaki ağacın kendisi. */
   .pencere-kapat,.pencere-dis{flex:none;background:none;cursor:pointer;
     border:1px solid var(--ink-faint);border-radius:2px;
@@ -880,6 +908,9 @@
   /* Sonu ya da başı: düğme kaybolmuyor, SÖNÜYOR. Kaybolsaydı yanındaki
      düğme yer değiştirirdi ve nerede olduğun okunmazdı. */
   .sayfa-ok[disabled]{opacity:.28;pointer-events:none}
+  /* Tek sayfalık pencerede (Tritonet ek sayfalar kapalıyken) ikisi de
+     ölü: o zaman hiç durmasınlar. Biri diriyse ikisi de kalır. */
+  .sayfa-oklar:not(:has(.sayfa-ok:not([disabled]))){display:none}
   @media (hover:none),(pointer:coarse){
     .sayfa-ok{width:38px;height:38px;font-size:1.3rem;
       border-color:var(--ink-faint)}
@@ -993,8 +1024,27 @@
   .ld-afis-sag p{margin:0 0 .7rem}
   .ld-afis-sag > .ld-arabaslik:first-child{margin-top:0}
   @media (max-width:720px){
-    .ld-sayfa.ld-d-sutun > :not(h3){columns:1}
+    /* `columns:1` HÂLÂ çok sütunlu bir kutu: sığmayan metin sağda yeni
+       sütun doğuruyor ve `overflow:hidden` onu yutuyordu. Tümden bırak. */
+    .ld-sayfa.ld-d-sutun > :not(h3){columns:auto}
     .ld-yan{grid-template-columns:1fr;gap:1rem}
+    /* SAYFALAR TELEFONDA KAYAR.
+       Masaüstünde tasarım kuralı "hiçbir sayfa kaydırma istemiyor" —
+       genişlik 940 px olduğu için metin yana yayılıyor. Telefonda 390 px
+       var: aynı metin üç katı yükseklik istiyor ve `overflow:hidden`
+       sessizce kırpıyordu. "Kim olduğum" sayfasında fotoğraf üste
+       geçince METİN HİÇ GÖRÜNMÜYORDU.
+       `minmax(min-content,1fr)`: sayfa kısaysa yine kâğıdı doldurup
+       ortalanıyor, uzunsa içeriği kadar uzayıp kayıyor. */
+    .ld-sayfalar{overflow-y:auto;overscroll-behavior:contain;
+      touch-action:pan-y;-webkit-overflow-scrolling:touch;
+      grid-template-rows:minmax(min-content,1fr)}
+    /* Dikeyde ortalama taşınca içeriği YUKARIDAN kırpıyor ve kaydırma
+       çubuğu bile oraya ulaşamıyor; `safe` taşınca ortalamayı bırakıyor. */
+    .ld-sayfa.ld-d-dar.acik{justify-content:safe center}
+    .ld-sayfa.ld-d-tam.acik,.ld-sayfa.ld-d-afis.acik{align-content:safe center}
+    /* Tirat kendi kabında kayıyor; parmağa izin ver. */
+    .ld-tirat{touch-action:pan-y}
   }
   @keyframes ldGir{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
@@ -2805,6 +2855,7 @@ const EN = {
     "The document previewers in WhatsApp, Telegram and similar apps do not run JavaScript. Save the file to your phone and open it in Safari or Chrome, or ask the sender for a web address.",
   "ağaca dön": "back to the tree",
   "Ağaca dön": "Back to the tree",
+  "son güncelleme": "last updated",
   "Yolculuğa dön": "Back to the journey",
   "Tritonet denetçisi": "Tritonet controller",
 
@@ -2945,6 +2996,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Lehre und Vorträge",
     "Albümler": "Alben",
     "Ağaca dön": "Zurück zum Baum",
+    "son güncelleme": "zuletzt aktualisiert",
     "Yolculuğa dön": "Zurück zur Reise",
     "Basılı işler": "Publikationen",
     "Beni bir yere ışınla": "Beam mich irgendwohin",
@@ -3013,6 +3065,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Enseignement et conférences",
     "Albümler": "Albums",
     "Ağaca dön": "Retour à l’arbre",
+    "son güncelleme": "dernière mise à jour",
     "Yolculuğa dön": "Retour au voyage",
     "Basılı işler": "Publications",
     "Beni bir yere ışınla": "Téléporte-moi quelque part",
@@ -3081,6 +3134,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Docencia y conferencias",
     "Albümler": "Álbumes",
     "Ağaca dön": "Volver al árbol",
+    "son güncelleme": "última actualización",
     "Yolculuğa dön": "Volver al viaje",
     "Basılı işler": "Publicaciones",
     "Beni bir yere ışınla": "Teletranspórtame",
@@ -3149,6 +3203,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Docenza e conferenze",
     "Albümler": "Album",
     "Ağaca dön": "Torna all’albero",
+    "son güncelleme": "ultimo aggiornamento",
     "Yolculuğa dön": "Torna al viaggio",
     "Basılı işler": "Pubblicazioni",
     "Beni bir yere ışınla": "Teletrasportami",
@@ -3217,6 +3272,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Преподавание и доклады",
     "Albümler": "Альбомы",
     "Ağaca dön": "Назад к дереву",
+    "son güncelleme": "последнее обновление",
     "Yolculuğa dön": "Назад к путешествию",
     "Basılı işler": "Публикации",
     "Beni bir yere ışınla": "Перенеси меня",
@@ -3285,6 +3341,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "教学与讲座",
     "Albümler": "专辑",
     "Ağaca dön": "返回树",
+    "son güncelleme": "最后更新",
     "Yolculuğa dön": "返回旅程",
     "Basılı işler": "出版物",
     "Beni bir yere ışınla": "把我传送走",
@@ -3353,6 +3410,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "教育と講演",
     "Albümler": "アルバム",
     "Ağaca dön": "木に戻る",
+    "son güncelleme": "最終更新",
     "Yolculuğa dön": "旅に戻る",
     "Basılı işler": "出版物",
     "Beni bir yere ışınla": "どこかへ飛ばして",
@@ -3726,7 +3784,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v70 · 2026-08-13';
+const SURUM = 'v71 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -3736,10 +3794,11 @@ console.log('%cağaç ' + SURUM, 'color:#C08A3E');
   const g = SURUM.match(/(\d{4})-(\d{2})-(\d{2})/);
   if (!el || !g) return;
   const yaz = () => {
+    /* Yalnız tarih bir şey anlatmıyordu — "13 Ağustos 2026" neyin tarihi?
+       Etiket önde, tarih arkada; etiket daha da sönük ve küçük. */
     const ay = DIL.ay(Number(g[2]) - 1);
-    el.textContent = DIL.get() === 'en'
-      ? Number(g[3]) + ' ' + ay + ' ' + g[1]
-      : Number(g[3]) + ' ' + ay + ' ' + g[1];
+    const tarih = Number(g[3]) + ' ' + ay + ' ' + g[1];
+    el.innerHTML = '<i>' + DIL.T('son güncelleme') + '</i>' + tarih;
     el.title = SURUM;
   };
   yaz(); DIL.dinle(yaz);
@@ -8097,7 +8156,7 @@ let triAcik = false;
 
    Kapatmak gerekirse aşağıdaki satır `false` — o zaman pencere yalnızca
    çalgıyı gösteriyor ve oklar sönüyor. */
-const TRI_EK_SAYFALAR = true;
+const TRI_EK_SAYFALAR = false;
 const TRI_ICERIK_TUM = [
   { ad:{tr:'Denetçi', en:'The controller'}, duzen:'uygulama', blok:[
     
@@ -9120,12 +9179,21 @@ function rgba(hex,a){
 
 let prev = performance.now(), frameErr = 0;
 let tunelKare = 0;
+const ORTU_DOKUNSAL = matchMedia('(hover:none), (pointer:coarse)').matches;
 function frame(now){
-  /* Bir pencere öndeyken ağaç durmaz: kenardaki şeritte yaşamaya devam ediyor
-     ve tünelde sesi de oradan geliyor. Yalnızca yükü yarıya indirmek için iki
-     karede bir çizilir — pencerenin içindeki üç boyutlu tünel ya da gömülü
-     çalgı zaten aynı anda çalışıyor. Başvuru penceresi hafif ama uzun bir
-     belge: okurken ağacı yarım hızda çizmek okumayı da rahatlatıyor. */
+  /* TELEFONDA ÜSTÜ ÖRTÜLÜYSE HİÇ ÇİZME.
+     Dizin ve pencereler telefonda TAM EKRAN: ağacın bir pikseli bile
+     görünmüyor. Yine de her karede yüzlerce dal çiziliyordu ve dizini
+     parmakla kaydırırken görüntü gözle görülür biçimde takılıyordu —
+     çizim ile kaydırma aynı iş parçacığında yarışıyor. `prev` tazeleniyor
+     ki geri dönünce zaman sıçraması olmasın. */
+  if (ORTU_DOKUNSAL &&
+      (menuPinned || tunelAcik || triAcik || basvuruAcik || likyaAcik)){
+    prev = now; requestAnimationFrame(frame); return;
+  }
+  /* Masaüstünde bir pencere öndeyken ağaç durmaz: kenardaki şeritte
+     yaşamaya devam ediyor ve tünelde sesi de oradan geliyor. Yalnızca
+     yükü yarıya indirmek için iki karede bir çiziliyor. */
   if ((tunelAcik || triAcik || basvuruAcik || likyaAcik) && (++tunelKare & 1)){ requestAnimationFrame(frame); return; }
   try { draw(now); } catch(e){
     if (++frameErr < 4) console.error('çizim hatası:', e);   // döngü yaşamaya devam eder
