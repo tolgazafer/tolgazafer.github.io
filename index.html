@@ -833,6 +833,24 @@
   @media (max-width:600px){
     .ld-kumanda-ad{display:none}
   }
+  /* OYNATICI PARMAK ÖLÇÜSÜNDE.
+     Masaüstü ölçüleriyle kalmıştı: 30 px düğmeler, 2 px kalınlığında bir
+     ilerleme çizgisi. Fareyle sorun yok; parmakla ne düğmeye basılıyor ne
+     de şeritten bir yere atlanıyor. Şerit hem kalınlaştı hem dokunma
+     alanı yükseldi — görünen çizgi ince kalabilir, tutulan alan olmaz. */
+  @media (hover:none),(pointer:coarse){
+    .ld-calar-alan{height:76px}
+    .ld-kumanda{gap:.5rem;padding:0 .7rem}
+    .ld-tus{width:42px;height:42px}
+    .ld-tus svg{width:19px;height:19px}
+    .ld-tus-cal{width:48px;height:48px}
+    .ld-tus-cal svg{width:17px;height:17px}
+    .ld-serit,.ld-serit-kap{height:44px;min-width:2.5rem}
+    .ld-serit::before,.ld-serit-kap > i{height:4px;border-radius:3px}
+    .ld-sure{font-size:.72rem}
+    .ld-spotify{width:34px;height:34px}
+    .ld-spotify svg{width:19px;height:19px}
+  }
 
   /* ── kâğıt ── */
   .ld-kagit{position:relative;flex:1 1 auto;min-height:0;display:flex}
@@ -859,6 +877,20 @@
   .sayfa-ok[disabled]{opacity:0 !important;pointer-events:none}
   .sayfa-ok-sol{left:1.1rem}
   .sayfa-ok-sag{right:1.1rem}
+  /* DOKUNMATİKTE OKLAR HEP AÇIK VE ALTTA.
+     `.yakin` sınıfını `mousemove` koyuyor — parmakta o olay hiç
+     tetiklenmiyor, yani oklar telefonda HİÇ belirmiyordu ve Likya
+     Dede'nin öbür sayfalarına geçmenin yolu yoktu.
+     Yerleri de değişti: dikey ortada dururken solda bölüm numaralarının
+     sütununa çarpıyorlar. Altta, iki köşede — hem çakışma yok hem
+     başparmağın durduğu yer orası. Ölçü 44 px: dokunma hedefi. */
+  @media (hover:none),(pointer:coarse){
+    .sayfa-ok{opacity:1;width:44px;height:44px;font-size:1.5rem;
+      top:auto;bottom:.6rem;transform:none;
+      background:color-mix(in srgb,var(--paper) 88%,transparent)}
+    .sayfa-ok-sol{left:.6rem}
+    .sayfa-ok-sag{right:.6rem}
+  }
 
   /* Sayfa alanı TEK SATIR ve tam yükseklikte: `minmax(0,1fr)` satırı
      kâğıdın boyuna sabitliyor, açık sayfa da tam o kadar oluyor. Böylece
@@ -3698,7 +3730,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v68 · 2026-08-13';
+const SURUM = 'v69 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -7524,6 +7556,30 @@ function okYakinlikKur(kagit, geri, ileri, yakin){
   kagit.addEventListener('pointerleave', () => {
     geri.classList.remove('yakin'); ileri.classList.remove('yakin');
   });
+
+  /* KAYDIRARAK SAYFA ÇEVİRME — telefonun kendi hareketi.
+     Oklar da duruyor (keşfedilebilirlik için) ama kâğıdı yana itmek daha
+     doğal. İki koruma var:
+       · Yatay hareket dikeyin 1.6 katından fazla olmalı — yoksa tiradı
+         yukarı kaydırırken sayfa atlıyordu.
+       · Eşik 48 px — parmağın doğal titremesi sayfa çevirmiyor.
+     Kaydırılabilir bir alandan (tirat, kart) başlayan dokunuş da geçerli:
+     yatay baskınlık koşulu zaten ayırıyor. */
+  let sx = 0, sy = 0, izle = false;
+  kagit.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1){ izle = false; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; izle = true;
+  }, {passive:true});
+  kagit.addEventListener('touchend', e => {
+    if (!izle) return;
+    izle = false;
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+    const dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
+    const dugme = dx < 0 ? ileri : geri;     // sola itmek = ileri
+    if (!dugme.disabled) dugme.click();
+  }, {passive:true});
 }
 
 function likyaKur(){
