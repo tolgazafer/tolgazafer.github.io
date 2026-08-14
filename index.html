@@ -291,9 +291,19 @@
     font-size:.86rem;letter-spacing:.05em;color:var(--ink-soft);line-height:2}
   .vw-body{font-size:1.04rem;line-height:1.8;color:var(--ink);white-space:pre-wrap}
   .vw-body:empty{display:none}
-  .vw-link{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
-    text-decoration:none;color:var(--ink);margin-top:.4rem}
-  .vw-link:hover{opacity:.7}
+  /* DIŞ KAYNAKLAR.
+     `.vw-link` biçemi buradaydı ama onu üreten kod hiç yazılmamıştı — ölü
+     stil. Artık bir düğüm `bag` alanı taşıyorsa kartın altında kurumun
+     kendi sayfası, künye, program ya da nota bağlantısı çıkıyor.
+     Tritonet penceresindeki kitap bağlantılarıyla aynı dil. */
+  .vw-baglar{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.2rem;min-width:0}
+  .vw-baglar[hidden]{display:none}
+  .vw-link{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+    white-space:nowrap;text-decoration:none;color:var(--ink-soft);
+    border:1px solid var(--ink-faint);border-radius:2px;padding:.42em .75em;
+    transition:color .2s,border-color .2s}
+  .vw-link:hover,.vw-link:focus-visible{color:var(--ink);
+    border-color:var(--ink);outline:none}
   /* Videosu olan kayıtlarda oynatıcının yanına eklenen Spotify bağlantısı. */
   .vw-dinle{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
     text-decoration:none;color:var(--ink-soft);margin-top:.5rem;
@@ -1993,6 +2003,8 @@
     <div class="vw-media" id="vwMedia"></div>
     <div class="vw-body" id="vwBody"></div>
     <a class="vw-dinle" id="vwDinle" target="_blank" rel="noopener" hidden></a>
+    <!-- Dış kaynaklar: kurumun kendi sayfası, künye, program, nota. -->
+    <div class="vw-baglar" id="vwBaglar" hidden></div>
   </div>
 </div>
 
@@ -2855,6 +2867,95 @@ const EN = {
     "The document previewers in WhatsApp, Telegram and similar apps do not run JavaScript. Save the file to your phone and open it in Safari or Chrome, or ask the sender for a web address.",
   "ağaca dön": "back to the tree",
   "Ağaca dön": "Back to the tree",
+  "17 Mart 2020": "17 March 2020",
+  "2020 – 2021": "2020 – 2021",
+  "Akademik danışman — rezonatörlü gürültü önleyici kulaklık": "Academic advisor — noise-cancelling headphones with resonators",
+  "Akademik danışman — yapay zekâ destekli gitar eğitimi": "Academic advisor — AI-supported guitar education",
+  "Akdeniz Çağdaş Müzik Günleri": "Mediterranean Contemporary Music Days",
+  "Armoni öğretmeni": "Harmony teacher",
+  "Armonik motoru tasarladım ve yazdım": "Designed and wrote the harmonic engine",
+  "Açık Ders": "Open Class",
+  "Açılış konuşmacısı": "Keynote speaker",
+  "Bangkok": "Bangkok",
+  "Bant": "Tape",
+  "Berlin": "Berlin",
+  "Beşliler Çemberi ve Tritonet ile canlı armoni dersi": "Live harmony class with the Circle of Fifths and Tritonet",
+  "Cedar Rapids": "Cedar Rapids",
+  "Cevdet Erek moderatörlüğünde söyleşi": "Conversation moderated by Cevdet Erek",
+  "Composers Cauldron — çocuk atölyeleri": "Composers Cauldron — children’s workshops",
+  "E-bow ile piyano": "E-bowed piano",
+  "Eskişehir": "Eskişehir",
+  "Festivaller": "Festivals",
+  "Film müziği · Mehmet Güreli": "Film score · Mehmet Güreli",
+  "Film, tiyatro ve yerleştirme": "Film, theatre and installation",
+  "Fraktal kontrpuan": "Fractal counterpoint",
+  "Garanti BBVA Konser Serisi": "Garanti BBVA Concert Series",
+  "Goethe-Institut İstanbul programı": "Within the Goethe-Institut Istanbul programme",
+  "Gönüllü işler": "Volunteering",
+  "Görevler": "Positions",
+  "Güncellemenin armonik motoru": "Harmonic engine of the update",
+  "Hanoi": "Hanoi",
+  "Hikâye anlatıcısı": "Storyteller",
+  "Jüri üyesi": "Jury member",
+  "Kamera asistanı": "Camera assistant",
+  "Kapadokya": "Cappadocia",
+  "Karma topluluk": "Mixed ensemble",
+  "Kaş Caz Festivali": "Kaş Jazz Festival",
+  "Kontakt 8 · Factory Tools": "Kontakt 8 · Factory Tools",
+  "Kurucu ve CEO — Tritonet donanımı Ar-Ge": "Founder and CEO — Tritonet hardware R&D",
+  "Kıdemli Ürün Tasarımcısı": "Senior Product Designer",
+  "Kısa film": "Short film",
+  "Lamia, Yunanistan": "Lamia, Greece",
+  "Londra": "London",
+  "Londra / Berlin · 2022 – bugün": "London / Berlin · 2022 – present",
+  "Londra · 19 Kasım 2022 · Anatolian Fusion Ensemble": "London · 19 November 2022 · Anatolian Fusion Ensemble",
+  "Londra · Ekim 2022 – Ocak 2023": "London · October 2022 – January 2023",
+  "Mardin": "Mardin",
+  "Muğla · 25 Ağustos 2023 · 2+1 Sounds From the Bridge": "Muğla · 25 August 2023 · 2+1 Sounds From the Bridge",
+  "Müzik eğitimi yayını": "Music-education broadcast",
+  "Nederlands Blazers Ensemble için ses tasarımı": "Sound design for the Netherlands Blazers Ensemble",
+  "Oda orkestrası için yarı-üretken beste": "Semi-generative composition for chamber orchestra",
+  "Piyano": "Piano",
+  "San Antonio": "San Antonio",
+  "Senfoni orkestrası": "Symphony orchestra",
+  "Senfoni orkestrası ve geleneksel çalgılar": "Symphony orchestra and traditional instruments",
+  "Senfoni orkestrası ve piyano konçertino": "Symphony orchestra and piano concertino",
+  "Society of Composers Konferansı": "Society of Composers conference",
+  "Stajyer — habercilik araştırması ve yazım": "Intern — journalistic research and writing",
+  "Sydney · 2 Mayıs 2010 · Affordable Escape": "Sydney · 2 May 2010 · Affordable Escape",
+  "Sırbistan": "Serbia",
+  "Tiyatro müziği": "Theatre music",
+  "Tritonet semineri": "Tritonet seminar",
+  "Uluslararası Klarnet Festivali": "International Clarinet Festival",
+  "Vurmalı çalgılar ve bant": "Percussion and tape",
+  "WKNO televizyon dizisi · Memphis": "WKNO television series · Memphis",
+  "Washington": "Washington",
+  "Yaylı oktet": "String octet",
+  "Yaylı orkestra ve duvar resmi": "String orchestra and wall painting",
+  "Yaşam Okulu": "School of Life",
+  "YouTube canlı armoni dersi": "YouTube live harmony class",
+  "Çanakkale": "Çanakkale",
+  "Çağdaş Dans Festivali": "Contemporary Dance Festival",
+  "Çağdaş dans ve bant": "Contemporary dance and tape",
+  "Çocuklarla müzik atölyeleri": "Music workshops with children",
+  "Çoklu ortam yerleştirmesi": "Multimedia installation",
+  "Öğretim görevlisi — 21. yüzyıl kompozisyon teknikleri": "Lecturer — twenty-first-century composition techniques",
+  "Ürün tasarımı, akor adlandırma mantığı": "Product design, chord-naming logic",
+  "Üçüncü Akdeniz Müzik Merkezi Yarışması": "Third Mediterranean Music Centre Competition",
+  "İTÜ MİAM, İstanbul · 2 Nisan 2024": "İTÜ MİAM, Istanbul · 2 April 2024",
+  "İki piyano ve iki synthesizer": "Two pianos and two synthesisers",
+  "İstanbul": "Istanbul",
+  "İstanbul · 1993 – 1994": "Istanbul · 1993 – 1994",
+  "İstanbul · 1994 – 1995": "Istanbul · 1994 – 1995",
+  "İstanbul · 2009 – 2011": "Istanbul · 2009 – 2011",
+  "İstanbul · 2013 – 2015": "Istanbul · 2013 – 2015",
+  "Şubat – Temmuz 2021": "February – July 2021",
+  "yarışma": "competition",
+  "program": "programme",
+  "nota — Edition Avantus": "score — Edition Avantus",
+  "YouTube albüm": "YouTube album",
+  "16 ülkeden 26 çalgı": "26 instruments from 16 countries",
+  "yazı": "article",
   "son güncelleme": "last updated",
   "Yolculuğa dön": "Back to the journey",
   "Tritonet denetçisi": "Tritonet controller",
@@ -2996,6 +3097,12 @@ const DILLER = {
     "Akademi ve konuşmalar": "Lehre und Vorträge",
     "Albümler": "Alben",
     "Ağaca dön": "Zurück zum Baum",
+    "yarışma": "Wettbewerb",
+    "program": "Programm",
+    "nota — Edition Avantus": "Noten — Edition Avantus",
+    "YouTube albüm": "YouTube-Album",
+    "16 ülkeden 26 çalgı": "26 Instrumente aus 16 Ländern",
+    "yazı": "Artikel",
     "son güncelleme": "zuletzt aktualisiert",
     "Yolculuğa dön": "Zurück zur Reise",
     "Basılı işler": "Publikationen",
@@ -3065,6 +3172,12 @@ const DILLER = {
     "Akademi ve konuşmalar": "Enseignement et conférences",
     "Albümler": "Albums",
     "Ağaca dön": "Retour à l’arbre",
+    "yarışma": "concours",
+    "program": "programme",
+    "nota — Edition Avantus": "partition — Edition Avantus",
+    "YouTube albüm": "album YouTube",
+    "16 ülkeden 26 çalgı": "26 instruments de 16 pays",
+    "yazı": "article",
     "son güncelleme": "dernière mise à jour",
     "Yolculuğa dön": "Retour au voyage",
     "Basılı işler": "Publications",
@@ -3134,6 +3247,12 @@ const DILLER = {
     "Akademi ve konuşmalar": "Docencia y conferencias",
     "Albümler": "Álbumes",
     "Ağaca dön": "Volver al árbol",
+    "yarışma": "concurso",
+    "program": "programa",
+    "nota — Edition Avantus": "partitura — Edition Avantus",
+    "YouTube albüm": "álbum de YouTube",
+    "16 ülkeden 26 çalgı": "26 instrumentos de 16 países",
+    "yazı": "artículo",
     "son güncelleme": "última actualización",
     "Yolculuğa dön": "Volver al viaje",
     "Basılı işler": "Publicaciones",
@@ -3203,6 +3322,12 @@ const DILLER = {
     "Akademi ve konuşmalar": "Docenza e conferenze",
     "Albümler": "Album",
     "Ağaca dön": "Torna all’albero",
+    "yarışma": "concorso",
+    "program": "programma",
+    "nota — Edition Avantus": "partitura — Edition Avantus",
+    "YouTube albüm": "album YouTube",
+    "16 ülkeden 26 çalgı": "26 strumenti da 16 paesi",
+    "yazı": "articolo",
     "son güncelleme": "ultimo aggiornamento",
     "Yolculuğa dön": "Torna al viaggio",
     "Basılı işler": "Pubblicazioni",
@@ -3272,6 +3397,12 @@ const DILLER = {
     "Akademi ve konuşmalar": "Преподавание и доклады",
     "Albümler": "Альбомы",
     "Ağaca dön": "Назад к дереву",
+    "yarışma": "конкурс",
+    "program": "программа",
+    "nota — Edition Avantus": "ноты — Edition Avantus",
+    "YouTube albüm": "альбом на YouTube",
+    "16 ülkeden 26 çalgı": "26 инструментов из 16 стран",
+    "yazı": "статья",
     "son güncelleme": "последнее обновление",
     "Yolculuğa dön": "Назад к путешествию",
     "Basılı işler": "Публикации",
@@ -3341,6 +3472,12 @@ const DILLER = {
     "Akademi ve konuşmalar": "教学与讲座",
     "Albümler": "专辑",
     "Ağaca dön": "返回树",
+    "yarışma": "比赛",
+    "program": "节目",
+    "nota — Edition Avantus": "乐谱 — Edition Avantus",
+    "YouTube albüm": "YouTube 专辑",
+    "16 ülkeden 26 çalgı": "来自16个国家的26件乐器",
+    "yazı": "文章",
     "son güncelleme": "最后更新",
     "Yolculuğa dön": "返回旅程",
     "Basılı işler": "出版物",
@@ -3410,6 +3547,12 @@ const DILLER = {
     "Akademi ve konuşmalar": "教育と講演",
     "Albümler": "アルバム",
     "Ağaca dön": "木に戻る",
+    "yarışma": "コンクール",
+    "program": "プログラム",
+    "nota — Edition Avantus": "楽譜 — Edition Avantus",
+    "YouTube albüm": "YouTube アルバム",
+    "16 ülkeden 26 çalgı": "16か国から26の楽器",
+    "yazı": "記事",
     "son güncelleme": "最終更新",
     "Yolculuğa dön": "旅に戻る",
     "Basılı işler": "出版物",
@@ -3784,7 +3927,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v71 · 2026-08-13';
+const SURUM = 'v73 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -3867,7 +4010,57 @@ const STRUCTURE = [
        "type": "youtube",
        "id": "61slAj3DAT4"
       },
-      "role": "KSP, arayüz tasarımı"
+      "role": "KSP, arayüz tasarımı",
+      "children": [
+       {
+        "label": "Arpeggiator",
+        "href": "/isler/yazilim/kontakt-factory-tools/arpeggiator/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       },
+       {
+        "label": "Chord Builder",
+        "href": "/isler/yazilim/kontakt-factory-tools/chord-builder/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       },
+       {
+        "label": "Chords",
+        "href": "/isler/yazilim/kontakt-factory-tools/chords/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       },
+       {
+        "label": "Humanizer",
+        "href": "/isler/yazilim/kontakt-factory-tools/humanizer/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       },
+       {
+        "label": "Patterns",
+        "href": "/isler/yazilim/kontakt-factory-tools/patterns/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       },
+       {
+        "label": "Phrases",
+        "href": "/isler/yazilim/kontakt-factory-tools/phrases/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       },
+       {
+        "label": "Scale Lock",
+        "href": "/isler/yazilim/kontakt-factory-tools/scale-lock/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       },
+       {
+        "label": "Velocity Curve",
+        "href": "/isler/yazilim/kontakt-factory-tools/velocity-curve/",
+        "trail": "İşler · Yazılım · Kontakt Factory Tools",
+        "blurb": "Kontakt 8 · Factory Tools"
+       }
+      ]
      },
      {
       "label": "Patterns Tool",
@@ -3891,7 +4084,13 @@ const STRUCTURE = [
        "type": "youtube",
        "id": "SFN8pYUfZgk"
       },
-      "role": "Arayüz ve kullanıcı deneyimi tasarımı"
+      "role": "Arayüz ve kullanıcı deneyimi tasarımı",
+      "bag": [
+       [
+        "Native Instruments",
+        "https://www.native-instruments.com/en/products/komplete/keys/claire-avant/"
+       ]
+      ]
      },
      {
       "label": "Electric Keys — Tines Duo",
@@ -3940,6 +4139,72 @@ const STRUCTURE = [
        "id": "OIJMzI5ymfM"
       },
       "role": "Jacob Collier'ın seyircisini bir enstrümana çevirdi. Djesse turnesinde 22 şehirde, 22 konserde kaydedilen kalabalık sesl"
+     },
+     {
+      "label": "Action Woodwinds",
+      "href": "/isler/yazilim/action-woodwinds/",
+      "trail": "İşler · Yazılım",
+      "date": "2023-01",
+      "role": "Armonik motoru tasarladım ve yazdım",
+      "blurb": "Native Instruments",
+      "bag": [
+       [
+        "Native Instruments",
+        "https://www.native-instruments.com/en/products/komplete/cinematic/action-woodwinds/"
+       ]
+      ]
+     },
+     {
+      "label": "Action Strings 2",
+      "href": "/isler/yazilim/action-strings-2/",
+      "trail": "İşler · Yazılım",
+      "date": "2023-01",
+      "role": "Güncellemenin armonik motoru",
+      "blurb": "Native Instruments",
+      "bag": [
+       [
+        "Native Instruments",
+        "https://www.native-instruments.com/en/products/komplete/cinematic/action-strings-2/"
+       ]
+      ]
+     },
+     {
+      "label": "Phrase Tool",
+      "href": "/isler/yazilim/phrase-tool/",
+      "trail": "İşler · Yazılım",
+      "date": "2024-01",
+      "role": "Ürün tasarımı",
+      "blurb": "Native Instruments"
+     },
+     {
+      "label": "Chords Tool",
+      "href": "/isler/yazilim/chords-tool/",
+      "trail": "İşler · Yazılım",
+      "date": "2024-01",
+      "role": "Ürün tasarımı, akor adlandırma mantığı",
+      "blurb": "Native Instruments"
+     },
+     {
+      "label": "Claire",
+      "href": "/isler/yazilim/claire/",
+      "trail": "İşler · Yazılım",
+      "date": "2024-01",
+      "role": "Ürün tasarımı",
+      "blurb": "Native Instruments"
+     },
+     {
+      "label": "Alicia's Electric Keys",
+      "href": "/isler/yazilim/alicia-s-electric-keys/",
+      "trail": "İşler · Yazılım",
+      "date": "2024-01",
+      "role": "Ürün tasarımı",
+      "blurb": "Native Instruments",
+      "bag": [
+       [
+        "Native Instruments",
+        "https://www.native-instruments.com/en/products/komplete/keys/alicias-electric-keys/"
+       ]
+      ]
      }
     ],
     "date": "2025-01"
@@ -4050,7 +4315,13 @@ const STRUCTURE = [
         "trail": "İşler · CV · Akademi ve konuşmalar",
         "blurb": "Müzik performansı ve kompozisyonunda matematik ve hesaplama",
         "role": "Poster — Singapur, 13 Şubat 2015",
-        "date": "2015-02"
+        "date": "2015-02",
+        "bag": [
+         [
+          "program",
+          "https://imsarchives.nus.edu.sg/oldwww/Programs/015wmusic/index.html"
+         ]
+        ]
        },
        {
         "label": "University of Oxford",
@@ -4108,7 +4379,13 @@ const STRUCTURE = [
         "href": "/isler/cv/akademi-ve-konusmalar/ipem-university-of-ghent/",
         "trail": "İşler · CV · Akademi ve konuşmalar",
         "blurb": "Belçika",
-        "role": "Konuşma"
+        "role": "Konuşma",
+        "bag": [
+         [
+          "IPEM",
+          "https://www.ugent.be/ipem/en"
+         ]
+        ]
        },
        {
         "label": "The Rattle",
@@ -4116,6 +4393,91 @@ const STRUCTURE = [
         "trail": "İşler · CV · Akademi ve konuşmalar",
         "blurb": "Birleşik Krallık",
         "role": "Konuşma"
+       },
+       {
+        "label": "Music Tech at a Close Range",
+        "href": "/isler/cv/akademi-ve-konusmalar/music-tech-at-a-close-range/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2024-04",
+        "role": "Cevdet Erek moderatörlüğünde söyleşi",
+        "blurb": "İTÜ MİAM, İstanbul · 2 Nisan 2024",
+        "bag": [
+         [
+          "İTÜ MİAM",
+          "https://miam.itu.edu.tr/en/home/2024/04/02/default-calendar/tolga-zafer---music-tech-at-a-close-range"
+         ]
+        ]
+       },
+       {
+        "label": "Açık Ders",
+        "href": "/isler/cv/akademi-ve-konusmalar/acik-ders/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2020-03",
+        "role": "Beşliler Çemberi ve Tritonet ile canlı armoni dersi",
+        "blurb": "17 Mart 2020",
+        "bag": [
+         [
+          "YouTube",
+          "https://youtu.be/W5_Yg0Tgco0"
+         ]
+        ]
+       },
+       {
+        "label": "YouTube canlı armoni dersi",
+        "href": "/isler/cv/akademi-ve-konusmalar/youtube-canli-armoni-dersi/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2020-01",
+        "role": "Müzik eğitimi yayını",
+        "bag": [
+         [
+          "YouTube",
+          "https://youtu.be/XIImhhq_mFI"
+         ]
+        ]
+       },
+       {
+        "label": "Anadolu Üniversitesi",
+        "href": "/isler/cv/akademi-ve-konusmalar/anadolu-universitesi/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2015-04",
+        "role": "Tritonet semineri",
+        "blurb": "Eskişehir"
+       },
+       {
+        "label": "Sakarya Üniversitesi",
+        "href": "/isler/cv/akademi-ve-konusmalar/sakarya-universitesi/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2015-03",
+        "role": "Tritonet semineri"
+       },
+       {
+        "label": "Mimar Sinan Üniversitesi",
+        "href": "/isler/cv/akademi-ve-konusmalar/mimar-sinan-universitesi/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2014-11",
+        "role": "Tritonet semineri",
+        "blurb": "İstanbul"
+       },
+       {
+        "label": "İstanbul Teknik Üniversitesi",
+        "href": "/isler/cv/akademi-ve-konusmalar/istanbul-teknik-universitesi/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2013-10",
+        "role": "Tritonet semineri"
+       },
+       {
+        "label": "Yıldız Teknik Üniversitesi",
+        "href": "/isler/cv/akademi-ve-konusmalar/yildiz-teknik-universitesi/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2013-05",
+        "role": "Tritonet semineri"
+       },
+       {
+        "label": "MİAM, İTÜ",
+        "href": "/isler/cv/akademi-ve-konusmalar/miam-itu/",
+        "trail": "İşler · CV · Akademi ve konuşmalar",
+        "date": "2013-04",
+        "role": "Tritonet semineri"
        }
       ],
       "date": "2020-01"
@@ -4133,7 +4495,17 @@ const STRUCTURE = [
         "trail": "İşler · CV · Ödüller",
         "date": "2022-01",
         "blurb": "Georgia Tech, ABD",
-        "role": "Yarı finalist — Tritonet · 16 ülkeden 26 enstrüman arasında"
+        "role": "Yarı finalist — Tritonet · 16 ülkeden 26 enstrüman arasında",
+        "bag": [
+         [
+          "yarışma",
+          "https://emi.wesleyhicks.art/guthman_competition"
+         ],
+         [
+          "16 ülkeden 26 çalgı",
+          "https://guthman.gatech.edu/2022-finalists"
+         ]
+        ]
        },
        {
         "label": "Visby Composer Centre",
@@ -4141,7 +4513,13 @@ const STRUCTURE = [
         "trail": "İşler · CV · Ödüller",
         "date": "2017-01",
         "blurb": "İsveç · 2010, 2017",
-        "role": "Konuk besteci"
+        "role": "Konuk besteci",
+        "bag": [
+         [
+          "Visby International Centre for Composers",
+          "https://vicc.se/"
+         ]
+        ]
        },
        {
         "label": "Bilim, Sanayi ve Teknoloji Bakanlığı — başarı belgesi",
@@ -4195,7 +4573,28 @@ const STRUCTURE = [
         "trail": "İşler · CV · Ödüller",
         "date": "2004-01",
         "blurb": "Türkiye",
-        "role": "Ödül"
+        "role": "Ödül",
+        "bag": [
+         [
+          "İKSEV",
+          "https://iksev.org/beste-yarismasi/"
+         ]
+        ]
+       },
+       {
+        "label": "Üçüncü Akdeniz Müzik Merkezi Yarışması",
+        "href": "/isler/cv/oduller/ucuncu-akdeniz-muzik-merkezi-yarismasi/",
+        "trail": "İşler · CV · Ödüller",
+        "date": "2006-01",
+        "role": "Shades of Mediterranean",
+        "blurb": "Lamia, Yunanistan"
+       },
+       {
+        "label": "Schmitt Composition Award",
+        "href": "/isler/cv/oduller/schmitt-composition-award/",
+        "trail": "İşler · CV · Ödüller",
+        "date": "2003-01",
+        "blurb": "University of Memphis"
        }
       ],
       "date": "2004-01"
@@ -4226,6 +4625,81 @@ const STRUCTURE = [
      }
     ],
     "date": "1999-01"
+   },
+   {
+    "label": "Görevler",
+    "href": "/isler/gorevler/",
+    "trail": "İşler",
+    "children": [
+     {
+      "label": "Native Instruments",
+      "href": "/isler/gorevler/native-instruments/",
+      "trail": "İşler · Görevler",
+      "date": "2022-09",
+      "role": "Kıdemli Ürün Tasarımcısı",
+      "blurb": "Londra / Berlin · 2022 – bugün",
+      "bag": [
+       [
+        "native-instruments.com",
+        "https://www.native-instruments.com/"
+       ]
+      ]
+     },
+     {
+      "label": "Point Blank Music School",
+      "href": "/isler/gorevler/point-blank-music-school/",
+      "trail": "İşler · Görevler",
+      "date": "2022-10",
+      "role": "Öğretim görevlisi — 21. yüzyıl kompozisyon teknikleri",
+      "blurb": "Londra · Ekim 2022 – Ocak 2023",
+      "bag": [
+       [
+        "Point Blank",
+        "https://www.pointblankmusicschool.com/locations/london/"
+       ]
+      ]
+     },
+     {
+      "label": "Deplike",
+      "href": "/isler/gorevler/deplike/",
+      "trail": "İşler · Görevler",
+      "date": "2021-02",
+      "role": "Akademik danışman — yapay zekâ destekli gitar eğitimi",
+      "blurb": "Şubat – Temmuz 2021"
+     },
+     {
+      "label": "Otokar",
+      "href": "/isler/gorevler/otokar/",
+      "trail": "İşler · Görevler",
+      "date": "2020-01",
+      "role": "Akademik danışman — rezonatörlü gürültü önleyici kulaklık",
+      "blurb": "2020 – 2021"
+     },
+     {
+      "label": "Tam Beşli Ltd. Şti.",
+      "href": "/isler/gorevler/tam-besli-ltd-sti/",
+      "trail": "İşler · Görevler",
+      "date": "2013-01",
+      "role": "Kurucu ve CEO — Tritonet donanımı Ar-Ge",
+      "blurb": "İstanbul · 2013 – 2015"
+     },
+     {
+      "label": "Star TV Haber",
+      "href": "/isler/gorevler/star-tv-haber/",
+      "trail": "İşler · Görevler",
+      "date": "1994-01",
+      "role": "Stajyer — habercilik araştırması ve yazım",
+      "blurb": "İstanbul · 1994 – 1995"
+     },
+     {
+      "label": "Show TV Haber",
+      "href": "/isler/gorevler/show-tv-haber/",
+      "trail": "İşler · Görevler",
+      "date": "1993-01",
+      "role": "Kamera asistanı",
+      "blurb": "İstanbul · 1993 – 1994"
+     }
+    ]
    },
    {
     "label": "Müzik",
@@ -4330,7 +4804,17 @@ const STRUCTURE = [
          "type": "text",
          "body": "Alto saksofon, keman ve piyano için · Lutz Koppetsch siparişi · ilk icra Trio Comet, 2009"
         },
-        "role": "Alto saksofon, keman ve piyano için"
+        "role": "Alto saksofon, keman ve piyano için",
+        "bag": [
+         [
+          "Spotify",
+          "https://open.spotify.com/track/6IKBVdDtCukV4lKwcfhZQt"
+         ],
+         [
+          "ISCM World New Music Days",
+          "https://iscm.org/wnmd/2010-sydney/"
+         ]
+        ]
        },
        {
         "label": "Gölge — Selma ve Gölgesi Suite",
@@ -4392,7 +4876,13 @@ const STRUCTURE = [
         "media": {
          "type": "youtube",
          "id": "u4T5qBBMJSY"
-        }
+        },
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=u4T5qBBMJSY"
+         ]
+        ]
        },
        {
         "label": "Shesh-tar",
@@ -4427,7 +4917,13 @@ const STRUCTURE = [
          "type": "youtube",
          "id": "vnSRZpfu04I"
         },
-        "role": "Aslen orkestra için · aktarım Şefik Kahramankaptan'ın isteğiyle · 2015'te Edition Avantus'tan basılı nota"
+        "role": "Aslen orkestra için · aktarım Şefik Kahramankaptan'ın isteğiyle · 2015'te Edition Avantus'tan basılı nota",
+        "bag": [
+         [
+          "nota — Edition Avantus",
+          "https://www.edition-avantus.de/akkordeon-kammermusik/karadeniz.html"
+         ]
+        ]
        },
        {
         "label": "Shades of Mediterranean",
@@ -4451,6 +4947,97 @@ const STRUCTURE = [
         "date": "2001-01",
         "blurb": "UofM Graduate Quartet · Simona Barbu",
         "role": "Yaylı dörtlü · UofM Graduate Quartet, 2006 · Simona Barbu ve dörtlüsü, 2007"
+       },
+       {
+        "label": "Cyclic Etudes",
+        "href": "/isler/muzik/besteler/cyclic-etudes/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2016-01",
+        "role": "Oda orkestrası için yarı-üretken beste"
+       },
+       {
+        "label": "Untitled Artist",
+        "href": "/isler/muzik/besteler/untitled-artist/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2012-01",
+        "role": "Yaylı orkestra ve duvar resmi"
+       },
+       {
+        "label": "Dialogues",
+        "href": "/isler/muzik/besteler/dialogues/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2006-01",
+        "role": "Senfoni orkestrası ve geleneksel çalgılar"
+       },
+       {
+        "label": "Ask Your Doctor Before Using “IT”",
+        "href": "/isler/muzik/besteler/ask-your-doctor-before-using-it/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2006-01",
+        "role": "Vurmalı çalgılar ve bant"
+       },
+       {
+        "label": "White Dreams",
+        "href": "/isler/muzik/besteler/white-dreams/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2003-01",
+        "role": "Yaylı oktet"
+       },
+       {
+        "label": "Mom! A Spider Came Out of My Ear!",
+        "href": "/isler/muzik/besteler/mom-a-spider-came-out-of-my-ear/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2003-01",
+        "role": "Karma topluluk"
+       },
+       {
+        "label": "Bitter Delight",
+        "href": "/isler/muzik/besteler/bitter-delight/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2003-01",
+        "role": "Karma topluluk"
+       },
+       {
+        "label": "Playin’ Chant",
+        "href": "/isler/muzik/besteler/playin-chant/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2002-01",
+        "role": "Karma topluluk"
+       },
+       {
+        "label": "Eine Kleine Nicht Musik",
+        "href": "/isler/muzik/besteler/eine-kleine-nicht-musik/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2002-01",
+        "role": "Senfoni orkestrası"
+       },
+       {
+        "label": "A Ship in the Stormy Sea",
+        "href": "/isler/muzik/besteler/a-ship-in-the-stormy-sea/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2000-01",
+        "role": "İki piyano ve iki synthesizer"
+       },
+       {
+        "label": "Motorway",
+        "href": "/isler/muzik/besteler/motorway/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "2000-01",
+        "role": "Karma topluluk"
+       },
+       {
+        "label": "Minik",
+        "href": "/isler/muzik/besteler/minik/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "1999-01",
+        "role": "Piyano"
+       },
+       {
+        "label": "Düspük",
+        "href": "/isler/muzik/besteler/duspuk/",
+        "trail": "İşler · Müzik · Besteler",
+        "date": "1995-01",
+        "role": "Senfoni orkestrası ve piyano konçertino"
        }
       ],
       "date": "2004-01"
@@ -4516,7 +5103,13 @@ const STRUCTURE = [
         "media": {
          "type": "youtube",
          "id": "eQT23N389_Q"
-        }
+        },
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=eQT23N389_Q"
+         ]
+        ]
        },
        {
         "label": "Davet",
@@ -4606,7 +5199,17 @@ const STRUCTURE = [
         "trail": "İşler · Müzik · Siparişler",
         "date": "2021-01",
         "blurb": "Kardeş Türküler + Tolga Zafer",
-        "role": "Komische Oper Berlin siparişi · sanat yönetmenliği, beste, düzenleme"
+        "role": "Komische Oper Berlin siparişi · sanat yönetmenliği, beste, düzenleme",
+        "bag": [
+         [
+          "Komische Oper Berlin",
+          "https://www.komische-oper-berlin.de/spielplan/a-z/ueuencue-mevki/"
+         ],
+         [
+          "concerti",
+          "https://www.concerti.de/konzert/komische-oper-berlin-ucuncu-mevki/"
+         ]
+        ]
        },
        {
         "label": "Artık bir davan var",
@@ -4620,7 +5223,13 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/hera-and-leandros/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2014-01",
-        "blurb": "Tolgahan Çoğulu, Türkiye"
+        "blurb": "Tolgahan Çoğulu, Türkiye",
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=u4T5qBBMJSY"
+         ]
+        ]
        },
        {
         "label": "Chaopolis",
@@ -4789,7 +5398,13 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/pantoral/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2010-01",
-        "blurb": "Visisonor, Hollanda"
+        "blurb": "Visisonor, Hollanda",
+        "bag": [
+         [
+          "Black Pencil",
+          "https://www.blackpencil.org/en/black-pencil"
+         ]
+        ]
        },
        {
         "label": "Yek",
@@ -4803,14 +5418,30 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/n-andel-cello-koncertosu/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2009-01",
-        "blurb": "Cihat Aşkın, Türkiye"
+        "blurb": "Cihat Aşkın, Türkiye",
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=eQT23N389_Q"
+         ]
+        ]
        },
        {
         "label": "Affordable Escape",
         "href": "/isler/muzik/siparisler/affordable-escape/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2008-01",
-        "blurb": "Lutz Koppetsch, Almanya"
+        "blurb": "Lutz Koppetsch, Almanya",
+        "bag": [
+         [
+          "Spotify",
+          "https://open.spotify.com/track/6IKBVdDtCukV4lKwcfhZQt"
+         ],
+         [
+          "ISCM World New Music Days",
+          "https://iscm.org/wnmd/2010-sydney/"
+         ]
+        ]
        },
        {
         "label": "Gölge — film müziği",
@@ -4824,7 +5455,13 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/karadeniz/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2008-01",
-        "blurb": "Duo Mares, Hollanda"
+        "blurb": "Duo Mares, Hollanda",
+        "bag": [
+         [
+          "nota — Edition Avantus",
+          "https://www.edition-avantus.de/akkordeon-kammermusik/karadeniz.html"
+         ]
+        ]
        },
        {
         "label": "Googlechestra",
@@ -4908,7 +5545,17 @@ const STRUCTURE = [
         "trail": "İşler · Müzik · Sahne müzikleri",
         "date": "2011-01",
         "blurb": "Antalya Devlet Opera ve Balesi siparişi",
-        "role": "Bale · eserin tamamı Güçler bandındaki Likya Dede sütununda"
+        "role": "Bale · eserin tamamı Güçler bandındaki Likya Dede sütununda",
+        "bag": [
+         [
+          "Apple Music",
+          "https://music.apple.com/us/album/likya-dede/1846686692"
+         ],
+         [
+          "YouTube albüm",
+          "https://www.youtube.com/playlist?list=OLAK5uy_lCM8eWcSE_WiKT0tGZtjE4oZfzJuKKz90"
+         ]
+        ]
        }
       ],
       "date": "2011-01"
@@ -4990,7 +5637,13 @@ const STRUCTURE = [
         "media": {
          "type": "youtube",
          "id": "3WEmAHe09qc"
-        }
+        },
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=3WEmAHe09qc"
+         ]
+        ]
        },
        {
         "label": "Anatolian Fusion Ensemble",
@@ -5032,7 +5685,13 @@ const STRUCTURE = [
         "href": "/isler/muzik/dogaclamalar/ayri-takilanlar/",
         "trail": "İşler · Müzik · Doğaçlamalar",
         "blurb": "davul Hakan Deniz · gitar Erdem Özcan · klavye ben",
-        "role": "Kardeşim ve eniştemle bir doğaçlama"
+        "role": "Kardeşim ve eniştemle bir doğaçlama",
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=prVDux72Tww"
+         ]
+        ]
        }
       ],
       "date": "2009-01"
@@ -5482,6 +6141,282 @@ const STRUCTURE = [
      }
     ],
     "date": "2020-01"
+   },
+   {
+    "label": "Festivaller",
+    "href": "/isler/festivaller/",
+    "trail": "İşler",
+    "children": [
+     {
+      "label": "Uluslararası Gümüşlük Müzik Festivali",
+      "href": "/isler/festivaller/uluslararasi-gumusluk-muzik-festivali/",
+      "trail": "İşler · Festivaller",
+      "date": "2023-08",
+      "role": "Muğla · 25 Ağustos 2023 · 2+1 Sounds From the Bridge",
+      "bag": [
+       [
+        "Biletix",
+        "https://www.biletix.com/etkinlik/2NV18/TURKIYE/tr"
+       ]
+      ]
+     },
+     {
+      "label": "2+1 Sounds From the Bridge — Londra",
+      "href": "/isler/festivaller/2-1-sounds-from-the-bridge-londra/",
+      "trail": "İşler · Festivaller",
+      "date": "2023-01",
+      "role": "db Music, Stoke Newington · Turquazz Culture",
+      "bag": [
+       [
+        "Eurovizyon",
+        "https://www.eurovizyon.co.uk/uc-muzisyenden-londrada-muzik-koprusu"
+       ]
+      ]
+     },
+     {
+      "label": "Momento Temporis",
+      "href": "/isler/festivaller/momento-temporis/",
+      "trail": "İşler · Festivaller",
+      "date": "2023-01",
+      "role": "Goethe-Institut İstanbul programı"
+     },
+     {
+      "label": "EFG London Jazz Festival",
+      "href": "/isler/festivaller/efg-london-jazz-festival/",
+      "trail": "İşler · Festivaller",
+      "date": "2022-11",
+      "role": "Londra · 19 Kasım 2022 · Anatolian Fusion Ensemble",
+      "bag": [
+       [
+        "Turquazz",
+        "https://www.turquazz.com/event/anatolian-fusion-ensemble/"
+       ]
+      ]
+     },
+     {
+      "label": "Çağdaş Dans Festivali",
+      "href": "/isler/festivaller/cagdas-dans-festivali/",
+      "trail": "İşler · Festivaller",
+      "date": "2019-01",
+      "role": "İstanbul"
+     },
+     {
+      "label": "Turquazz",
+      "href": "/isler/festivaller/turquazz/",
+      "trail": "İşler · Festivaller",
+      "date": "2019-01",
+      "role": "Londra"
+     },
+     {
+      "label": "Kaş Caz Festivali",
+      "href": "/isler/festivaller/kas-caz-festivali/",
+      "trail": "İşler · Festivaller",
+      "date": "2019-01",
+      "role": "Antalya"
+     },
+     {
+      "label": "Red Bull Music Festival",
+      "href": "/isler/festivaller/red-bull-music-festival/",
+      "trail": "İşler · Festivaller",
+      "date": "2019-01",
+      "role": "İstanbul"
+     },
+     {
+      "label": "Garanti BBVA Konser Serisi",
+      "href": "/isler/festivaller/garanti-bbva-konser-serisi/",
+      "trail": "İşler · Festivaller",
+      "date": "2019-01",
+      "role": "İstanbul"
+     },
+     {
+      "label": "Sónar İstanbul",
+      "href": "/isler/festivaller/sonar-istanbul/",
+      "trail": "İşler · Festivaller",
+      "date": "2018-01",
+      "role": "İstanbul"
+     },
+     {
+      "label": "XJAZZ Festival",
+      "href": "/isler/festivaller/xjazz-festival/",
+      "trail": "İşler · Festivaller",
+      "date": "2018-01",
+      "role": "İstanbul"
+     },
+     {
+      "label": "34. Asian Composers League",
+      "href": "/isler/festivaller/34-asian-composers-league/",
+      "trail": "İşler · Festivaller",
+      "date": "2016-01",
+      "role": "Hanoi"
+     },
+     {
+      "label": "Alle Farben Türkischer Musik",
+      "href": "/isler/festivaller/alle-farben-turkischer-musik/",
+      "trail": "İşler · Festivaller",
+      "date": "2016-01",
+      "role": "Berlin"
+     },
+     {
+      "label": "Uluslararası Klarnet Festivali",
+      "href": "/isler/festivaller/uluslararasi-klarnet-festivali/",
+      "trail": "İşler · Festivaller",
+      "date": "2015-01",
+      "role": "İstanbul"
+     },
+     {
+      "label": "Nišville Jazz Festival",
+      "href": "/isler/festivaller/nisville-jazz-festival/",
+      "trail": "İşler · Festivaller",
+      "date": "2013-01",
+      "role": "Sırbistan"
+     },
+     {
+      "label": "Composers Cauldron",
+      "href": "/isler/festivaller/composers-cauldron/",
+      "trail": "İşler · Festivaller",
+      "date": "2013-01",
+      "role": "Kapadokya"
+     },
+     {
+      "label": "International Saxophone Symposium",
+      "href": "/isler/festivaller/international-saxophone-symposium/",
+      "trail": "İşler · Festivaller",
+      "date": "2011-01",
+      "role": "Washington"
+     },
+     {
+      "label": "15. World Saxophone Congress",
+      "href": "/isler/festivaller/15-world-saxophone-congress/",
+      "trail": "İşler · Festivaller",
+      "date": "2010-01",
+      "role": "Bangkok"
+     },
+     {
+      "label": "ISCM World New Music Days",
+      "href": "/isler/festivaller/iscm-world-new-music-days/",
+      "trail": "İşler · Festivaller",
+      "date": "2010-05",
+      "role": "Sydney · 2 Mayıs 2010 · Affordable Escape",
+      "bag": [
+       [
+        "ISCM",
+        "https://iscm.org/wnmd/2010-sydney/"
+       ]
+      ]
+     },
+     {
+      "label": "Stromberg–Duong Festival",
+      "href": "/isler/festivaller/stromberg-duong-festival/",
+      "trail": "İşler · Festivaller",
+      "date": "2007-01",
+      "role": "Hanoi"
+     },
+     {
+      "label": "Akdeniz Çağdaş Müzik Günleri",
+      "href": "/isler/festivaller/akdeniz-cagdas-muzik-gunleri/",
+      "trail": "İşler · Festivaller",
+      "date": "2006-01",
+      "role": "İstanbul"
+     },
+     {
+      "label": "The Five Seasons",
+      "href": "/isler/festivaller/the-five-seasons/",
+      "trail": "İşler · Festivaller",
+      "date": "2006-01",
+      "role": "Cedar Rapids"
+     },
+     {
+      "label": "Society of Composers Konferansı",
+      "href": "/isler/festivaller/society-of-composers-konferansi/",
+      "trail": "İşler · Festivaller",
+      "date": "2005-01",
+      "role": "San Antonio"
+     },
+     {
+      "label": "Turkfest",
+      "href": "/isler/festivaller/turkfest/",
+      "trail": "İşler · Festivaller",
+      "date": "2004-01",
+      "role": "Londra"
+     }
+    ]
+   },
+   {
+    "label": "Film, tiyatro ve yerleştirme",
+    "href": "/isler/film-tiyatro-ve-yerlestirme/",
+    "trail": "İşler",
+    "children": [
+     {
+      "label": "Selma ve Gölgesi",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/selma-ve-golgesi/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2007-01",
+      "role": "Film müziği · Mehmet Güreli"
+     },
+     {
+      "label": "Sacred Spaces",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/sacred-spaces/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2004-01",
+      "role": "WKNO televizyon dizisi · Memphis"
+     },
+     {
+      "label": "Çıldırıyorum",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/cildiriyorum/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2002-01",
+      "role": "Kısa film"
+     },
+     {
+      "label": "What Is Art?",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/what-is-art/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2008-01",
+      "role": "Çoklu ortam yerleştirmesi"
+     },
+     {
+      "label": "Get into the Groove",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/get-into-the-groove/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2005-01",
+      "role": "Çağdaş dans ve bant"
+     },
+     {
+      "label": "Rapers",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/rapers/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2002-01",
+      "role": "Tiyatro müziği"
+     },
+     {
+      "label": "Turquoise",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/turquoise/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2006-01",
+      "role": "Nederlands Blazers Ensemble için ses tasarımı"
+     },
+     {
+      "label": "Industrial Sufi",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/industrial-sufi/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2005-01",
+      "role": "E-bow ile piyano"
+     },
+     {
+      "label": "Piece of Mind",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/piece-of-mind/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2004-01",
+      "role": "Bant"
+     },
+     {
+      "label": "Fractal Counterpoint",
+      "href": "/isler/film-tiyatro-ve-yerlestirme/fractal-counterpoint/",
+      "trail": "İşler · Film, tiyatro ve yerleştirme",
+      "date": "2010-01",
+      "role": "Fraktal kontrpuan"
+     }
+    ]
    }
   ],
   "date": "1999-01"
@@ -5512,7 +6447,17 @@ const STRUCTURE = [
         "href": "/kisisel/albumler/solo/likya-dede/",
         "trail": "Kim · Albümler · Solo",
         "date": "2024-01",
-        "role": "Beste"
+        "role": "Beste",
+        "bag": [
+         [
+          "Apple Music",
+          "https://music.apple.com/us/album/likya-dede/1846686692"
+         ],
+         [
+          "YouTube albüm",
+          "https://www.youtube.com/playlist?list=OLAK5uy_lCM8eWcSE_WiKT0tGZtjE4oZfzJuKKz90"
+         ]
+        ]
        },
        {
         "label": "Acoustic Works",
@@ -5589,7 +6534,17 @@ const STRUCTURE = [
         "trail": "Kim · Albümler · Katkı",
         "date": "2024-01",
         "role": "Sanat yönetmenliği, beste, düzenleme · albüm olarak yayımlanmadı",
-        "blurb": "Kardeş Türküler + Tolga Zafer · Komische Oper Berlin siparişi. Albüm beklemede."
+        "blurb": "Kardeş Türküler + Tolga Zafer · Komische Oper Berlin siparişi. Albüm beklemede.",
+        "bag": [
+         [
+          "Komische Oper Berlin",
+          "https://www.komische-oper-berlin.de/spielplan/a-z/ueuencue-mevki/"
+         ],
+         [
+          "concerti",
+          "https://www.concerti.de/konzert/komische-oper-berlin-ucuncu-mevki/"
+         ]
+        ]
        },
        {
         "label": "Mesopotamia Suite",
@@ -5625,7 +6580,13 @@ const STRUCTURE = [
         "media": {
          "type": "youtube",
          "id": "8K4HdZglbZw"
-        }
+        },
+        "bag": [
+         [
+          "nota — Edition Avantus",
+          "https://www.edition-avantus.de/akkordeon-kammermusik/karadeniz.html"
+         ]
+        ]
        },
        {
         "label": "50 jaar Nieuwjaarsconcert",
@@ -5791,7 +6752,13 @@ const STRUCTURE = [
       "media": {
        "type": "text",
        "body": "Beşliler çemberine dayanan armonik gezinme için kuramsal ve pratik bir çerçeve."
-      }
+      },
+      "bag": [
+       [
+        "tritonetcalculator.com",
+        "https://www.tritonetcalculator.com/"
+       ]
+      ]
      },
      {
       "label": "Karadeniz — basılı nota",
@@ -5811,7 +6778,13 @@ const STRUCTURE = [
       "trail": "Kim · Kitaplar",
       "date": "2017-01",
       "blurb": "Pan Müzik Yayınları, Türkiye",
-      "role": "Türkçe baskı."
+      "role": "Türkçe baskı.",
+      "bag": [
+       [
+        "tritonetcalculator.com",
+        "https://www.tritonetcalculator.com/"
+       ]
+      ]
      }
     ],
     "date": "2017-01"
@@ -5848,6 +6821,52 @@ const STRUCTURE = [
      }
     ],
     "date": "2016-01"
+   },
+   {
+    "label": "Gönüllü işler",
+    "href": "/kisisel/gonullu-isler/",
+    "trail": "Kim",
+    "children": [
+     {
+      "label": "İstanbul Design Summit",
+      "href": "/kim/gonullu-isler/istanbul-design-summit/",
+      "trail": "Kim · Gönüllü işler",
+      "date": "2019-03",
+      "role": "Açılış konuşmacısı"
+     },
+     {
+      "label": "Tales of Sound",
+      "href": "/kim/gonullu-isler/tales-of-sound/",
+      "trail": "Kim · Gönüllü işler",
+      "date": "2018-10",
+      "role": "Hikâye anlatıcısı",
+      "blurb": "Mardin"
+     },
+     {
+      "label": "Yaşam Okulu",
+      "href": "/kim/gonullu-isler/yasam-okulu/",
+      "trail": "Kim · Gönüllü işler",
+      "date": "2014-01",
+      "role": "Armoni öğretmeni",
+      "blurb": "Çanakkale"
+     },
+     {
+      "label": "Composers Cauldron — çocuk atölyeleri",
+      "href": "/kim/gonullu-isler/composers-cauldron-cocuk-atolyeleri/",
+      "trail": "Kim · Gönüllü işler",
+      "date": "2013-01",
+      "role": "Çocuklarla müzik atölyeleri",
+      "blurb": "Kapadokya"
+     },
+     {
+      "label": "Pera Uluslararası Piyano Festivali",
+      "href": "/kim/gonullu-isler/pera-uluslararasi-piyano-festivali/",
+      "trail": "Kim · Gönüllü işler",
+      "date": "2009-01",
+      "role": "Jüri üyesi",
+      "blurb": "İstanbul · 2009 – 2011"
+     }
+    ]
    }
   ],
   "date": "2002-01"
@@ -6083,7 +7102,13 @@ const STRUCTURE = [
         "href": "/evren/tritonet/sunumlar/surrey-university/",
         "trail": "Güçler · Tritonet · Sunumlar",
         "date": "2014-12",
-        "role": "10 Aralık 2014"
+        "role": "10 Aralık 2014",
+        "bag": [
+         [
+          "University of Surrey",
+          "https://www.surrey.ac.uk/"
+         ]
+        ]
        },
        {
         "label": "Walter Fabeck — IceBreaker Studios",
@@ -6797,6 +7822,20 @@ function vwMetniYaz(n){
     dinle.textContent = DIL.T('Spotify’da dinle');
     dinle.hidden = false;
   } else dinle.hidden = true;
+  /* Dış kaynaklar: [etiket, adres] çiftleri. Etiket sözlükten geçiyor —
+     "künye" ya da "program" çeviriliyor, kurum adları kendileri kalıyor
+     (sözlükte karşılığı yoksa T() dizeyi olduğu gibi döndürüyor). */
+  const bagKap = document.getElementById('vwBaglar');
+  bagKap.innerHTML = '';
+  const baglar = (n.meta && n.meta.bag) || [];
+  baglar.forEach(([etiket, adres]) => {
+    const a = document.createElement('a');
+    a.className = 'vw-link';
+    a.href = adres; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = DIL.T(etiket);
+    bagKap.appendChild(a);
+  });
+  bagKap.hidden = !baglar.length;
 }
 
 function openViewer(n){
