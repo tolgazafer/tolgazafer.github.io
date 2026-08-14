@@ -79,6 +79,12 @@
   .node:hover::before,.node:focus-visible::before{
     transform:scale(2.2);
     box-shadow:0 0 0 8px color-mix(in srgb,var(--dot,var(--ink)) 15%,transparent)}
+  /* Dizinde bir satır seçiliyken ağacın öbür noktaları da geri çekiliyor;
+     dallardaki sönme tek başına yetmiyordu, noktalar hâlâ eşit parlaktı
+     ve göz nereye bakacağını bulamıyordu. Seçilen nokta `.secili`. */
+  .node{transition:opacity .25s ease}
+  html:has(.menu.on) .agac-secim .node{opacity:.3}
+  html:has(.menu.on) .agac-secim .node.secili{opacity:1}
   .node:focus-visible{outline:none}
   .node.deep{width:24px;height:24px}
   .node[data-zone="isler"]{--dot:var(--isler)}
@@ -205,6 +211,15 @@
     padding:0 .15em .1em;margin-left:.4em;border-radius:2px;
     transition:color .18s}
   .menu-kapat:hover,.menu-kapat:focus-visible{color:var(--ink);outline:none}
+  /* MASAÜSTÜNDE KAPATMA TUŞU YOK.
+     Orada dizin imleç köşeden ayrılınca zaten kapanıyor; düğme hem
+     gereksizdi hem de ilk satırın üstünde, adın hizasının dışında
+     duruyordu. Dokunmatikte kalıyor: parmakta hover yok, çıkışın tek
+     yolu o. (`hover:hover` — kalem/dokunmatik karışık cihazlarda da
+     doğru tarafta kalıyor.) */
+  @media (hover:hover) and (pointer:fine){
+    .menu-kapat{display:none}
+  }
   /* Dokunmatikte paneli açacak bir tutamak: hover olmadığı için şart. */
   /* Dokunmatikte paneli açan tek şey bu düğme. SOL ÜST KÖŞEDE ve
      çerçevesiz: ortada duran "INDEX" kutusu ekranın göbeğini işgal
@@ -3927,7 +3942,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v73 · 2026-08-15';
+const SURUM = 'v74 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -4222,7 +4237,7 @@ const STRUCTURE = [
       "trail": "İşler · CV",
       "media": {
        "type": "text",
-       "body": "Londra'da yaşayan besteci, müzik teknolojisi tasarımcısı ve etkileşimli armoni sistemleri mimarıyım. 2022'den beri Native Instruments'ta Kıdemli Ürün Tasarımcısı olarak Kontakt için müzik üretim araçları tasarlıyorum. Öncesinde on iki yıl İstanbul Bilgi Üniversitesi'nde doçent olarak kompozisyon, armoni, orkestrasyon ve müzik teknolojisi dersleri verdim; Akdeniz Üniversitesi'nde öğretim görevlisi, University of Memphis'te araştırma görevlisi olarak çalıştım.\n2013'ten beri Tritonet'i geliştiriyorum: beşliler çemberine dayanan, gerçek zamanlı bir armonik gezinme sistemi. Kuramsal temeli 2018'de Cambridge Scholars Publishing'den kitap olarak çıktı; 2022'de Guthman Enstrüman Yarışması'nda yarı finale kaldı.\nKompozisyon doktoramı University of Memphis'te (2008, summa cum laude), yüksek lisansımı İTÜ MIAM'da (2002, summa cum laude) tamamladım.\nTam CV'yi PDF olarak buraya ekleyebilirsin — dosyayı `assets/` altına koyup bu metne bağlantı ver."
+       "body": "Londra'da yaşayan besteci, müzik teknolojisi tasarımcısı ve etkileşimli armoni sistemleri mimarıyım. 2022'den beri Native Instruments'ta Kıdemli Ürün Tasarımcısı olarak Kontakt için müzik üretim araçları tasarlıyorum. Öncesinde on iki yıl İstanbul Bilgi Üniversitesi'nde doçent olarak kompozisyon, armoni, orkestrasyon ve müzik teknolojisi dersleri verdim; Akdeniz Üniversitesi'nde öğretim görevlisi, University of Memphis'te araştırma görevlisi olarak çalıştım.\n2013'ten beri Tritonet'i geliştiriyorum: beşliler çemberine dayanan, gerçek zamanlı bir armonik gezinme sistemi. Kuramsal temeli 2018'de Cambridge Scholars Publishing'den kitap olarak çıktı; 2022'de Guthman Enstrüman Yarışması'nda yarı finale kaldı.\nKompozisyon doktoramı University of Memphis'te (2008, summa cum laude), yüksek lisansımı İTÜ MIAM'da (2002, summa cum laude) tamamladım."
       },
       "children": []
      },
@@ -4760,7 +4775,13 @@ const STRUCTURE = [
         "media": {
          "type": "youtube",
          "id": "trf4TSxD4nY"
-        }
+        },
+        "bag": [
+         [
+          "Spotify kaydı",
+          "https://open.spotify.com/track/3U9xHb77tI0YXPwro6wJLd"
+         ]
+        ]
        },
        {
         "label": "Adventura",
@@ -4825,7 +4846,13 @@ const STRUCTURE = [
         "media": {
          "type": "text",
          "body": "Mehmet Güreli'nin Gölge filmi için yazdığım müzik; süit olarak da kaydedildi"
-        }
+        },
+        "bag": [
+         [
+          "Spotify kaydı",
+          "https://open.spotify.com/track/2Gzw1yEzQVkqYxlgq36PDt"
+         ]
+        ]
        },
        {
         "label": "Mesopotamia Suite",
@@ -4837,7 +4864,13 @@ const STRUCTURE = [
          "type": "youtube",
          "id": "FjYkebtlj1Q"
         },
-        "role": "Solo piyano"
+        "role": "Solo piyano",
+        "bag": [
+         [
+          "Glazbeni Mostovi",
+          "https://open.spotify.com/album/4ppAUFZqSJUnZ0ecHQekaP"
+         ]
+        ]
        },
        {
         "label": "Crown Dream of a Clown",
@@ -5216,7 +5249,13 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/artik-bir-davan-var/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2019-01",
-        "blurb": "BGST Müzikal Tiyatro, Türkiye"
+        "blurb": "BGST Müzikal Tiyatro, Türkiye",
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=n4PywPFI7Ow"
+         ]
+        ]
        },
        {
         "label": "Hera and Leandros",
@@ -5236,7 +5275,13 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/chaopolis/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2013-01",
-        "blurb": "CEC ArtsLink, ABD"
+        "blurb": "CEC ArtsLink, ABD",
+        "bag": [
+         [
+          "CEC ArtsLink",
+          "https://www.cecartslink.org/"
+         ]
+        ]
        },
        {
         "label": "Thumbnails",
@@ -5370,6 +5415,16 @@ const STRUCTURE = [
            }
           ]
          }
+        ],
+        "bag": [
+         [
+          "Apple Music",
+          "https://music.apple.com/us/album/likya-dede/1846686692"
+         ],
+         [
+          "YouTube albüm",
+          "https://www.youtube.com/playlist?list=OLAK5uy_lCM8eWcSE_WiKT0tGZtjE4oZfzJuKKz90"
+         ]
         ]
        },
        {
@@ -5448,7 +5503,13 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/golge-film-muzigi/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2008-01",
-        "blurb": "Mehmet Güreli, Türkiye"
+        "blurb": "Mehmet Güreli, Türkiye",
+        "bag": [
+         [
+          "Spotify kaydı",
+          "https://open.spotify.com/track/2Gzw1yEzQVkqYxlgq36PDt"
+         ]
+        ]
        },
        {
         "label": "Karadeniz",
@@ -5476,14 +5537,30 @@ const STRUCTURE = [
         "href": "/isler/muzik/siparisler/shesh-tar/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2007-01",
-        "blurb": "Lilly Afshar, ABD"
+        "blurb": "Lilly Afshar, ABD",
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=c95pBvz84jE"
+         ]
+        ]
        },
        {
         "label": "Karpathia",
         "href": "/isler/muzik/siparisler/karpathia/",
         "trail": "İşler · Müzik · Siparişler",
         "date": "2006-01",
-        "blurb": "Allen Rippe, ABD"
+        "blurb": "Allen Rippe, ABD",
+        "bag": [
+         [
+          "YouTube",
+          "https://www.youtube.com/watch?v=trf4TSxD4nY"
+         ],
+         [
+          "Spotify kaydı",
+          "https://open.spotify.com/track/3U9xHb77tI0YXPwro6wJLd"
+         ]
+        ]
        }
       ],
       "date": "2006-01"
@@ -7452,7 +7529,37 @@ function build(){
 /* sdepth 2 = bölgenin doğrudan çocukları. Bölgeler üst üste dizildiği için
    bu kat neredeyse yatay açılır, böylece her bölge kendi bandını doldurur. */
 const FAN    = [0, 0.84, 1.06, 0.44, 0.30, 0.22];
-const SHRINK = [0, 0.90, 0.86, 0.70, 0.62, 0.58];
+const SHRINK = [0, 0.88, 0.80, 0.62, 0.54, 0.48];
+
+/* ── MERKEZE TOPLANMA ──
+   Dallar derinleştikçe dikeye doğru bükülüyor: bir dal dikeyden ne kadar
+   sapmışsa, o sapmanın `TOPLA` kadarı geri alınıyor.
+
+   NEDEN: 333 düğümle taç yana savrulan bir yelpaze oluyordu; düğümlerin
+   çoğu en üst şeride çıkıyor, gövdenin iki yanındaki orta alan boş
+   kalıyordu. Bükme, dış dalları içeri kıvırıp o boşluğu dolduruyor ve
+   silueti kubbeleştiriyor — ağacın beyin görüntüsünü veren şey bu.
+   Değer derinlikle artıyor: gövdeye yakın dallar serbest açılsın, uçlar
+   toparlansın. Sabit tek bir katsayı denendi, taban da büzülüp ağaç
+   süpürgeye dönüyordu. */
+/* İLK DENEME — dikeye toplamak: `a + (DIKEY-a)*k`. Yanlıştı ve neden
+   yanlış olduğu kayda değer: bütün dallar dikeye yaklaşınca birbirine
+   paralel hale geliyor, taç kubbeleşmiyor SÜPÜRGE oluyor.
+
+   Doğrusu tersi: dal dikeyden ne kadar sapmışsa o sapmayı biraz DAHA
+   ilerlet — yani uç, dışa ve aşağı doğru kıvrılsın. Fıskiyenin suyu
+   gibi: yukarı çıkar, tepede yatar, kenarlarda aşağı döner. Silueti
+   kubbe yapan da, gövdenin iki yanındaki orta boşluğu dolduran da bu.
+   Dikeye yakın dallar (|sapma| küçük) neredeyse hiç bükülmüyor —
+   `min(1, |sapma|/0.9)` onları koruyor, yoksa tacın ortası da dışa
+   savruluyor ve ağaç ortasından yarılıyordu. */
+const KIVRIM = [0, 0, 0.05, 0.10, 0.14, 0.17, 0.19, 0.21];
+const DIKEY = -Math.PI/2;
+function topla(a, gd){
+  const k = KIVRIM[Math.min(gd, KIVRIM.length-1)];
+  const sap = a - DIKEY;
+  return a + Math.sign(sap) * k * Math.min(1, Math.abs(sap)/0.9);
+}
 
 /* Kalabalık grupları ağacın kendi mantığıyla dağıtırız: yirmi eseri tek
    noktaya dizmek yerine, dal ikiye bölünür, her yarı yine ikiye bölünür,
@@ -7466,7 +7573,7 @@ function splitGrow(parent, items, sdepth, zoneId, rnd, gd, small, rank){
     // en eski en uzun dalı alır → node'u en dışta kalır
     const boost = 1 + (rank ? rank(it) : 0)*0.16;
     const b = add(parent.x2, parent.y2,
-                  parent.a + (rnd()-0.5)*0.34,
+                  topla(parent.a + (rnd()-0.5)*0.34, gd),
                   parent.len*(0.80+rnd()*0.10)*boost,
                   gd, zoneId, parent);
     if (it.float) mkFloater(it, b);
@@ -7479,8 +7586,8 @@ function splitGrow(parent, items, sdepth, zoneId, rnd, gd, small, rank){
   [items.slice(0, mid), items.slice(mid)].forEach((half, i) => {
     const side = i ? 1 : -1;
     const b = add(parent.x2, parent.y2,
-                  parent.a + side*(0.28 + rnd()*0.18),
-                  parent.len*(0.72+rnd()*0.08),
+                  topla(parent.a + side*(0.30 + rnd()*0.18), gd),
+                  parent.len*(0.70+rnd()*0.08),
                   gd, zoneId, parent);
     splitGrow(b, half, sdepth, zoneId, rnd, gd+1, small, rank);
   });
@@ -7510,7 +7617,7 @@ function growItems(parent, items, sdepth, zoneId, rnd, gd, small){
   items.forEach((item, j) => {
     const off = (j - (n-1)/2) * fan + (rnd()-0.5)*0.09;
     const boost = 1 + ((n-1) - rk(item)) * (0.14/Math.max(1, n-1));
-    const b = add(parent.x2, parent.y2, parent.a + off,
+    const b = add(parent.x2, parent.y2, topla(parent.a + off, gd),
                   parent.len * shrink * boost, gd, zoneId, parent);
     if (item.float) mkFloater(item, b);
     else mkNode(b, item.label, item.href, zoneId, sdepth, item, j);
@@ -7571,6 +7678,20 @@ function setTrace(n, on){
   for (const b of n.path) b.trT = on ? 1 : 0;      // köke inen yol
   for (const b of n.sub)  b.trT = on ? 0.9 : 0;    // üstündeki tüm dallar
   traceOwner = on ? n : (traceOwner === n ? null : traceOwner);
+  /* Seçilen node ve alt ağacındaki node'lar işaretleniyor: CSS geri
+     kalanını söndürürken bunlar tam parlaklıkta kalıyor. `agac-secim`
+     gövdede duruyor — seçim yokken sönme hiç devreye girmesin. */
+  if (!on){
+    nodes.forEach(x => x.el && x.el.classList.remove('secili'));
+  } else {
+    /* Seçilenin kendisi ve ALT AĞACI parlak kalıyor: bir grubun üstüne
+       gelince altındaki eserler de görünsün. Dal listesi `n.sub`; hangi
+       node'un hangi dala oturduğu `node.b` ile biliniyor. */
+    const kume = new Set(n.sub);
+    nodes.forEach(x => x.el &&
+      x.el.classList.toggle('secili', x === n || kume.has(x.b)));
+  }
+  document.body.classList.toggle('agac-secim', !!traceOwner);
 }
 let traceOwner = null;
 
@@ -10331,12 +10452,18 @@ function draw(now){
 
     ctx.beginPath(); ctx.moveTo(b.x1,b.y1); ctx.lineTo(b.x2,b.y2);
     ctx.lineWidth = w + b.tr*1.5;
+    /* DİZİN AÇIKKEN GERİ KALAN SÖNER.
+       Bir satırın üstüne gelince ilgili dal aydınlanıyordu ama ağacın
+       geri kalanı aynı parlaklıkta durduğu için seçilenin nerede olduğu
+       okunmuyordu. Seçim varken seçilmeyen dallar `KISIK` kadar
+       söndürülüyor — seçilen dal aynı kalıyor, fark kendiliğinden çıkıyor. */
+    const kisik = (menuOpen && traceOwner) ? (0.42 + b.tr*0.58) : 1;
     ctx.strokeStyle = b.tr > 0.01
-      ? rgba(zt, 0.26 + b.tr*0.66)
-      : rgba(ink, Math.max(0.16, 0.46 - u*0.28));   // taban: asla görünmez olmasın
+      ? rgba(zt, (0.26 + b.tr*0.66))
+      : rgba(ink, Math.max(0.16, 0.46 - u*0.28) * kisik);   // taban: asla görünmez olmasın
     ctx.stroke();
 
-    if (lit > 0.04 && b.tr < 0.4){
+    if (lit > 0.04 && b.tr < 0.4 && kisik > 0.9){
       ctx.beginPath(); ctx.moveTo(b.x1,b.y1); ctx.lineTo(b.x2,b.y2);
       ctx.lineWidth = w;
       ctx.strokeStyle = rgba(sunc, lit*0.5);
