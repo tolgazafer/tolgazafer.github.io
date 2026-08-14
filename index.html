@@ -517,8 +517,38 @@
   .tri-arabaslik{margin:1.8rem 0 .6rem;font-size:.72rem;font-weight:600;
     letter-spacing:.2em;text-transform:uppercase;color:var(--evren)}
   .tri-kucuk{font-size:.86rem;line-height:1.7;color:var(--ink-faint)}
+  /* GÜVENLİK AĞI — metin SESSİZCE kırpılmasın.
+     Pencere küçüldüğünde ya da bir çeviri uzadığında sayfa taşıyor ve
+     `.tri-sayfalar` overflow:hidden olduğu için taşan kısım yok oluyordu:
+     ne çubuk var ne uyarı, cümle ortasında bitiyor. Artık:
+       · dar / parça / kitap tek akış → DİKEYDE kayar,
+       · sütun çok sütunlu → taşma yeni bir sütun doğurduğu için YANDA kayar.
+     Çubuk ince ve sönük: sayfa hissi bozulmuyor ama kayıp da olmuyor. */
+  .tri-sayfa.tri-d-dar.acik,.tri-sayfa.tri-d-parca.acik,
+  .tri-sayfa.tri-d-kitap.acik,.tri-sayfa.tri-d-ozet.acik{
+    overflow-y:auto;overscroll-behavior:contain}
+  .tri-sayfa.tri-d-sutun.acik{overflow-x:auto;overscroll-behavior:contain}
+  .tri-sayfa::-webkit-scrollbar{width:3px;height:3px}
+  .tri-sayfa::-webkit-scrollbar-thumb{background:var(--ink-faint);border-radius:2px}
   .tri-em{font-style:italic;color:var(--ink)}
   .tri-siir{white-space:pre-line;color:var(--ink);margin:0 0 1.2rem}
+  .tri-liste{margin:0 0 1rem;padding-left:1.1rem;list-style:none}
+  .tri-liste li{position:relative;margin:0 0 .42rem;line-height:1.6}
+  /* Madde işareti nokta değil kısa çizgi: sayfanın öbür listeleriyle
+     (Likya Dede künyesi, dizin) aynı dil. */
+  .tri-liste li::before{content:'–';position:absolute;left:-1.1rem;
+    color:var(--ink-faint)}
+  /* Durum etiketi: "çalışan prototip" ile "tasarlanmış kavram" arasındaki
+     fark bu sayfalarda içerikten daha önemli. Renk taşımıyor — ağacın
+     hiçbir yerinde uyarı rengi yok; ayrımı çerçeve ve doluluk yapıyor. */
+  .tri-durum{margin-left:.7rem;font-size:.58rem;letter-spacing:.14em;
+    padding:.28em .55em;border-radius:2px;white-space:nowrap;
+    border:1px solid var(--ink-faint);color:var(--ink-faint);
+    vertical-align:middle}
+  .tri-durum-calisan{border-color:var(--evren);color:var(--evren)}
+  /* parca — beşinci parça tek başına kalınca satırı boydan boya alsın */
+  .tri-d-parca .tri-parca:last-child:nth-child(odd){grid-column:1/-1;
+    max-width:min(100%,56ch);justify-self:center}
 
   /* ozet — ilk sayfa: altı satır, ortada, büyük */
   .tri-sayfa.tri-d-ozet.acik{display:flex;flex-direction:column;
@@ -528,9 +558,15 @@
   .tri-d-ozet .tri-kucuk{max-width:46ch;margin-top:1.4rem}
 
   /* dar — okunur tek sütun, dikeyde ortalanmış */
-  .tri-sayfa.tri-d-dar{max-width:62ch;margin:0 auto}
-  .tri-sayfa.tri-d-dar.acik{display:flex;flex-direction:column;justify-content:center}
-  .tri-d-dar .tri-siir{margin:1.4rem 0;padding-left:1.1rem;
+  /* Satır aralığı sayfanın genelinden bir tık sıkı: `dar` sayfalar tek
+     sütun ve uzun; 1.75 ile iki sayfa pencereyi taşırıyordu. */
+  .tri-sayfa.tri-d-dar{max-width:62ch;margin:0 auto;line-height:1.68}
+  /* `safe center`: içerik sığdığı sürece dikeyde ortalanır, taşarsa
+     ortalama BIRAKILIR. Düz `center` taşınca içeriği yukarıdan kırpıyor —
+     kaydırma çubuğu bile o kısma ulaşamıyor. */
+  .tri-sayfa.tri-d-dar.acik{display:flex;flex-direction:column;
+    justify-content:safe center}
+  .tri-d-dar .tri-siir{margin:1.1rem 0;padding-left:1.1rem;
     border-left:1px solid var(--ink-faint);color:var(--ink)}
 
   /* sutun — uzun metin iki sütuna; pencere yüksek değil, yana yayılıyor */
@@ -541,11 +577,11 @@
 
   /* parca — dört bileşen, ikişerli ızgara, her biri şekil + metin */
   .tri-sayfa.tri-d-parca.acik{display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem 2.4rem;
-    align-content:center}
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:1.05rem 2.4rem;
+    align-content:safe center}
   .tri-parca{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);
     gap:1.1rem;align-items:start}
-  .tri-sekil{width:104px;color:var(--evren)}
+  .tri-sekil{width:98px;color:var(--evren)}
   .tri-sekil svg{width:100%;height:auto;display:block}
   /* min-width:0 — ızgara öğesinin kendiliğinden en küçük boyu içeriği
      kadardır; bunu sıfırlamadan sütun daralamıyor ve satır taşıyor. */
@@ -569,7 +605,12 @@
   .tri-kitap-ad{display:block;color:var(--ink);font-size:.95rem;
     font-weight:600;margin-bottom:.35rem}
   .tri-kitap figcaption > span{display:block;color:var(--ink-faint);font-size:.76rem}
-  .tri-baglar{margin-top:.8rem;display:flex;flex-wrap:wrap;gap:.45rem}
+  .tri-kitap figcaption > span.tri-baglar{margin-top:.8rem;
+    display:flex;flex-wrap:wrap;gap:.45rem;min-width:0}
+  .tri-baglar{margin-top:.8rem;display:flex;flex-wrap:wrap;gap:.45rem;min-width:0}
+  /* figcaption ızgara hücresinin içinde; min-width sıfırlanmazsa hücre
+     en uzun bağlantı adı kadar geniş kalıyor ve sütunun dışına taşıyor. */
+  .tri-kitap{min-width:0}
   /* Bağlantı adı bölünmüyor: "Google Books" iki satıra düşünce alttaki
      satırın üstüne biniyordu. */
   .tri-baglar a{white-space:nowrap;
@@ -580,7 +621,11 @@
   .tri-baglar a:hover,.tri-baglar a:focus-visible{color:var(--ink);
     border-color:var(--ink);outline:none}
   @media (max-width:720px){
-    .tri-sayfa.tri-d-sutun.acik{columns:1}
+    /* `columns:1` HÂLÂ çok sütunlu bir kutu: sığmayan metin sağda yeni bir
+       sütun doğuruyor, telefonda okuma yana kayıyordu. Çok sütunluluk
+       tümden bırakılıyor, taşma dikeyde kayıyor. */
+    .tri-sayfa.tri-d-sutun.acik{columns:auto;
+      overflow-x:hidden;overflow-y:auto}
     .tri-sayfa.tri-d-parca.acik,.tri-d-kitap .tri-kitaplar{grid-template-columns:1fr}
   }
 
@@ -3653,7 +3698,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v66 · 2026-08-13';
+const SURUM = 'v68 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -7992,55 +8037,121 @@ let triAcik = false;
    yazılmadı, kısaltıldı. Türkçesi kitabın kendi terimleriyle kuruldu:
    Masa · Ufuk · Gece · Pusula · "Sağ gerer, sol çözer".
    Şekiller sitenin çizgi dilinde, canvas sembolleriyle aynı ailede. */
-/* ── Ek sayfalar ŞİMDİLİK KAPALI ──
-   Yedi sayfa hazır (Nedir · Neden zor · Manzara · İki kuvvet · Dört parça ·
-   Kitap) ama Tolga bunlara yeniden bakacak. Veri, düzenler, diyagramlar ve
-   üretici olduğu yerde duruyor; açmak için tek yapılacak şey aşağıdaki
-   satırı `true` yapmak. Kapalıyken pencere yalnızca çalgıyı gösteriyor,
-   oklar kendiliğinden sönüyor (tek sayfada ikisi de devre dışı). */
-const TRI_EK_SAYFALAR = false;
+/* ── On iki sayfa ──
+   Metinler "Tritonet Master Reference" belgesinden seçildi ve kısaltıldı;
+   yeniden yazılmadı. Belgenin iki kuralı burada bağlayıcı:
+
+   1 · GÜNCEL PARÇA ADLARI. Belge açıkça söylüyor: eski belgelerdeki
+       "Night / Night-line / Anchor" yerine Masa · Ufuk · Güneş · Ay ·
+       Pusula kullanılacak. Bu yüzden eski "Dört parça" sayfası "Beş
+       parça" oldu ve "Gece" ikiye ayrıldı — Güneş ile Ay, aynı ayracın
+       iki ucu. Çizimleri de öyle: aynı çember, karşıt yarısı gölgeli.
+   2 · DURUM AYRIMI. "Çalışan prototip" ile "tasarlanmış kavram" aynı şey
+       değil; belge bunu karıştırmayı açıkça yasaklıyor. "Şimdi
+       yapılanlar" sayfasındaki her başlık kendi etiketini taşıyor,
+       "Sonrası" sayfası baştan araştırma yönü olduğunu söylüyor.
+
+   Kapatmak gerekirse aşağıdaki satır `false` — o zaman pencere yalnızca
+   çalgıyı gösteriyor ve oklar sönüyor. */
+const TRI_EK_SAYFALAR = true;
 const TRI_ICERIK_TUM = [
   { ad:{tr:'Denetçi', en:'The controller'}, duzen:'uygulama', blok:[
     
   ]},
 
   { ad:{tr:'Nedir', en:'What it is'}, duzen:'ozet', blok:[
-    {t:'siir', tr:'Masa alanı verir.\nUfuk çalan sesleri seçer.\nGüneş ve Ay derecelerini değiştirir.\nPusula akorları kurar.\nSağ gerer.\nSol çözer.', en:'The Table gives the field.\nThe Horizon selects the active tones.\nSun and Moon change their degrees.\nThe Compass forms chords.\nRight tightens.\nLeft resolves.'},
+    {t:'siir', tr:'Masa alanı verir.\nUfuk çalan sesleri seçer.\nGüneş ve Ay derecelerini değiştirir.\nPusula akorları kurar.\nSağ gerer.\nSol çözer.', en:'The Table gives the field.\nThe Horizon selects the active tones.\nThe Sun and Moon change their degrees.\nThe Compass forms chords.\nRight tightens.\nLeft resolves.'},
     {t:'em', tr:'Tritonet’in özü bu.', en:'This is the core Tritonet scheme.'},
-    {t:'kucuk', tr:'Beşliler Çemberi üzerine kurulmuş bir armonik gezinme sistemi. Armoniyi ezberlenecek kurallar yığını olmaktan çıkarıp görülebilir ve çalınabilir bir hareket alanına çeviriyor.', en:'A harmonic navigation system built on the Circle of Fifths. It turns harmony from a set of memorized rules into a visible and playable field of movement.'}
+    {t:'kucuk', tr:'Beşliler Çemberi üzerine kurulmuş görsel ve devingen bir armonik gezinme sistemi. Armoniyi ezberlenecek kurallar yığını olmaktan çıkarıp görülebilir, gezilebilir ve çalınabilir bir hareket alanına çeviriyor.', en:'A visual and dynamic harmony-navigation system built on the Circle of Fifths. It turns harmony from a set of memorised rules into a field of movement that can be seen, navigated and played.'}
   ]},
 
   { ad:{tr:'Neden zor', en:'Why it feels hard'}, duzen:'dar', blok:[
     {t:'p', tr:'Çoğu müzisyen armoni yeteneklerini aştığı için zorlanmıyor. Armoni onlara, ilişkiler sistemi olarak yaşatılmadan önce tanımlar dili olarak sunulduğu için zorlanıyorlar.', en:'Most musicians do not struggle because harmony is beyond their ability. They struggle because harmony is usually introduced as a language of definitions before it is experienced as a system of relationships.'},
     {t:'p', tr:'Armoni öğrenmek çoğu zaman, kutunun üstündeki resmi hiç görmeden yapboz kurmaya benziyor.', en:'Learning harmony often feels like assembling a puzzle without ever seeing the image on the box.'},
-    {t:'p', tr:'Buradan yaygın bir yanılgı doğuyor: deneyimli müzisyenlerin daha çok kural bildiği sanılıyor. Oysa deneyimli müzisyen daha çok <b>ilişki</b> görüyor. Artık tek tek akorları düşünmüyor; hareketi tanıyor, yönü sezinliyor, dengeyi ve dengesizliği hissediyor.', en:'People begin to believe that experienced musicians know more rules. In reality, experienced musicians usually perceive more relationships. They no longer think about isolated chords. They recognize movement. They anticipate direction. They feel balance and imbalance.'},
+    {t:'p', tr:'Buradan yaygın bir yanılgı doğuyor: deneyimli müzisyenlerin daha çok kural bildiği sanılıyor. Oysa deneyimli müzisyen daha çok <b>ilişki</b> görüyor. Artık tek tek akorları düşünmüyor; hareketi tanıyor, yönü sezinliyor, dengeyi ve dengesizliği hissediyor.', en:'People begin to believe that experienced musicians know more rules. In reality, experienced musicians usually perceive more relationships. They no longer think about isolated chords. They recognise movement. They anticipate direction. They feel balance and imbalance.'},
     {t:'siir', tr:'Tritonet “bu akor hangisi?” diye sormaz.\nÖnce “neredeyim?” diye sorar.\n\n“Sıradaki kural ne?” diye sormaz.\n“Buradan nereye gidebilirim?” diye sorar.', en:'Tritonet does not ask, “What chord is this?”\nIt first asks, “Where am I?”\n\nIt does not ask, “What rule comes next?”\nIt asks, “Where can I move from here?”'}
   ]},
 
   { ad:{tr:'Manzara', en:'A landscape'}, duzen:'sutun', blok:[
-    {t:'p', tr:'Müzisyenler armoniden söz ederken farkında olmadan coğrafyanın dilini kullanır. Bir tondan <em>uzaklaşmak</em>. <em>Eve dönmek</em>. Tonaliteler arasında <em>yol almak</em>. Bir merkeze doğru <em>çözülmek</em>.', en:'When musicians talk about harmony, they often use the language of geography without realizing it. We speak about moving away from a key. Returning home. Travelling through tonalities. Resolving toward a center.'},
+    {t:'p', tr:'Müzisyenler armoniden söz ederken farkında olmadan coğrafyanın dilini kullanır. Bir tondan <em>uzaklaşmak</em>. <em>Eve dönmek</em>. Tonaliteler arasında <em>yol almak</em>. Bir merkeze doğru <em>çözülmek</em>.', en:'When musicians talk about harmony, they often use the language of geography without realising it. We speak about moving away from a key. Returning home. Travelling through tonalities. Resolving toward a centre.'},
     {t:'p', tr:'Bunlar matematiksel değil, <b>uzamsal</b> tariflerdir. Yani müzisyen armoniyi zaten bir tür arazi olarak yaşıyor. Tritonet bu sezgiyi ciddiye alıyor.', en:'These are not mathematical descriptions. They are spatial descriptions. They suggest that, somewhere beneath the terminology, musicians already experience harmony as a kind of landscape. Tritonet takes this intuition seriously.'},
     {t:'p', tr:'Haritanın amacı müzisyene ne yapması gerektiğini söylemek değil. Harita yolculuğu buyurmaz; yalnızca olasılıkları gösterir. Aynı yerde duran iki müzisyen bambaşka yollar seçebilir.', en:'The purpose of the map is not to tell musicians what they must do. A map does not dictate a journey. A map simply reveals possibilities. Two musicians may stand at the same location and choose entirely different paths.'},
     {t:'h', tr:'Unutulmuş harita', en:'The forgotten map'},
-    {t:'p', tr:'Beşliler Çemberi yüzyıllardır kullanılıyor. Ders kitaplarında, konservatuvarlarda, stüdyo duvarlarında. Çoğu müzisyen onu hemen tanır. Pek azı her gün kullanır.', en:'For centuries, musicians have used the Circle of Fifths. It appears in textbooks, classrooms, conservatories, software applications and studio walls. Most musicians recognize it immediately. Few use it daily.'},
+    {t:'p', tr:'Beşliler Çemberi yüzyıllardır kullanılıyor. Ders kitaplarında, konservatuvarlarda, stüdyo duvarlarında. Çoğu müzisyen onu hemen tanır. Pek azı her gün kullanır.', en:'For centuries, musicians have used the Circle of Fifths. It appears in textbooks, classrooms, conservatories, software applications and studio walls. Most musicians recognise it immediately. Few use it daily.'},
     {t:'p', tr:'Çünkü ona bir <b>başvuru çizelgesi</b> gibi bakılıyor — oysa o bir <b>ilişkiler haritası</b>. Her konum, öbür konumlarla ilişkisi sayesinde var. Uzaklık önemli. Yön önemli. Komşuluk önemli. Hareket önemli.', en:'The Circle of Fifths is not merely a catalogue of keys. It is a map of relationships. Every position exists because of its relationship to every other position. Distance matters. Direction matters. Neighbourhood matters. Movement matters.'},
     {t:'p', tr:'Zor olan yeni bir harita çizmek değil. Zor olan, önümüzde duranı okumayı öğrenmek.', en:'The challenge is not creating a new map. The challenge is learning how to read the one that has been in front of us all along.'}
   ]},
 
   { ad:{tr:'İki kuvvet', en:'Two forces'}, duzen:'dar', blok:[
     {t:'p', tr:'Armoni bir arazi ise, o arazideki hareket tarafsız değildir. Her adımın bir sonucu var. Kimi hareket beklenti yaratır, kimi rahatlama. Kimi basıncı artırır, kimi azaltır.', en:'If harmony is a landscape, then movement within that landscape is not neutral. Every step creates a consequence. Some movements create expectation. Others create release. Some increase pressure. Others reduce it.'},
-    {t:'p', tr:'Bu duygular keyfî değil. Beşliler Çemberi’nin içinde saklı bir <b>yön asimetrisinden</b> doğuyorlar. Bir yöne gidince armonik enerji birikiyor, ters yöne gidince gevşiyor.', en:'These experiences are not arbitrary. They emerge from a directional asymmetry hidden inside the Circle of Fifths. Move in one direction and harmonic energy tends to accumulate. Move in the opposite direction and harmonic energy tends to relax.'},
-    {t:'p', tr:'Yerçekimi gibi: düşen bir cismin yasayı öğrenmesi gerekmez, hareketi onu zaten gösterir. Armonik hareket de kendi eğilimini gösterir.', en:'The relationship is similar to gravity. A falling object does not need to learn the laws of gravity. Its motion reveals them. Likewise, harmonic movement reveals its own tendencies.'},
+    {t:'p', tr:'Bu duygular keyfî değil; Beşliler Çemberi’nin içinde saklı bir <b>yön asimetrisinden</b> doğuyorlar. Sağa gidince üst harmoniklerin basıncı birikir, sola gidince alt harmoniklerin çekimi yatıştırır.', en:'These experiences are not arbitrary; they emerge from a directional asymmetry hidden inside the Circle of Fifths. Move right and upper-harmonic pressure accumulates; move left and lower-harmonic gravity settles it.'},
     {t:'siir', tr:'Sağ gerer.\nSol çözer.', en:'Right tightens.\nLeft resolves.'},
-    {t:'p', tr:'Cümle bilerek basit. Armoni basit olduğu için değil — işe yarayan haritalar çoğu zaman basit bir gözlemle başladığı için. Pusula bir kıtayı anlatmaz; yalnızca kuzeyin nerede olduğunu söyler.', en:'The phrase is intentionally simple. Not because harmony is simple, but because useful maps often begin with simple observations. A compass does not describe an entire continent. It only tells you where north is.'},
+    {t:'kucuk', tr:'İkisi ahlaki karşıtlar değil: gerilim kötü, çözülme iyi değil. Müziğe yön veren şey aralarındaki gidiş geliş.', en:'The two are not moral opposites: tension is not bad, resolution is not good. What gives music direction is the traffic between them.'},
     {t:'p', tr:'Yön duygusu doğunca soru değişiyor. Artık “bu akor ne?” değil, <b>“bu akor ne yapmak istiyor?”</b>', en:'Once orientation exists, navigation becomes possible. The question is no longer “What is this chord?” The deeper question becomes “What does this chord want to do?”'}
   ]},
 
-  { ad:{tr:'Dört parça', en:'Four parts'}, duzen:'parca', blok:[
-    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><g fill="currentColor" stroke="none"><circle cx="-0.0" cy="34.0" r="2.2"/><circle cx="-17.0" cy="29.4" r="2.2"/><circle cx="-29.4" cy="17.0" r="2.2"/><circle cx="-34.0" cy="-0.0" r="2.2"/><circle cx="-29.4" cy="-17.0" r="2.2"/><circle cx="-17.0" cy="-29.4" r="2.2"/><circle cx="0.0" cy="-34.0" r="2.2"/><circle cx="17.0" cy="-29.4" r="2.2"/><circle cx="29.4" cy="-17.0" r="2.2"/><circle cx="34.0" cy="0.0" r="2.2"/><circle cx="29.4" cy="17.0" r="2.2"/><circle cx="17.0" cy="29.4" r="2.2"/></g><path d="M14.5 -44.7A47 47 0 0 1 42.9 -19.1"/><path d="M47.1 -22.1L45.8 -12.7L38.0 -18.0" fill="currentColor"/><path d="M-14.5 -44.7A47 47 0 0 0 -42.9 -19.1"/><path d="M-47.1 -22.1L-45.8 -12.7L-38.0 -18.0" fill="currentColor"/></svg>', ad:{tr:'Masa',en:'The Table'}, tr:'On iki ses, Beşliler Çemberi düzeninde. Hareket yönlü: <b>sağa</b> gitmek üst harmonikleri ekler, gerginlik doğar; <b>sola</b> gitmek alt harmonikleri ekler, çözülme doğar.', en:'All twelve notes in Circle of Fifths fashion. Movement is directional: <b>right</b> adds upper harmonics and creates tension, <b>left</b> adds lower harmonics and creates resolution.'},
-    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><g fill="currentColor" stroke="none"><circle cx="-34.0" cy="-0.0" r="2.8"/><circle cx="-29.4" cy="-17.0" r="2.8"/><circle cx="-17.0" cy="-29.4" r="2.8"/><circle cx="0.0" cy="-34.0" r="2.8"/><circle cx="17.0" cy="-29.4" r="2.8"/><circle cx="29.4" cy="-17.0" r="2.8"/><circle cx="34.0" cy="0.0" r="2.8"/></g><path d="M-46 0H46" stroke-dasharray="5 5"/></svg>', ad:{tr:'Ufuk',en:'The Horizon'}, tr:'Çemberi bölen yatay çizgi; üstte kalan sesler diziyi kurar. Ufuk <b>yükselirse</b> beş sesli diziler, <b>yerindeyse</b> doğal diziler, <b>kaybolursa</b> kristal diziler (8–12 ses).', en:'A horizontal line divides the circle; the notes above it constitute the scale. <b>Raised</b> → pentatonic scales. <b>Default</b> → natural scales. <b>Disappearing</b> → crystal scales of 8–12 notes.'},
-    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><path d="M0 -34 A34 34 0 0 1 0 34 Z" fill="currentColor" fill-opacity=".13" stroke="none"/><path d="M0 -46V46"/><g fill="currentColor" stroke="none"><circle cx="0" cy="-34" r="2.8"/><circle cx="0" cy="34" r="2.8"/></g></svg>', ad:{tr:'Gece',en:'The Night'}, tr:'Çemberi ikiye bölen dikey ayraç: solda kalan sesler diyezlenir, sağda kalanlar bemolleşir. Kutbu merkeze koyup dünyaya yukarıdan bakmak gibi — gündüz ile gecenin kesiştiği yerler tritonların, yani renk seslerinin yeridir.', en:'A vertical divider splits the Circle in two: notes on the left are sharpened, notes on the right are flattened. Imagine the Earth seen from above with the pole at the centre — where day meets night is where the tritones, the colour tones, sit.'},
-    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34" stroke-opacity=".28"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8" stroke-opacity=".28"/><path d="M0 -32V16"/><path d="M-30 -6 0 16 30 -6"/><path d="M-30 -6-36-17M30 -6 36-17"/><g fill="currentColor" stroke="none"><circle cx="0" cy="16" r="3.2"/></g></svg>', ad:{tr:'Pusula',en:'The Compass'}, tr:'Akoru kuran ve hareketini gösteren parça. <b>Uç</b> bas sesi verir. <b>Kanat uçları</b> modal aralıkları (3 ve 6), <b>kanat ortaları</b> melodik aralıkları (2 ve 7), <b>tam altı</b> armonik aralıkları (4 ve 5) taşır. Bir uçak gibi düşün: seçilen sesler bir uçuş yönü öneriyor — istersen izlersin, istersen bilerek kaçarsın.', en:'The part that builds the chord and shows how it behaves. The <b>tip</b> gives the bass note. <b>Wing tips</b> carry the modal intervals (3rd and 6th), <b>wing centres</b> the melodic intervals (2nd and 7th), and <b>directly below</b> the harmonic intervals (4th and 5th). Think of it as an aeroplane: the chosen tones suggest a flight direction you can follow or deliberately avoid.'}
+  { ad:{tr:'Beş parça', en:'Five parts'}, duzen:'parca', blok:[
+    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><g fill="currentColor" stroke="none"><circle cx="-0.0" cy="34.0" r="2.2"/><circle cx="-17.0" cy="29.4" r="2.2"/><circle cx="-29.4" cy="17.0" r="2.2"/><circle cx="-34.0" cy="-0.0" r="2.2"/><circle cx="-29.4" cy="-17.0" r="2.2"/><circle cx="-17.0" cy="-29.4" r="2.2"/><circle cx="0.0" cy="-34.0" r="2.2"/><circle cx="17.0" cy="-29.4" r="2.2"/><circle cx="29.4" cy="-17.0" r="2.2"/><circle cx="34.0" cy="0.0" r="2.2"/><circle cx="29.4" cy="17.0" r="2.2"/><circle cx="17.0" cy="29.4" r="2.2"/></g><path d="M14.5 -44.7A47 47 0 0 1 42.9 -19.1"/><path d="M47.1 -22.1L45.8 -12.7L38.0 -18.0" fill="currentColor"/><path d="M-14.5 -44.7A47 47 0 0 0 -42.9 -19.1"/><path d="M-47.1 -22.1L-45.8 -12.7L-38.0 -18.0" fill="currentColor"/></svg>', ad:{tr:'Masa',en:'The Table'}, tr:'On iki ses, Beşliler Çemberi düzeninde. Bir sesin nerede durduğunu, komşularıyla ilişkisini ve hangi yönün basıncı artırıp hangisinin bıraktığını gösteren zemin. <b>Sağa</b> gitmek üst harmonikleri ekler, <b>sola</b> gitmek alt harmonikleri.', en:'All twelve tones in Circle of Fifths order. The working surface that shows where a tone sits, how it relates to its neighbours, and which direction raises or releases harmonic pressure. Moving <b>right</b> adds upper harmonics, moving <b>left</b> adds lower ones.'},
+    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><g fill="currentColor" stroke="none"><circle cx="-34.0" cy="-0.0" r="2.8"/><circle cx="-29.4" cy="-17.0" r="2.8"/><circle cx="-17.0" cy="-29.4" r="2.8"/><circle cx="0.0" cy="-34.0" r="2.8"/><circle cx="17.0" cy="-29.4" r="2.8"/><circle cx="29.4" cy="-17.0" r="2.8"/><circle cx="34.0" cy="0.0" r="2.8"/></g><path d="M-46 0H46" stroke-dasharray="5 5"/></svg>', ad:{tr:'Ufuk',en:'The Horizon'}, tr:'Hangi seslerin dizide çaldığını belirleyen sınır. Alanın <b>büyüklüğünü</b> seçer, seslerin derece kimliğine dokunmaz. Yükselirse beş sesli diziler, yerindeyse doğal diziler, kaybolursa kristal diziler (8–12 ses).', en:'The boundary that determines which tones are active in a scale. It selects the <b>size</b> of the field without changing the degree identity of the notes. Raised → pentatonic scales. Default → natural scales. Disappearing → crystal scales of 8–12 notes.'},
+  {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><path d="M0 -34 A34 34 0 0 0 0 34 Z" fill="currentColor" fill-opacity=".13" stroke="none"/><path d="M0 -40V40" stroke-opacity=".45"/><circle cx="0" cy="-47" r="4.2"/><path d="M6.6 -47L9.2 -47M4.7 -51.7L6.5 -53.5M0 -53.6V-56.2M-4.7 -51.7L-6.5 -53.5M-6.6 -47L-9.2 -47M-4.7 -42.3L-6.5 -40.5M0 -40.4V-37.8M4.7 -42.3L6.5 -40.5"/></svg>', ad:{tr:'Güneş',en:'The Sun'}, tr:'Çalan seslerin <b>derecelerini</b> değiştiren iki kuvvetten biri. Ufuk seçer, Güneş ile Ay dönüştürür. Kutbu merkeze koyup dünyaya yukarıdan bakmak gibi: ayracın bir yanında kalanlar bir yöne çekilir.', en:'One of the two forces that alter the <b>degree identities</b> of the active tones. The Horizon selects; the Sun and Moon transform. Imagine the Earth seen from above with the pole at the centre: whatever falls on one side of the divider is pulled one way.'},
+  {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8"/><path d="M0 -34 A34 34 0 0 1 0 34 Z" fill="currentColor" fill-opacity=".13" stroke="none"/><path d="M0 -40V40" stroke-opacity=".45"/><path d="M4.4 40.9a6.8 6.8 0 1 0 0 12.2 8.4 8.4 0 1 1 0-12.2z" fill="currentColor" stroke="none"/></svg>', ad:{tr:'Ay',en:'The Moon'}, tr:'Güneş’i tamamlayan karşı kuvvet, ayracın öbür yanı. İkisinin birlikte çalışması doğal, bileşik ve daha bakışımlı modal yapıları aynı alanın içindeki akraba durumlar olarak görünür kılıyor. Gündüz ile gecenin kesiştiği yerler tritonların, yani renk seslerinin yeri.', en:'The complementary force to the Sun, the other side of the divider. Working together, the two make natural, compound and more symmetrical modal structures visible as related conditions within one field. Where day meets night is where the tritones — the colour tones — sit.'},
+    {t:'parca', svg:'<svg viewBox="-56 -56 112 112" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle r="34" stroke-opacity=".28"/><path d="M0.0 -34.0L0.0 -39.0M17.0 -29.4L19.5 -33.8M29.4 -17.0L33.8 -19.5M34.0 0.0L39.0 0.0M29.4 17.0L33.8 19.5M17.0 29.4L19.5 33.8M0.0 34.0L0.0 39.0M-17.0 29.4L-19.5 33.8M-29.4 17.0L-33.8 19.5M-34.0 0.0L-39.0 0.0M-29.4 -17.0L-33.8 -19.5M-17.0 -29.4L-19.5 -33.8" stroke-opacity=".28"/><path d="M0 -32V16"/><path d="M-30 -6 0 16 30 -6"/><path d="M-30 -6-36-17M30 -6 36-17"/><g fill="currentColor" stroke="none"><circle cx="0" cy="16" r="3.2"/></g></svg>', ad:{tr:'Pusula',en:'The Compass'}, tr:'Birlikte çalacak sesleri seçen, akorun ağırlığını, eğilimini, çevrimini ve hareketini gösteren parça. <b>Uç</b> bas sesi verir. <b>Kanat uçları</b> modal aralıkları (3 ve 6), <b>kanat ortaları</b> melodik aralıkları (2 ve 7), <b>tam altı</b> armonik aralıkları (4 ve 5) taşır. Bir uçak gibi düşün: seçilen sesler bir uçuş yönü öneriyor — istersen izlersin, istersen bilerek kaçarsın.', en:'The part that selects which tones sound together and shows chord weight, tendency, inversion and movement. The <b>tip</b> gives the bass note. <b>Wing tips</b> carry the modal intervals (3rd and 6th), <b>wing centres</b> the melodic intervals (2nd and 7th), and <b>directly below</b> the harmonic intervals (4th and 5th). Think of it as an aeroplane: the chosen tones suggest a flight direction you can follow or deliberately avoid.'}
+  ]},
+
+  { ad:{tr:'Ne yapıyor', en:'What it does'}, duzen:'sutun', blok:[
+    {t:'p', tr:'Bugünkü yazılım biçiminde Tritonet, Ableton Live için gerçek zamanlı bir armoni motoru. Armonik bilgiyi tek bir merkezden üretip bağlı MIDI kanallarına dağıtıyor.', en:'In its current software form, Tritonet is a real-time harmony engine for Ableton Live. It produces harmonic information at one central point and distributes it to the connected MIDI tracks.'},
+    {t:'liste', tr:['600’den fazla dizi, 200’den fazla akor.','Gerçek zamanlı dizi, mod, akor ve ton merkezi denetimi.','Bir diziyi başka bir diziye dönüştürme.','Tek notadan SATB düzeninde akor üretme.','Gerçek zamanlı armoni takibi.','Bağlı MIDI kanalları arasında ortak armonik bilgi dağıtımı.','Ableton Push tümleşmesi.','Ableton Live 12 Scale Awareness uyumu.'], en:['More than 600 scales and 200 chords.','Real-time scale, mode, chord and tonal-centre control.','Transformation of one scale into another.','Single-note generation of SATB-style chords.','Real-time harmony tracking.','Distribution of shared harmonic information across connected MIDI tracks.','Ableton Push integration.','Ableton Live 12 Scale Awareness compatibility.']},
+    {t:'h', tr:'Üretimde ne değişiyor', en:'What changes in production'},
+    {t:'p', tr:'Alışıldık akışta bir MIDI klibinin içindeki notalar armoniyi kalıcı olarak tanımlar. Diziyi, modu ya da ton merkezini değiştirmek birkaç kanalı yeniden yazmayı gerektirir. Tritonet ile klip <b>kaynak malzeme</b> olarak kalıyor; armonik yorumu gerçek zamanda değişiyor.', en:'In a conventional workflow, the notes stored in a MIDI clip define the harmony permanently. Changing the scale, mode or tonal centre means rewriting several tracks. With Tritonet the clip remains <b>source material</b> while its harmonic interpretation changes in real time.'},
+    {t:'p', tr:'Eski eskizler, hazır kütüphaneler ve yarım kalmış projeler baştan kurulmadan yeniden armonize edilebiliyor. Tek bir cümle farklı dizilerde, farklı modal renklerde, farklı ton merkezlerinde dolaştırılarak aynı malzemeden çok sayıda akraba varyasyon çıkıyor.', en:'Old sketches, existing libraries and unfinished projects can be reharmonised without rebuilding them. A single phrase can be explored through different scales, modal colours and tonal centres, producing many related variations from the same material.'},
+    {t:'p', tr:'Kararlar canlı verilebildiği için Tritonet aynı zamanda bir <b>sahne çalgısı</b>: parça çalarken mod değiştirmek, gerilimi başka yöne çevirmek, modülasyon kurmak ya da düzenlemeyi dönüştürmek mümkün.', en:'Because the decisions can be made live, Tritonet is also a <b>performance instrument</b>: you can change mode, redirect tension, build a modulation or transform an arrangement while the music is playing.'},
+    {t:'p', tr:'Böylece besteci tek tek nota yazmaktan çıkıp bir <b>armonik iklim</b> tasarlıyor: hangi alan çalışıyor, rengi ne, hangi akor davranışları serbest, hangi yönlere gidilebilir.', en:'The composer therefore moves beyond writing individual notes toward designing a <b>harmonic climate</b>: which field is active, what its colour is, which chord behaviours are available, and which directions of movement are open.'}
+  ]},
+
+  { ad:{tr:'Öğretmek', en:'Teaching'}, duzen:'dar', blok:[
+    {t:'p', tr:'Tritonet, birbirinden çok farklı geçmişlerden gelen öğrencilere tek bir armoni sistemi öğretmenin zorluğundan doğdu. Bir DJ, bir metal gitaristi, bir caz icracısı, akustik bir besteci, elektronik bir müzisyen ve yeni başlayan bir çocuk başka başka müzik dilleri konuşuyor — ama hepsi titreşimler arasındaki ilişkilerle çalışıyor.', en:'Tritonet grew out of the difficulty of teaching one harmony system to students from very different backgrounds. A DJ, a metal guitarist, a jazz performer, an acoustic composer, an electronic musician and a young beginner speak different musical languages — yet all of them work with relationships between vibrations.'},
+    {t:'p', tr:'Amaç, belirli bir geleneğin üslup kurallarına girmeden önce temel armoniyi <b>görsel ve işlevsel bir harita</b> üzerinden tanıtmak. Öğrenci önce yönü, çalan sesleri, modal rengi, akor davranışını ve ton hareketini gezmeyi öğreniyor.', en:'The aim is to introduce fundamental harmony through a <b>visual and functional map</b> before moving into the stylistic rules of any one tradition. A student first learns to navigate direction, active tones, modal colour, chord behaviour and tonal movement.'},
+    {t:'p', tr:'Sonra bu temeli klasik armoniye, caza, elektronik müziğe, makam pratiklerine, çağdaş besteye ya da kendi diline uygulayabiliyor.', en:'Those foundations can then be applied to classical harmony, jazz, electronic music, maqam-related practices, contemporary composition or the student’s own language.'},
+    {t:'p', tr:'Tritonet geleneksel armoniyi reddetmiyor; ondan önce gelen bir çerçeve öneriyor. Asıl hedef, tek bir tarihsel üslubu taklit etmeyi armoninin tanımı saymak yerine öğrencinin <b>kendi sesini</b> bulması.', en:'Tritonet does not reject traditional harmony; it offers a framework that comes before it. The broader goal is for learners to develop <b>an individual musical voice</b>, rather than treating imitation of one historical style as the definition of harmony itself.'}
+  ]},
+
+  { ad:{tr:'Nereden geliyor', en:'Where it comes from'}, duzen:'dar', blok:[
+    {t:'p', tr:'Tritonet uzun soluklu bir araştırmanın sonucu: ders verme pratiği, yayımlanmış iki kitap, yazılım denemeleri, bir MIDI armoni denetçisi prototipi, Ableton Live uygulamaları ve eski Orta Doğu müzik kuramı üzerine çalışma.', en:'Tritonet is the result of a long-running research process: teaching practice, two published books, software experiments, a MIDI harmony-controller prototype, Ableton Live implementations, and research into ancient Middle Eastern music theory.'},
+    {t:'p', tr:'Önemli bir tarihsel dayanak, eski müzik tabletleri ile modern Beşliler Dizisi arasındaki karşılaştırma. Araştırmada yinelenen yedili sıra <b>fa–do–sol–re–la–mi–si</b> ile eşleşiyor. <em>La zaku</em> kavramı — bu araştırmada kararsız ya da belirsiz bir ilişkiyle ilişkilendirilen terim — Tritonet’in tritonu bir hata değil <b>etkin bir kuvvet</b> sayan anlayışını besledi.', en:'An important historical reference is the comparison between ancient musical tablets and the modern Series of Fifths. The recurring seven-part order found in this research maps to <b>F–C–G–D–A–E–B</b>. The concept of <em>la zaku</em> — associated in this research with an unstable or indeterminate relationship — fed Tritonet’s understanding of the tritone as <b>an active force</b> rather than an error.'},
+    {t:'kucuk', tr:'Bu tarihsel yorumlar kavramsal arka plan; bestecinin kendi araştırma ve çözümleme çerçevesi olarak okunmalı, yerleşmiş arkeolojik sonuçlar olarak değil.', en:'These historical interpretations are conceptual background: they should be read as the creator’s own research and analytical framework, not as settled archaeological conclusions.'},
+    {t:'p', tr:'Tritonet ayrıca müziği düşünmenin üç eski katmanını yeniden birbirine bağlıyor: <b>musica instrumentalis</b> (duyulan ses ve icra), <b>musica humana</b> (oran, algı, beden, iç deneyim) ve <b>musica mundana</b> (doğal ve evrensel düzen). Burada üçü de oransal ilişkinin katmanları sayılıyor; müzik armonisi hemen duyulabilen giriş kapısı.', en:'Tritonet also reconnects three old ways of thinking about music: <b>musica instrumentalis</b> (audible sound and practice), <b>musica humana</b> (proportion, perception, the body, inner experience) and <b>musica mundana</b> (natural and universal order). Here all three are treated as layers of proportional relationship; musical harmony is the immediately audible entry point.'}
+  ]},
+
+  { ad:{tr:'Şimdi yapılanlar', en:'In progress'}, duzen:'sutun', blok:[
+    {t:'p', tr:'Tritonet’i Ableton Live motorunun ötesine taşıyan çalışmalar. Olgunlukları farklı, o yüzden her birinin durumu ayrıca yazılı: çalışan bir prototip ile tasarlanmış bir kavram aynı şey değil.', en:'Work that carries Tritonet beyond its Ableton Live implementation. Their maturity differs, so each one carries its status: a working prototype is not the same as a designed concept.'},
+    {t:'durum', tr:'Tritonet Controller', en:'Tritonet Controller', hal:'calisan', etiket:{tr:'çalışan prototip', en:'working prototype'}},
+    {t:'p', tr:'Armoni motorunu bir DAW gerektirmeden tarayıcıya taşıyan çalışan prototip — bu pencerenin ilk sayfasında duran şey. Beşliler Çemberi yüzeyini aranabilir bir dizi kütüphanesi, SATB üreteçleri, ses yürütme akorlayıcısı, gömülü bir synth, efektler, Web MIDI ve WebAudio ile birleştiriyor. Fars, Japon ve gagaku kökenli diziler de dahil olmak üzere kültürler arası malzemeye açılıyor.', en:'A working prototype that brings the harmonic engine into the browser without requiring a DAW — the thing sitting on the first page of this window. It combines a Circle-of-Fifths surface with a searchable scale library, SATB generators, a voice-leading chorder, a built-in synthesiser, effects, Web MIDI and WebAudio. It also opens onto cross-cultural material, including Persian, Japanese and gagaku-related scales.'},
+    {t:'durum', tr:'MIDI 2.0 armonik genişletmesi', en:'MIDI 2.0 harmonic extension', hal:'arastirma', etiket:{tr:'protokol araştırması', en:'exploratory protocol work'}},
+    {t:'p', tr:'Ayrı kanallardaki cihazların canlı bir armonik durumu paylaşabilmesi için MIDI 2.0’a armonik parametreler önerme çalışması. Bugün her çalgı kendi dizi ve akor işlevlerini bağımsız çalıştırıyor; öneri, bir klavyenin, groovebox’ın, synth’in ya da çok kanallı bir topluluğun aynı ton merkezini, diziyi, akor durumunu ve yönü anlamasını sağlamak. Kabul edilmiş bir MIDI 2.0 standardı değil.', en:'Work proposing harmonic parameters for MIDI 2.0 so that devices on separate channels can share a live harmonic state. Today every instrument runs its own scale and chord functions independently; the proposal would let a keyboard, groovebox, synthesiser or multi-channel ensemble understand the same tonal centre, scale, chord state and direction. This is not an adopted MIDI 2.0 standard.'},
+  ]},
+
+  { ad:{tr:'Donanım ve kabuk', en:'Hardware and shell'}, duzen:'sutun', blok:[
+    {t:'durum', tr:'Conductor', en:'Conductor', hal:'kavram', etiket:{tr:'geliştirilmiş donanım kavramı', en:'developed hardware concept'}},
+    {t:'p', tr:'Tritonet motoru üzerine kurulmuş bir donanım çalgısı ve groovebox kavramı. Asıl önerisi şu kayma: <b>çalgı düzeyinde dizi süzmekten topluluk düzeyinde armonik zekâya</b>. Kullanıcı alanı, rengi, akor davranışını ve yönü bir kez tanımlıyor; ayrı parçalar kendi rollerine göre karşılık veriyor. Amaç her çalgıya aynı notaları çaldırmak değil, bütün kurulumun aynı müzikal durumu anlaması. Etkileşim modeli ve ürün belirtimi geliştirildi; yayımlanmış bir donanım değil.', en:'A hardware-instrument and groovebox concept built around the Tritonet engine. Its central proposition is a shift from <b>instrument-level scale filtering to ensemble-level harmonic intelligence</b>. The user defines the field, colour, chord behaviour and direction once; separate parts respond according to their own roles. The aim is not to make every instrument play the same notes, but to let the whole rig understand the same musical situation. The interaction model and product specification have been developed; it is not a released hardware product.'},
+    {t:'durum', tr:'VST Web Shell', en:'VST Web Shell', hal:'kavram', etiket:{tr:'tasarlanmış mimari', en:'designed architecture'}},
+    {t:'p', tr:'Tarayıcı tabanlı çalgıları ince bir yerel eklenti katmanı üzerinden DAW’ın içinde çalıştırma kavramı. Tritonet açısından ilginç yanı, o tarayıcı katmanının aynı zamanda armonik durumu paylaşan bir ağ olabilmesi: bir denetim katmanında yapılan değişiklik birkaç çalgıyı, hepsini aynı davranışa hapsetmeden yeniden biçimlendirebilir. Tasarlanmış bir mimari, bugünkü bir Tritonet özelliği değil.', en:'A concept for running browser-based instruments inside a DAW through a thin native plugin layer. What makes it interesting for Tritonet is that the browser layer could also be a network sharing harmonic state: a change in one controlling layer could reshape several instruments without freezing them into identical behaviour. A designed architecture, not a current Tritonet feature.'}
+  ]},
+
+  { ad:{tr:'Sonrası', en:'What could follow'}, duzen:'sutun', blok:[
+    {t:'p', tr:'Aşağıdakiler araştırma yönleri ve geliştirme olasılıkları — tamamlanmış ürün yetenekleri değil.', en:'The following are research directions and development possibilities, not completed product capabilities.'},
+    {t:'h', tr:'Taşınabilir armonik durum', en:'Portable harmonic state'},
+    {t:'p', tr:'Armoninin tek tek kliplerin, kanalların ya da uygulamaların içinde tutsak kalması yerine, ton merkezini, çalan alanı, modal rengi, akor durumunu, yönü, gerilim ve çözülmeyi taşıyan ortak bir katman olarak dolaşması. Farklı bileşenlerin aynı notaları üretmesi gerekmez; aynı müzikal bağlamı anlaması yeter.', en:'Instead of harmony being trapped inside individual clips, tracks or applications, a shared layer could carry tonal centre, active field, modal colour, chord state, direction, tension and release. Different components would not need to produce the same notes; they would only need to understand the same musical context.'},
+    {t:'h', tr:'Uyarlanabilir film ve oyun müziği', en:'Adaptive film and game music'},
+    {t:'p', tr:'Müziğin armonik durumu anlatı olaylarına, oyuncu davranışına, yere ya da dramatik yoğunluğa göre değişebilir. Hazır ses dosyaları arasında sert geçişler yapmak yerine, müzik akraba armonik durumlar arasında sürekli evrilebilir.', en:'The harmonic state of the music could respond to narrative events, player behaviour, location or dramatic intensity. Rather than switching abruptly between fixed audio files, a score could evolve continuously through related harmonic conditions.'},
+  ]},
+
+  { ad:{tr:'Daha ötesi', en:'Further out'}, duzen:'sutun', blok:[
+    {t:'h', tr:'Yazarı belli üretken müzik', en:'Authored generative music'},
+    {t:'p', tr:'Üretken modeller ses yüzeyini yaratırken Tritonet yapının kalmasını istediğimiz kısmını tutabilir: ton alanı, tema, ses ilişkileri, biçim sınırları, gerilim, çözülme ve varılacak yer. Her ses nesnesi canlı bir üretken düğüm gibi davranabilir ama beste bir kara kutuya dönüşmez. Besteci olasılıkların alanını kurar, üretken sistem o alanın içinde dolaşır.', en:'Generative models could create the sound surface while Tritonet holds the part of the structure that should remain intentional: tonal field, theme, voice relationships, formal boundaries, tension, release and destination. Every sound object may behave as a live generative node, yet the composition does not become a black box. The composer establishes the space of possibilities; the generative system explores within it.'},
+    {t:'h', tr:'Titreşim, veri, mekân', en:'Vibration, data, space'},
+    {t:'p', tr:'Tritonet’in oran haritası olağan müzik girdisinin ötesindeki frekans ilişkilerini okumak için de araştırılabilir: ses tayfları, elektromanyetik sinyaller, sismik hareket, biyolojik ritimler. Hava, piyasa ya da çevre ölçümleri gibi sayısal veri kümeleri matrise çevrilerek ritim, bakışım, dengesizlik ve değişim sesle ya da görsel biçimle ifade edilebilir. Bir salonun rezonans frekansları armonik bir alan olarak düzenlenebilir.', en:'Tritonet’s map of ratios could also be explored as a way of reading frequency relationships beyond ordinary musical input: audio spectra, electromagnetic signals, seismic activity, biological rhythms. Numerical datasets such as weather, markets or environmental measurements could be translated into the matrix, expressing rhythm, symmetry, imbalance and change through sound or visual form. The resonant frequencies of a room could be organised as a harmonic field.'},
+    {t:'kucuk', tr:'Beyin dalgası verisinin armonik alana eşlenmesi gibi öneriler bağımsız bilimsel araştırma ve doğrulama gerektirir. Armonik çözümleme ile duygu arasındaki her bağ bir araştırma hipotezi olarak okunmalı.', en:'Proposals such as mapping brainwave data onto the harmonic field would require independent scientific research and validation. Any link between harmonic analysis and emotion should be read as a research hypothesis.'},
+    {t:'em', tr:'Yön belli: sistem olasılığı genişletir, müzikal karar müzisyende kalır.', en:'The principle is fixed: the system expands possibility; the user retains musical agency.'}
   ]},
 
   { ad:{tr:'Kitap', en:'The book'}, duzen:'kitap', blok:[
@@ -8073,6 +8184,15 @@ function triSayfalariKur(){
       else if (b.t === 'kucuk') h += '<p class="tri-kucuk">' + b[d] + '</p>';
       else if (b.t === 'h')     h += '<h4 class="tri-arabaslik">' + b[d] + '</h4>';
       else if (b.t === 'siir')  h += '<p class="tri-siir">' + b[d] + '</p>';
+      else if (b.t === 'liste')
+        /* Yetenek listeleri düzyazıya sığmıyor: "600 dizi, 200 akor, tek
+           notadan SATB…" bir cümlede birbirini eziyor. Madde madde. */
+        h += '<ul class="tri-liste">' + b[d].map(x => '<li>' + x + '</li>').join('') + '</ul>';
+      else if (b.t === 'durum')
+        /* Durum etiketi: belgenin en önemli kuralı "çalışan prototip ile
+           tasarlanmış kavramı karıştırma". Etiket başlığın yanında. */
+        h += '<h4 class="tri-arabaslik">' + b[d] +
+             '<span class="tri-durum tri-durum-' + b.hal + '">' + b.etiket[d] + '</span></h4>';
       else if (b.t === 'parca')
         h += '<figure class="tri-parca"><div class="tri-sekil">' + b.svg + '</div>' +
              '<figcaption><b class="tri-parca-ad">' + b.ad[d] + '</b>' + b[d] +
