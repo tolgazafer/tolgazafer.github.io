@@ -1490,11 +1490,32 @@
   letter-spacing: 0.02em;
   color: #fffdf6;
 }
-.ucus-kapali {
+/* Eskiden burada "yolculuğa dönmek için bir yön tuşu" yazıyordu: bir
+   KLAVYE tarifi. Telefonda karşılığı yok, kart da tam ekran açıldığı
+   için çıkış yolu kalmıyordu. Yazı yerine düğme — her yerde çalışıyor.
+   Dokunma alanı görünen daireden geniş (44 px), parmak için. */
+.ucus-kapat {
   margin-left: auto;
-  font-size: 10.5px;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.35);
+  flex: 0 0 auto;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.07);
+  border: 0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.62);
+  cursor: pointer;
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.ucus-kapat:hover, .ucus-kapat:focus-visible {
+  background: rgba(255, 255, 255, 0.16); color: #fff; outline: none;
 }
 
 .ucus-medya { background: #000; }
@@ -1571,8 +1592,11 @@
 
 /* ---------- 12. Zaman tüneli kumandası ---------- */
 
-/* Tek kumanda yön tuşları. Ekranda sürüklenecek bir şey yok; yalnızca
-   hangi tuşa bastığını gösteren küçük bir şema. */
+/* Masaüstünde tek kumanda yön tuşları; şema hangi tuşa bastığını
+   gösteriyor. DOKUNMATİKTE şema kalkıyor — orada kumanda parmağın
+   kendisi: yana sürüklemek yön, yukarı hızlanma, aşağı yavaşlama.
+   Dört kutu hem yer kaplıyordu hem de parmağı tünelin bir köşesine
+   hapsediyordu. Hız göstergesi kalıyor: tek okunur bilgi o. */
 .ucus-tuslar {
   position: absolute;
   left: 22px;
@@ -1605,6 +1629,11 @@
 .ucus-tus[data-tus="sol"]  { grid-area: 2 / 1; }
 .ucus-tus[data-tus="fren"] { grid-area: 2 / 2; }
 .ucus-tus[data-tus="sag"]  { grid-area: 2 / 3; }
+@media (hover:none),(pointer:coarse){
+  .ucus-tus{display:none}
+  .ucus-tuslar{grid-template-columns:auto;grid-template-rows:auto;left:18px;bottom:16px}
+  .ucus-hiz{grid-area:auto;margin:0;text-align:left}
+}
 .ucus-tus.basili {
   color: #16171a;
   background: rgba(255, 243, 210, 0.92);
@@ -1861,7 +1890,7 @@
     </div>
     <button class="pencere-kapat" id="tunelKapat" aria-label="Ağaca dön" data-i18n-aria="Ağaca dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V10"/><path d="M12 14.4 7.6 9.8"/><path d="M12 12.2 16.4 7.6"/><path d="M7.6 9.8 5.2 6"/><path d="M7.6 9.8 9.2 5.2"/><path d="M16.4 7.6 18.8 4"/><path d="M16.4 7.6 14.9 3.2"/><path d="M8.4 22h7.2"/></svg></button>
   </header>
-  <div class="ucus" data-veri="luka-veri"><canvas class="ucus-tuval"></canvas><p class="ucus-sayac"><b>0</b> / <i>0</i> <span data-i18n="mektup">mektup</span></p><button class="ucus-atla" type="button" data-i18n="Beni bir yere ışınla">Beni bir yere ışınla</button><p class="ucus-ipucu" data-i18n="↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır">↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır</p><div class="ucus-yillar" aria-hidden="true"></div><div class="ucus-konum" aria-hidden="true"><b class="ucus-konum-tarih"></b><span class="ucus-konum-uzak"></span></div><div class="ucus-tuslar" aria-hidden="true"><span class="ucus-tus" data-tus="gaz">↑</span><span class="ucus-tus" data-tus="sol">←</span><span class="ucus-tus" data-tus="fren">↓</span><span class="ucus-tus" data-tus="sag">→</span><b class="ucus-hiz"></b></div><article class="ucus-kart" hidden><header class="ucus-ust"><span class="ucus-rozet" aria-hidden="true">TZ</span><span class="ucus-tarih"></span><span class="ucus-kapali" data-i18n="yolculuğa dönmek için bir yön tuşu">yolculuğa dönmek için bir yön tuşu</span></header><div class="ucus-medya" hidden></div><div class="ucus-govde"><p class="ucus-metin"></p></div><a class="ucus-dis" target="_blank" rel="noopener" hidden>YouTube ↗</a></article></div>
+  <div class="ucus" data-veri="luka-veri"><canvas class="ucus-tuval"></canvas><p class="ucus-sayac"><b>0</b> / <i>0</i> <span data-i18n="mektup">mektup</span></p><button class="ucus-atla" type="button" data-i18n="Beni bir yere ışınla">Beni bir yere ışınla</button><p class="ucus-ipucu" data-i18n="↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır">↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır</p><div class="ucus-yillar" aria-hidden="true"></div><div class="ucus-konum" aria-hidden="true"><b class="ucus-konum-tarih"></b><span class="ucus-konum-uzak"></span></div><div class="ucus-tuslar" aria-hidden="true"><span class="ucus-tus" data-tus="gaz">↑</span><span class="ucus-tus" data-tus="sol">←</span><span class="ucus-tus" data-tus="fren">↓</span><span class="ucus-tus" data-tus="sag">→</span><b class="ucus-hiz"></b></div><article class="ucus-kart" hidden><header class="ucus-ust"><span class="ucus-rozet" aria-hidden="true">TZ</span><span class="ucus-tarih"></span><button class="ucus-kapat" type="button" aria-label="Yolculuğa dön" data-i18n-aria="Yolculuğa dön">×</button></header><div class="ucus-medya" hidden></div><div class="ucus-govde"><p class="ucus-metin"></p></div><a class="ucus-dis" target="_blank" rel="noopener" hidden>YouTube ↗</a></article></div>
 </div>
 <div class="pencere tritonet" id="tritonetPencere" aria-hidden="true" role="dialog" aria-label="Tritonet denetçisi" data-i18n-aria="Tritonet denetçisi">
   <header class="pencere-bar">
@@ -2691,6 +2720,7 @@ const EN = {
     "The document previewers in WhatsApp, Telegram and similar apps do not run JavaScript. Save the file to your phone and open it in Safari or Chrome, or ask the sender for a web address.",
   "ağaca dön": "back to the tree",
   "Ağaca dön": "Back to the tree",
+  "Yolculuğa dön": "Back to the journey",
   "Tritonet denetçisi": "Tritonet controller",
 
   /* kilit ve başvuru penceresi */
@@ -2796,7 +2826,6 @@ const EN = {
   "Beni bir yere ışınla": "Beam me somewhere",
   "↑ hızlan · ↓ yavaşla · ← → tünelde yön değiştir · bir mektubun yanına kadar uç, kendiliğinden açılır":
     "↑ speed up · ↓ slow down · ← → steer inside the tunnel · fly up to a letter and it opens by itself",
-  "yolculuğa dönmek için bir yön tuşu": "any arrow key to return to the journey",
   "ışık hızı": "light speed",
   " geçmişe": " into the past",
   " bugüne": " toward today",
@@ -2831,6 +2860,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Lehre und Vorträge",
     "Albümler": "Alben",
     "Ağaca dön": "Zurück zum Baum",
+    "Yolculuğa dön": "Zurück zur Reise",
     "Basılı işler": "Publikationen",
     "Beni bir yere ışınla": "Beam mich irgendwohin",
     "Besteler": "Kompositionen",
@@ -2885,7 +2915,6 @@ const DILLER = {
     "müzisyen": "Musiker",
     "parola": "passwort",
     "sen biliyorsun": "du weißt es",
-    "yolculuğa dönmek için bir yön tuşu": "eine Pfeiltaste, um zur Reise zurückzukehren",
     "Çal": "Abspielen",
     "Ödüller": "Auszeichnungen",
     "Önceki parça": "Vorheriger Titel",
@@ -2899,6 +2928,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Enseignement et conférences",
     "Albümler": "Albums",
     "Ağaca dön": "Retour à l’arbre",
+    "Yolculuğa dön": "Retour au voyage",
     "Basılı işler": "Publications",
     "Beni bir yere ışınla": "Téléporte-moi quelque part",
     "Besteler": "Compositions",
@@ -2953,7 +2983,6 @@ const DILLER = {
     "müzisyen": "musicien",
     "parola": "mot de passe",
     "sen biliyorsun": "tu le sais",
-    "yolculuğa dönmek için bir yön tuşu": "une touche fléchée pour reprendre le voyage",
     "Çal": "Lecture",
     "Ödüller": "Distinctions",
     "Önceki parça": "Piste précédente",
@@ -2967,6 +2996,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Docencia y conferencias",
     "Albümler": "Álbumes",
     "Ağaca dön": "Volver al árbol",
+    "Yolculuğa dön": "Volver al viaje",
     "Basılı işler": "Publicaciones",
     "Beni bir yere ışınla": "Teletranspórtame",
     "Besteler": "Composiciones",
@@ -3021,7 +3051,6 @@ const DILLER = {
     "müzisyen": "músico",
     "parola": "contraseña",
     "sen biliyorsun": "tú lo sabes",
-    "yolculuğa dönmek için bir yön tuşu": "una tecla de flecha para volver al viaje",
     "Çal": "Reproducir",
     "Ödüller": "Premios",
     "Önceki parça": "Pista anterior",
@@ -3035,6 +3064,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Docenza e conferenze",
     "Albümler": "Album",
     "Ağaca dön": "Torna all’albero",
+    "Yolculuğa dön": "Torna al viaggio",
     "Basılı işler": "Pubblicazioni",
     "Beni bir yere ışınla": "Teletrasportami",
     "Besteler": "Composizioni",
@@ -3089,7 +3119,6 @@ const DILLER = {
     "müzisyen": "musicista",
     "parola": "password",
     "sen biliyorsun": "lo sai",
-    "yolculuğa dönmek için bir yön tuşu": "un tasto freccia per tornare al viaggio",
     "Çal": "Riproduci",
     "Ödüller": "Riconoscimenti",
     "Önceki parça": "Traccia precedente",
@@ -3103,6 +3132,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "Преподавание и доклады",
     "Albümler": "Альбомы",
     "Ağaca dön": "Назад к дереву",
+    "Yolculuğa dön": "Назад к путешествию",
     "Basılı işler": "Публикации",
     "Beni bir yere ışınla": "Перенеси меня",
     "Besteler": "Сочинения",
@@ -3157,7 +3187,6 @@ const DILLER = {
     "müzisyen": "музыкант",
     "parola": "пароль",
     "sen biliyorsun": "ты знаешь",
-    "yolculuğa dönmek için bir yön tuşu": "любая стрелка — вернуться в путь",
     "Çal": "Играть",
     "Ödüller": "Награды",
     "Önceki parça": "Предыдущий трек",
@@ -3171,6 +3200,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "教学与讲座",
     "Albümler": "专辑",
     "Ağaca dön": "返回树",
+    "Yolculuğa dön": "返回旅程",
     "Basılı işler": "出版物",
     "Beni bir yere ışınla": "把我传送走",
     "Besteler": "作曲",
@@ -3225,7 +3255,6 @@ const DILLER = {
     "müzisyen": "音乐家",
     "parola": "密码",
     "sen biliyorsun": "你知道的",
-    "yolculuğa dönmek için bir yön tuşu": "按方向键继续旅程",
     "Çal": "播放",
     "Ödüller": "奖项",
     "Önceki parça": "上一曲",
@@ -3239,6 +3268,7 @@ const DILLER = {
     "Akademi ve konuşmalar": "教育と講演",
     "Albümler": "アルバム",
     "Ağaca dön": "木に戻る",
+    "Yolculuğa dön": "旅に戻る",
     "Basılı işler": "出版物",
     "Beni bir yere ışınla": "どこかへ飛ばして",
     "Besteler": "作曲",
@@ -3293,7 +3323,6 @@ const DILLER = {
     "müzisyen": "音楽家",
     "parola": "パスワード",
     "sen biliyorsun": "きみは知っている",
-    "yolculuğa dönmek için bir yön tuşu": "矢印キーで旅に戻る",
     "Çal": "再生",
     "Ödüller": "受賞",
     "Önceki parça": "前の曲",
@@ -3612,7 +3641,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v64 · 2026-08-13';
+const SURUM = 'v65 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -10056,6 +10085,45 @@ DIL.uygula();
       for (var k in tusEl) tusIsigi(k, false);
     });
 
+    /* ---------- parmakla sürüklemek ----------
+       Dokunmatikte asıl kumanda bu. Ekranın herhangi bir yerinden
+       tutup çekiyorsun:
+         yana  → tünelde yön        (analog: ne kadar çektiysen o kadar)
+         yukarı → hızlan   aşağı → yavaşla
+       Ölçü BAŞPARMAK mesafesi: 84 px'te tam güç. Daha uzun bir eşik
+       telefonda ekrandan taşıyor, daha kısası titriyor.
+       Yön tuşlarıyla aynı değişkenlere yazmıyor, kendi payını ekliyor —
+       böylece klavye ve parmak birbirini bozmuyor. */
+    var surukleX = 0, surukleGaz = 0, surukluyor = false, sX0 = 0, sY0 = 0;
+    var SURUKLE_TAM = 84;
+    function kavra(x, y){ surukluyor = true; sX0 = x; sY0 = y; }
+    function suruklendi(x, y){
+      if (!surukluyor) return;
+      var kirp = function (v){ return Math.max(-1, Math.min(1, v)); };
+      surukleX   = kirp((x - sX0) / SURUKLE_TAM);
+      surukleGaz = kirp((sY0 - y) / SURUKLE_TAM);   // yukarı = hızlan
+    }
+    function birakildi(){ surukluyor = false; surukleX = 0; surukleGaz = 0; }
+    kap.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.ucus-atla, .ucus-tus, a, button')) return;
+      /* Kart açıkken: DIŞINA dokunmak yolculuğa döndürür — telefonda kart
+         neredeyse bütün alanı kaplıyor, üstte kalan şeride dokunmak en
+         doğal çıkış. O dokunuş direksiyona geçmiyor; yoksa kartı
+         kapatan parmak mekiği de savuruyordu. */
+      if (!kartEl.hidden) {
+        if (!e.target.closest('.ucus-kart')) kartiKapat();
+        return;
+      }
+      kavra(e.clientX, e.clientY);
+      /* Yakalama şart: parmak tünelin kenarından taşsa da direksiyon
+         elde kalsın. Yakalama varken pointerleave gelmiyor, o yüzden
+         bırakmayı yalnızca up/cancel dinliyor. */
+      if (kap.setPointerCapture) { try { kap.setPointerCapture(e.pointerId); } catch(x){} }
+    });
+    kap.addEventListener('pointermove', function (e) { suruklendi(e.clientX, e.clientY); });
+    kap.addEventListener('pointerup', birakildi);
+    kap.addEventListener('pointercancel', birakildi);
+
     /* Dokunmatikte klavye yok; şemanın kendisi tuş olur. */
     Object.keys(tusEl).forEach(function (ad) {
       var el = tusEl[ad];
@@ -10096,12 +10164,18 @@ DIL.uygula();
       if (pencere && !pencere.classList.contains('on')) return;
       if (!kap.offsetParent || !olcekle()) return;
 
-      /* hız yön tuşlarıyla, yumuşak — birden fırlamasın */
+      /* hız yön tuşlarıyla ya da parmakla, yumuşak — birden fırlamasın.
+         Parmak analog: yarım çektiysen yarım ivme. */
       if (basili.gaz) { manivela = Math.min(1, manivela + 0.008); hiziCiz(); }
       if (basili.fren) { manivela = Math.max(-1, manivela - 0.008); hiziCiz(); }
+      if (surukleGaz) {
+        manivela = Math.max(-1, Math.min(1, manivela + surukleGaz * 0.008));
+        hiziCiz();
+      }
 
-      /* yanal girdi */
-      var kx = (basili.sag ? 1 : 0) - (basili.sol ? 1 : 0);
+      /* yanal girdi: tuş + parmak, ikisi de −1..1 */
+      var kx = (basili.sag ? 1 : 0) - (basili.sol ? 1 : 0) + surukleX;
+      kx = Math.max(-1, Math.min(1, kx));
       var ky = (basili.yukari ? 1 : 0) - (basili.asagi ? 1 : 0);
       sapmaX += (kx - sapmaX) * 0.09;
       sapmaY += (ky - sapmaY) * 0.09;
