@@ -855,41 +855,34 @@
   /* ── kâğıt ── */
   .ld-kagit{position:relative;flex:1 1 auto;min-height:0;display:flex}
 
-  /* Oklar SAYFANIN İÇİNDE, iki yanında; kâğıdın üstüne gelince beliriyor.
-     Şeritte dururken pencerenin adıyla yarışıyorlardı. Kenar boşluğunun
-     (clamp(1.4rem,4vw,3rem)) içinde kalıyorlar, metne değmiyorlar. */
-  /* Kâğıdın DİKEY ORTASINDA, iki kenara yapışık ama biraz payla.
-     Kâğıdın her yerinde belirmiyorlar: yalnızca imleç o kenara
-     yaklaşınca (JS `.yakin` koyuyor) — sayfanın ortasında okurken
-     köşede duran bir düğme dikkat dağıtıyordu. */
-  /* Sayfa okları — hem Likya Dede hem başvuru penceresi kullanıyor.
-     Kâğıdın dikey ortasında, iki kenara yapışık ama biraz payla; yalnızca
-     imleç o kenara yaklaşınca beliriyorlar (JS `.yakin` koyuyor). */
-  .sayfa-ok{position:absolute;top:50%;transform:translateY(-50%);z-index:6;
-    width:30px;height:30px;display:grid;place-items:center;
-    background:color-mix(in srgb,var(--paper) 72%,transparent);
-    border:1px solid var(--ink-faint);border-radius:50%;cursor:pointer;
-    color:var(--ink-soft);font:inherit;font-size:1.1rem;line-height:1;
-    padding:0 0 .1em;opacity:0;
-    transition:opacity .22s,color .2s,border-color .2s}
-  .sayfa-ok.yakin,.sayfa-ok:focus-visible{opacity:1}
-  .sayfa-ok:hover,.sayfa-ok:focus-visible{color:var(--ink);border-color:var(--ink);outline:none}
-  .sayfa-ok[disabled]{opacity:0 !important;pointer-events:none}
-  .sayfa-ok-sol{left:1.1rem}
-  .sayfa-ok-sag{right:1.1rem}
-  /* DOKUNMATİKTE OKLAR HEP AÇIK VE ALTTA.
-     `.yakin` sınıfını `mousemove` koyuyor — parmakta o olay hiç
-     tetiklenmiyor, yani oklar telefonda HİÇ belirmiyordu ve Likya
-     Dede'nin öbür sayfalarına geçmenin yolu yoktu.
-     Yerleri de değişti: dikey ortada dururken solda bölüm numaralarının
-     sütununa çarpıyorlar. Altta, iki köşede — hem çakışma yok hem
-     başparmağın durduğu yer orası. Ölçü 44 px: dokunma hedefi. */
+  /* SAYFA OKLARI ŞERİTTE, SOL ÜST KÖŞEDE, YAN YANA.
+     Üç yer denendi: şeritte (başlıkla yarışıyordu), kâğıdın dikey
+     ortasında iki kenara yapışık (imleç yaklaşınca beliriyordu — telefonda
+     hiç belirmiyordu, sonra alt köşelere alındı, orada da metnin üstüne
+     biniyordu). Dördüncüsü ve sonuncusu: pencerenin kendi künyesinde,
+     kapatma düğmesinin karşı köşesinde. Gerekçe:
+       · Sayfa gezinmesi İÇERİK değil, pencerenin kendi kumandası.
+       · Hiçbir zaman metnin üstüne binmiyor.
+       · HEP GÖRÜNÜR — masaüstünde de. Belirip kaybolan bir düğme, on dört
+         sayfalık bir pencerede "sayfa var mı?" sorusunu her seferinde
+         yeniden sordurtuyordu.
+     Sönük duruyorlar (ink-faint), imleç değince ya da odaklanınca
+     koyulaşıyor. Dokunmatikte büyüyor ve çerçeve kazanıyorlar. */
+  .sayfa-oklar{flex:none;display:flex;align-items:center;gap:.3rem;
+    margin-right:auto}
+  .sayfa-ok{flex:none;width:26px;height:26px;display:grid;place-items:center;
+    background:none;border:1px solid transparent;border-radius:2px;
+    cursor:pointer;color:var(--ink-faint);font:inherit;
+    font-size:1rem;line-height:1;padding:0 0 .1em;
+    transition:color .18s,border-color .18s,opacity .18s}
+  .sayfa-ok:hover,.sayfa-ok:focus-visible{color:var(--ink);
+    border-color:var(--ink-faint);outline:none}
+  /* Sonu ya da başı: düğme kaybolmuyor, SÖNÜYOR. Kaybolsaydı yanındaki
+     düğme yer değiştirirdi ve nerede olduğun okunmazdı. */
+  .sayfa-ok[disabled]{opacity:.28;pointer-events:none}
   @media (hover:none),(pointer:coarse){
-    .sayfa-ok{opacity:1;width:44px;height:44px;font-size:1.5rem;
-      top:auto;bottom:.6rem;transform:none;
-      background:color-mix(in srgb,var(--paper) 88%,transparent)}
-    .sayfa-ok-sol{left:.6rem}
-    .sayfa-ok-sag{right:.6rem}
+    .sayfa-ok{width:38px;height:38px;font-size:1.3rem;
+      border-color:var(--ink-faint)}
   }
 
   /* Sayfa alanı TEK SATIR ve tam yükseklikte: `minmax(0,1fr)` satırı
@@ -1983,16 +1976,17 @@
 </div>
 <div class="pencere tritonet" id="tritonetPencere" aria-hidden="true" role="dialog" aria-label="Tritonet denetçisi" data-i18n-aria="Tritonet denetçisi">
   <header class="pencere-bar">
+    <div class="sayfa-oklar">
+      <button class="sayfa-ok" id="triGeri" type="button"
+              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
+      <button class="sayfa-ok" id="triIleri" type="button"
+              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
+    </div>
     <span class="pencere-ad" id="tritonetAd">Tritonet</span>
     <a class="pencere-dis" id="tritonetDis" href="https://tritonet.pages.dev/ui/tritonet-controller" target="_blank" rel="noopener" aria-label="Yeni sekmede aç" data-i18n-aria="Yeni sekmede aç" title="Yeni sekmede aç" data-i18n-title="Yeni sekmede aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4 11.5 12.5"/><path d="M18 14.5V19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/></svg></a>
     <button class="pencere-kapat" id="tritonetKapat" aria-label="Ağaca dön" data-i18n-aria="Ağaca dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V10"/><path d="M12 14.4 7.6 9.8"/><path d="M12 12.2 16.4 7.6"/><path d="M7.6 9.8 5.2 6"/><path d="M7.6 9.8 9.2 5.2"/><path d="M16.4 7.6 18.8 4"/><path d="M16.4 7.6 14.9 3.2"/><path d="M8.4 22h7.2"/></svg></button>
   </header>
   <div class="tri-kagit">
-    <!-- Sayfa okları kâğıdın kenarında, imleç yaklaşınca belirir. -->
-    <button class="sayfa-ok sayfa-ok-sol" id="triGeri" type="button"
-            aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
-    <button class="sayfa-ok sayfa-ok-sag" id="triIleri" type="button"
-            aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
     <!-- Metin sayfaları burada üretiliyor; dil değişince yeniden kuruluyor. -->
     <div class="tri-sayfalar" id="triSayfalar"></div>
   <div class="tritonet-govde" id="triUygulama">
@@ -2014,6 +2008,12 @@
 <div class="pencere likya" id="likyaPencere" aria-hidden="true" role="dialog"
      aria-label="Likya Dede" data-i18n-aria="Likya Dede">
   <header class="pencere-bar">
+    <div class="sayfa-oklar">
+      <button class="sayfa-ok" id="ldGeri" type="button"
+              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
+      <button class="sayfa-ok" id="ldIleri" type="button"
+              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
+    </div>
     <span class="pencere-ad" id="likyaAd">Likya Dede</span>
     <button class="pencere-kapat" id="likyaKapat" aria-label="Ağaca dön" data-i18n-aria="Ağaca dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V10"/><path d="M12 14.4 7.6 9.8"/><path d="M12 12.2 16.4 7.6"/><path d="M7.6 9.8 5.2 6"/><path d="M7.6 9.8 9.2 5.2"/><path d="M16.4 7.6 18.8 4"/><path d="M16.4 7.6 14.9 3.2"/><path d="M8.4 22h7.2"/></svg></button>
   </header>
@@ -2021,11 +2021,6 @@
     <!-- Sayfa alanı önce, çalar ALTTA: okunan şey üstte kalsın, çalan şey
          elin altında. Oklar sayfa alanının kenarlarında, hover ile beliriyor. -->
     <div class="ld-kagit">
-      <!-- Sayfa okları kâğıdın kenar boşluğunda, hover ile belirir. -->
-      <button class="sayfa-ok sayfa-ok-sol" id="ldGeri" type="button"
-              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
-      <button class="sayfa-ok sayfa-ok-sag" id="ldIleri" type="button"
-              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
     <!-- Sayfalar JS'ten üretiliyor (LD_ICERIK). Sekiz sayfalık uzun metni
          elle iki dilde yazmak sürdürülemezdi. -->
     <div class="ld-sayfalar" id="ldSayfalar" tabindex="-1"></div>
@@ -2094,15 +2089,16 @@
 <div class="pencere basvuru" id="basvuruPencere" aria-hidden="true" role="dialog"
      aria-label="Kilitli belge" data-i18n-aria="Kilitli belge">
   <header class="pencere-bar">
+    <div class="sayfa-oklar">
+      <button class="sayfa-ok" id="bvGeri" type="button"
+              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
+      <button class="sayfa-ok" id="bvIleri" type="button"
+              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
+    </div>
     <span class="pencere-ad" id="basvuruAd" data-i18n="Kilitli belge">Kilitli belge</span>
     <button class="pencere-kapat" id="basvuruKapat" aria-label="Ağaca dön" data-i18n-aria="Ağaca dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V10"/><path d="M12 14.4 7.6 9.8"/><path d="M12 12.2 16.4 7.6"/><path d="M7.6 9.8 5.2 6"/><path d="M7.6 9.8 9.2 5.2"/><path d="M16.4 7.6 18.8 4"/><path d="M16.4 7.6 14.9 3.2"/><path d="M8.4 22h7.2"/></svg></button>
   </header>
   <div class="bv-kagit">
-    <!-- Sayfa okları kâğıdın kenar boşluğunda, yaklaşınca belirir. -->
-    <button class="sayfa-ok sayfa-ok-sol" id="bvGeri" type="button"
-            aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
-    <button class="sayfa-ok sayfa-ok-sag" id="bvIleri" type="button"
-            aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
     <div class="basvuru-govde" id="basvuruGovde" tabindex="-1"></div>
   </div>
 </div>
@@ -3730,7 +3726,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v69 · 2026-08-13';
+const SURUM = 'v70 · 2026-08-13';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -7542,20 +7538,12 @@ function ldSayfalariKur(){
   });
 }
 
-/* Sayfa okları imleç kâğıdın kenarına YAKLAŞINCA beliriyor. Kâğıdın
-   tamamına hover vermek, ortada okurken de köşede bir düğme yakıyordu.
-   İki pencere de (Likya Dede, başvuru) bunu kullanıyor. */
-function okYakinlikKur(kagit, geri, ileri, yakin){
+/* Kâğıdı yana itmek sayfa çeviriyor. Oklar artık pencerenin künyesinde
+   ve hep görünür (bkz. `.sayfa-oklar`); burada eskiden imleç kenara
+   yaklaşınca okları yakan bir bölüm vardı, kalktı — düğmeler yerlerinde
+   duruyor, yakılacak bir şey yok. Üç pencere de bunu kullanıyor. */
+function sayfaGezmeKur(kagit, geri, ileri){
   if (!kagit || !geri || !ileri) return;
-  const YAKIN = yakin || 140;
-  kagit.addEventListener('pointermove', e => {
-    const r = kagit.getBoundingClientRect();
-    geri.classList.toggle('yakin', e.clientX - r.left < YAKIN);
-    ileri.classList.toggle('yakin', r.right - e.clientX < YAKIN);
-  });
-  kagit.addEventListener('pointerleave', () => {
-    geri.classList.remove('yakin'); ileri.classList.remove('yakin');
-  });
 
   /* KAYDIRARAK SAYFA ÇEVİRME — telefonun kendi hareketi.
      Oklar da duruyor (keşfedilebilirlik için) ama kâğıdı yana itmek daha
@@ -7590,7 +7578,7 @@ function likyaKur(){
      (ağ yok, engelli) düğmeler ölü durmasın, hiç değilse sahne
      numaralarla gezilebilsin. */
   ldKumandaKur();
-  okYakinlikKur(document.querySelector('.ld-kagit'),
+  sayfaGezmeKur(document.querySelector('.ld-kagit'),
                 document.getElementById('ldGeri'),
                 document.getElementById('ldIleri'));
   document.getElementById('ldGeri').addEventListener('click',
@@ -8313,7 +8301,7 @@ function triKur(){
   const ileri = document.getElementById('triIleri');
   geri.addEventListener('click', () => triSayfaAc(triSayfa - 1));
   ileri.addEventListener('click', () => triSayfaAc(triSayfa + 1));
-  okYakinlikKur(document.querySelector('.tri-kagit'), geri, ileri);
+  sayfaGezmeKur(document.querySelector('.tri-kagit'), geri, ileri);
   /* Dil değişince metin sayfaları yeniden üretiliyor; uygulama kutusuna
      dokunulmadığı için çalgı sıfırlanmıyor. */
   DIL.dinle(() => {
@@ -8537,7 +8525,7 @@ function basvuruAdiYaz(){
   const ileri = document.getElementById('bvIleri');
   geri.addEventListener('click', () => bvSayfaAc(bvSayfa - 1));
   ileri.addEventListener('click', () => bvSayfaAc(bvSayfa + 1));
-  okYakinlikKur(document.querySelector('.bv-kagit'), geri, ileri);
+  sayfaGezmeKur(document.querySelector('.bv-kagit'), geri, ileri);
 })();
 DIL.dinle(basvuruAdiYaz);
 
