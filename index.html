@@ -4142,7 +4142,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v102 · 2026-08-15';
+const SURUM = 'v103 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -12469,8 +12469,21 @@ DIL.uygula();
 
       /* --- konum göstergesi: hangi tarihteyiz, ne kadar önce --- */
       var suanki = zamandaNe(kamera.position.z);
-      if (tarihEl) tarihEl.textContent = tarihYaz(suanki);
-      if (uzakEl) uzakEl.textContent = neKadarOnce(suanki);
+      /* KART AÇIKKEN TARİH MEKTUBUN TARİHİ.
+         Gösterge z → zaman eğrisinden okunuyor; kart ise notanın 220
+         birim kadar ÖNÜNDEN açılabiliyor ve o mesafede eğri başka bir
+         tarih veriyor. Ekranda "25 Aralık 2022" yazan kartın yanında
+         "1 Şubat 2023" duruyordu. Üstelik notaların yerleşimi takvimle
+         birebir aynı sırada değil (yerleşim takvimi harmanlıyor), o
+         yüzden eğriyi "düzeltmek" de çözüm değil.
+         Mektup açıkken tek doğru tarih MEKTUBUN tarihi. */
+      var gosterZaman = suanki;
+      if (!kartEl.hidden && acikOlan > -1){
+        var az = Date.parse(mektuplar[acikOlan].iso || '');
+        if (!isNaN(az)) gosterZaman = az;
+      }
+      if (tarihEl) tarihEl.textContent = tarihYaz(gosterZaman);
+      if (uzakEl) uzakEl.textContent = neKadarOnce(gosterZaman);
 
       /* --- halka yılları --- */
       for (var yy = 0; yy < yilEtiketleri.length; yy++) {
@@ -12593,14 +12606,30 @@ DIL.uygula();
         var carpan = 1 + Math.min(1, hizAn / 26) * 0.85;   // 1 … 1.85
         var yanX = YANASMA_X * carpan, yanY = YANASMA_Y * carpan;
         var onPay = Math.max(6, hizAn * 1.2);              // bir karelik yol
+        /* `beklet` = az önce KAPATILAN mektup; hemen yeniden açılmasın
+           diye tutuluyor. Eskiden yalnızca ADAY LİSTESİNDEYKEN serbest
+           bırakılıyordu (`aday.d > BOY*4`) — ama uzaklaşınca nota
+           listeden düşüyor ve o satır bir daha hiç çalışmıyordu: mektup
+           kalıcı olarak "beklemede" kalıyor, geri dönüldüğünde
+           açılmıyordu. Serbest bırakma artık listeden bağımsız ve iki
+           yönlü: yeterince uzaklaştıysan unutuluyor. */
+        if (beklet > -1 &&
+            Math.abs(noktalar[beklet].z - kamera.position.z) > BOY * 2) beklet = -1;
+
         var enIyi = -1, enIyiUzak = Infinity;
         for (var s2 = 0; s2 < adaylar.length; s2++) {
           var aday = adaylar[s2], n2 = noktalar[aday.i];
-          if (aday.i === beklet) {
-            if (aday.d > BOY * 4) beklet = -1;
-            continue;
-          }
-          if (okunan.has(mektuplar[aday.i].id)) continue;
+          if (aday.i === beklet) continue;
+          /* OKUNMUŞ MEKTUP DA AÇILIR.
+             Burada `okunan.has(...)` ile okunmuş mektuplar atlanıyordu:
+             bir kez açtığın mektup bir daha ASLA açılmıyordu. Sonuç,
+             "kartı atlıyor, bir sonrakini seçiyor" şikâyeti — kapatıp
+             geri döndüğünde o mektup artık görünmez oluyor ve tünel
+             seni bir sonrakine götürüyordu.
+             Kural kalktı. `okunan` yalnızca SAYAÇ ve duvardaki "okundu"
+             işareti için duruyor; okumayı engellemiyor.
+             Kapattığın mektubun hemen yeniden açılmasını `beklet`
+             engelliyor, o yeter. */
           var dz2 = n2.z - kamera.position.z;      // önde ise negatif
           if (dz2 > onPay || dz2 < -BOY) continue;
           if (Math.abs(n2.x - kamera.position.x) > yanX) continue;
