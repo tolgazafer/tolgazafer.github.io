@@ -1276,19 +1276,24 @@
      köşelerine yapışsın diye. Esnek düzende `max-height:100%` kabın
      kesin boyuna göre çözülüyor; `display:block` + `fit-content` ile
      denendi, yüzdelik en-boy döngüye giriyor ve görsel taşıyordu. */
+  /* Kendisi de bir KAP: içindeki yazı kapağın enine göre ölçekleniyor.
+     Sabit punto pencere büyüdükçe küçücük kalıyordu — kapak 665 px de
+     olabilir 1200 px de, yazı onunla birlikte büyümeli. */
   .ld-kapak{position:relative;margin:0;display:block;
-    width:min(100cqw,100cqh);height:min(100cqw,100cqh)}
+    width:min(100cqw,100cqh);height:min(100cqw,100cqh);
+    container-type:inline-size}
   .ld-kapak img{display:block;width:100%;height:100%;
     object-fit:contain;border-radius:2px}
   /* Başlık RESMİN sağ alt köşesinde. Kapağın o köşesi orta mavi ve
      dokulu: beyaz yazı + koyu gölge okunuyor, perde gerekmiyor. */
-  .ld-kapak-ad{position:absolute;right:1.1rem;bottom:1rem;z-index:2;
-    max-width:min(28ch,72%);text-align:right;color:#fff;
-    text-shadow:0 1px 2px rgba(0,0,0,.75),0 0 1.2em rgba(0,0,0,.65)}
-  .ld-kapak-ad b{display:block;font-size:1.35rem;font-weight:600;
-    letter-spacing:.06em;line-height:1.2}
-  .ld-kapak-ad span{display:block;margin-top:.3rem;font-size:.8rem;
-    letter-spacing:.04em;line-height:1.5;color:rgba(255,255,255,.88)}
+  .ld-kapak-ad{position:absolute;right:4cqw;bottom:3.5cqw;z-index:2;
+    max-width:74%;text-align:right;color:#fff;
+    text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 1.4em rgba(0,0,0,.7)}
+  .ld-kapak-ad b{display:block;font-size:clamp(1.5rem,9cqw,4.2rem);
+    font-weight:600;letter-spacing:.04em;line-height:1.08}
+  .ld-kapak-ad span{display:block;margin-top:.45em;
+    font-size:clamp(.78rem,3.4cqw,1.6rem);
+    letter-spacing:.03em;line-height:1.35;color:rgba(255,255,255,.9)}
   /* Büyüteç karşı köşede — başlıkla çakışmasın diye SOL altta. */
   /* `.ld-gorsel-ac` genel kuralı `display:block;width:100%` — büyüteç
      kapakta bütün eni kaplıyordu. Buradaki kural onu eziyor. */
@@ -1302,10 +1307,10 @@
   .ld-kapak-ac:hover,.ld-kapak-ac:focus-visible{color:#fff;
     border-color:#fff;background:rgba(0,0,0,.6);outline:none}
   .ld-kapak-ac svg{width:1rem;height:1rem}
+  /* Telefon için ayrı punto kuralı YOK: `cqw` zaten kapağın enine
+     bağlı, kapak küçülünce yazı da küçülüyor. Yalnızca büyüteç
+     kenarlara biraz daha yaklaşıyor. */
   @media (max-width:720px){
-    .ld-kapak-ad b{font-size:1.05rem}
-    .ld-kapak-ad span{font-size:.72rem}
-    .ld-kapak-ad{right:.7rem;bottom:.7rem;max-width:80%}
     .ld-kapak-ac{left:.7rem;bottom:.7rem}
   }
   .ld-kagit > .ld-sayfalar{position:relative;z-index:1}
@@ -4013,7 +4018,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v83 · 2026-08-15';
+const SURUM = 'v84 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8669,10 +8674,12 @@ const LD_ICERIK = [
     fon:{url:'site/assets/img/likya-album/kapak.jpg', buyutulebilir:true,
          /* Fotoğrafın sahibi aranıyor — uydurulmuş bir künye değil, açık
             bir çağrı. Adı öğrenilince bu not adla değişecek. */
-         kunye:{tr:'<b>Likya Dede</b> — albüm kapağı · CT Music Productions · 19 Eylül 2025<br><br>' +
+         kunye:{tr:'Ege’de bir yerleşimde, bir evin kapı tokmağı.<br><br>' +
+                   '<b>Likya Dede</b> — albüm kapağı · CT Music Productions · 19 Eylül 2025<br><br>' +
                    'Bu fotoğrafın aslı, 2004 yıllarında konuştuğum ve sonra izini kaybettiğim ' +
                    'sevgili bir gönüldaşıma ait. Kendisine ulaşırsa, adını seve seve buraya eklerim.',
-                en:'<b>Likya Dede</b> — album cover · CT Music Productions · 19 September 2025<br><br>' +
+                en:'A door knocker on a house in a settlement in the Aegean.<br><br>' +
+                   '<b>Likya Dede</b> — album cover · CT Music Productions · 19 September 2025<br><br>' +
                    'The original of this photograph belongs to a dear kindred spirit I spoke with ' +
                    'around 2004 and later lost touch with. If this reaches them, I would gladly ' +
                    'add their name here.'}},
