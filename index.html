@@ -4068,7 +4068,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v88 · 2026-08-15';
+const SURUM = 'v91 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -11452,7 +11452,7 @@ DIL.uygula();
     var sahne = new THREE.Scene();
     sahne.fog = new THREE.FogExp2(0x05080f, 0.00030);
 
-    var kamera = new THREE.PerspectiveCamera(70, 1, 1, 40000);
+    var kamera = new THREE.PerspectiveCamera(71, 1, 1, 40000);   // hızla 88°ye açılıyor
     /* Tünelin ağzının biraz dışında başlıyoruz: ilk saniyede ne olduğu görünsün */
     kamera.position.set(0, 0, 900);
 
@@ -11601,42 +11601,161 @@ DIL.uygula();
     });
     sahne.add(new THREE.Points(isikGeo, isikMal));
 
-    /* ---------- mekik ---------- */
+    /* ---------- MEKİK ----------
+       Eskisi bir koni + bir kutu + bir küreydi: yandan bakınca kâğıt
+       uçağa benziyordu ve sahnede ışık olmadığı için tamamen düz bir
+       siluetti. Yeniden çizildi:
+
+         · gövde üç parçadan (burun konisi, orta silindir, kuyruk daralması)
+           — tek koni "roket" gibi duruyordu, mekik gövdesi silindirik;
+         · delta kanatlar GERÇEK üçgen (Shape → Extrude), kutu değil;
+         · dikey dümen + iki yatay kuyruk kanadı;
+         · üç motor lülesi ve her birinin kendi alevi;
+         · kokpit camı yassı bir kubbe, koyu ve parlak.
+
+       Sahneye IŞIK eklendi ve gövde Phong'a geçti: düz renkli yüzeyler
+       hacim vermiyordu. `flatShading` bilerek — yüzeyler kırıklı kalsın,
+       tünelin tel kafes diliyle aynı ailede dursun. */
+    function ucgen(a, b, c, kalinlik, mal){
+      var sh = new THREE.Shape();
+      sh.moveTo(a[0], a[1]); sh.lineTo(b[0], b[1]); sh.lineTo(c[0], c[1]); sh.closePath();
+      var geo = new THREE.ExtrudeGeometry(sh, { depth: kalinlik, bevelEnabled: false });
+      geo.translate(0, 0, -kalinlik / 2);
+      return new THREE.Mesh(geo, mal);
+    }
+
     function mekikYap() {
       var g = new THREE.Group();
-      var acik = new THREE.MeshBasicMaterial({ color: 0xe4e9f0 });
-      var koyu = new THREE.MeshBasicMaterial({ color: 0x76839a });
-      var cam = new THREE.MeshBasicMaterial({ color: 0x7fd4ff });
+      var govdeMal = new THREE.MeshPhongMaterial({
+        color: 0xf2f5fa, shininess: 26, flatShading: true });
+      var koyuMal = new THREE.MeshPhongMaterial({
+        color: 0x8794ab, shininess: 14, flatShading: true });
+      var isiMal  = new THREE.MeshPhongMaterial({          // karın kalkanı
+        color: 0x3d4657, shininess: 8, flatShading: true });
+      var camMal  = new THREE.MeshPhongMaterial({
+        color: 0x0e2438, shininess: 120, specular: 0x9fd8ff, flatShading: true });
+      var luleMal = new THREE.MeshPhongMaterial({
+        color: 0x5b6478, shininess: 40, flatShading: true });
 
-      var govde = new THREE.Mesh(new THREE.ConeGeometry(1, 4.6, 12), acik);
-      govde.rotation.x = Math.PI / 2;              // burun -Z, yani ileri
-      g.add(govde);
+      /* ── gövde: burun · orta · kuyruk ── */
+      var burun = new THREE.Mesh(new THREE.ConeGeometry(0.86, 2.4, 16), govdeMal);
+      burun.rotation.x = -Math.PI / 2;        // sivri uç -Z, yani ileri
+      burun.position.z = -2.5;
+      g.add(burun);
 
-      var kanat = new THREE.Mesh(new THREE.BoxGeometry(6, 0.14, 1.4), koyu);
-      kanat.position.z = 0.8;
-      g.add(kanat);
+      var orta = new THREE.Mesh(new THREE.CylinderGeometry(0.86, 1.02, 3.4, 16), govdeMal);
+      orta.rotation.x = Math.PI / 2;
+      orta.position.z = 0.4;
+      g.add(orta);
 
-      var kuyruk = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.4, 1), koyu);
-      kuyruk.position.set(0, 0.65, 1.6);
+      var kuyruk = new THREE.Mesh(new THREE.CylinderGeometry(1.02, 0.78, 1.5, 16), koyuMal);
+      kuyruk.rotation.x = Math.PI / 2;
+      kuyruk.position.z = 2.85;
       g.add(kuyruk);
 
-      var kokpit = new THREE.Mesh(new THREE.SphereGeometry(0.44, 10, 8), cam);
-      kokpit.position.set(0, 0.3, -0.9);
+      /* Karın kalkanı: gövdenin altına yapışık yassı bir kabuk. Mekiği
+         mekik yapan şeylerden biri — altı koyu, üstü açık. */
+      var karin = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.04, 5.4, 16, 1, false, 0, Math.PI), isiMal);
+      karin.rotation.x = Math.PI / 2;
+      karin.rotation.y = Math.PI / 2;
+      karin.position.set(0, -0.06, 0.3);
+      karin.scale.y = 1.02;
+      g.add(karin);
+
+      /* ── delta kanatlar ──
+         Üçgen XY düzleminde çiziliyor; X ekseni açıklık, Y ekseni
+         veter. `rotation.x = -90°` ile düzlem YATIYOR: yerel +Y dünyada
+         -Z (ileri) oluyor, kalınlık da dikeye geçiyor.
+         (Önce Y ekseninde döndürülmüştü — kanatlar DİK duruyordu,
+         mekik yandan bakınca yelkenli gibiydi.) */
+      var kanatSag = ucgen([0.55, 1.9], [4.6, -1.5], [0.55, -1.9], 0.16, koyuMal);
+      kanatSag.rotation.x = -Math.PI / 2;
+      kanatSag.position.set(0, -0.24, 0.9);
+      g.add(kanatSag);
+      var kanatSol = kanatSag.clone();
+      kanatSol.scale.x = -1;                  // aynası
+      g.add(kanatSol);
+
+      /* ── dikey dümen ──
+         Bu üçgen DİK kalacak: `rotation.y = 90°` ile YZ düzlemine
+         geçiyor, yerel +X dünyada -Z (ileri). */
+      var dumen = ucgen([-1.6, 0], [1.2, 0], [0.15, 1.5], 0.16, koyuMal);
+      dumen.rotation.y = Math.PI / 2;
+      dumen.position.set(0, 0.72, 2.5);
+      g.add(dumen);
+
+      /* ── yatay kuyruk kanatçıkları ── */
+      var kanatcik = ucgen([0, 0.5], [1.5, -0.35], [0, -0.5], 0.11, koyuMal);
+      kanatcik.rotation.x = -Math.PI / 2;
+      kanatcik.position.set(0, 0.35, 3.1);
+      g.add(kanatcik);
+      var kanatcik2 = kanatcik.clone(); kanatcik2.scale.x = -1; g.add(kanatcik2);
+
+      /* ── kokpit camı: yassı kubbe ── */
+      var kokpit = new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), camMal);
+      kokpit.position.set(0, 0.44, -1.75);
+      kokpit.scale.set(1, 0.52, 1.75);
       g.add(kokpit);
 
+      /* ── üç motor lülesi ve alevleri ── */
+      /* ALEVLER ARKADAN GÖRÜNÜYOR — kamera mekiğin ardında, yani
+         lülelere cepheden bakıyoruz. Uzun bir koni buradan damla gibi
+         duruyordu; alev İNCE ve kısa, üstüne çekirdek için ikinci bir
+         katman kondu. Toplayıcı harman iki katmanı beyaza doğru
+         parlatıyor — motorun ağzı öyle görünüyor. */
       var alevMal = new THREE.MeshBasicMaterial({
-        color: 0xffb457, transparent: true, opacity: 0.85
-      });
-      var alev = new THREE.Mesh(new THREE.ConeGeometry(0.42, 2, 10), alevMal);
-      alev.rotation.x = -Math.PI / 2;
-      alev.position.z = 3;
-      g.add(alev);
-      g.userData.alev = alev;
+        color: 0xff9a3c, transparent: true, opacity: 0.75,
+        blending: THREE.AdditiveBlending, depthWrite: false });
+      var cekirdekMal = new THREE.MeshBasicMaterial({
+        color: 0xbfe4ff, transparent: true, opacity: 0.8,
+        blending: THREE.AdditiveBlending, depthWrite: false });
+      var alevler = [];
+      var yerler = [[0, 0.5], [-0.66, -0.16], [0.66, -0.16]];
+      for (var i = 0; i < yerler.length; i++){
+        var lule = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.34, 0.75, 12), luleMal);
+        lule.rotation.x = Math.PI / 2;
+        lule.position.set(yerler[i][0], yerler[i][1], 3.8);
+        g.add(lule);
+
+        var alev = new THREE.Mesh(new THREE.ConeGeometry(0.22, 2.2, 12), alevMal.clone());
+        alev.rotation.x = -Math.PI / 2;       // sivri uç +Z, arkaya
+        alev.position.set(yerler[i][0], yerler[i][1], 5.2);
+        g.add(alev);
+
+        var cekirdek = new THREE.Mesh(new THREE.ConeGeometry(0.12, 1.1, 10), cekirdekMal.clone());
+        cekirdek.rotation.x = -Math.PI / 2;
+        cekirdek.position.set(yerler[i][0], yerler[i][1], 4.6);
+        g.add(cekirdek);
+
+        alev.userData.cekirdek = cekirdek;
+        alevler.push(alev);
+      }
+      g.userData.alevler = alevler;
+      g.userData.alev = alevler[0];           // eski ad, geriye dönük
       return g;
     }
+
+    /* Sahnede ışık YOKTU: bütün gövdeler tek düz renkti ve mekik bir
+       siluete iniyordu. İki ışık kameraya bağlı — mekik dönerken
+       aydınlatma sabit kalsın, tünelin içinde gölge gezinmesin.
+       Tel kafes `LineBasicMaterial` olduğu için ışıktan etkilenmiyor. */
+    var isikOrtam = new THREE.AmbientLight(0x4a5a78, 1.15);
+    kamera.add(isikOrtam);
+    var isikYon = new THREE.DirectionalLight(0xdfe9ff, 1.25);
+    isikYon.position.set(-3, 5, 2);
+    kamera.add(isikYon);
+    var isikDolgu = new THREE.DirectionalLight(0x6f86b8, 0.55);
+    isikDolgu.position.set(4, -2, -3);
+    kamera.add(isikDolgu);
+
     var mekik = mekikYap();
     mekik.scale.setScalar(1.5);
-    mekik.position.set(0, -6, -34);
+    /* Mekiğin dinlenme yeri. Kamera onun arkasında ve biraz üstünde:
+       aşağıda durması gökyüzünü açık bırakıyor, tünelin halkaları
+       kesilmiyor. Dönerken bu noktadan SAPIYOR, geri de buraya
+       yaslanıyor (bkz. cerceve). */
+    var MEKIK_YER = new THREE.Vector3(0, -6.4, -30);
+    mekik.position.copy(MEKIK_YER);
     kamera.add(mekik);
     sahne.add(kamera);
 
@@ -11665,7 +11784,9 @@ DIL.uygula();
 
     /* ---------- uçuş durumu ---------- */
     var manivela = 0.45;        // -1 .. +1 · 0 = ışık hızı
-    var sapmaX = 0, sapmaY = 0; // tünel içindeki yanal girdi
+    var sapmaX = 0, sapmaY = 0; // kumanda yüzeylerinin eğimi (girdiye yaklaşır)
+    var hizX = 0, hizY = 0;     // gövdenin yanal hızı (eğime yaklaşır)
+    var kameraYat = 0;          // dönüşte tünelin devrilmesi
     var acikOlan = -1;
     var ortayaDon = false;
     var beklet = -1;
@@ -11700,7 +11821,7 @@ DIL.uygula();
       /* Mekik tünelin ortasına döner; yoksa duvara yapışık kaldığı için
          hemen komşu sinyal açılıyordu. */
       ortayaDon = true;
-      sapmaX = 0; sapmaY = 0;
+      sapmaX = 0; sapmaY = 0; hizX = 0; hizY = 0;
     }
     kartEl.addEventListener('click', function (e) {
       if (e.target.closest('a, video, iframe')) return;
@@ -11948,8 +12069,16 @@ DIL.uygula();
       var kx = (basili.sag ? 1 : 0) - (basili.sol ? 1 : 0) + surukleX;
       kx = Math.max(-1, Math.min(1, kx));
       var ky = (basili.yukari ? 1 : 0) - (basili.asagi ? 1 : 0);
-      sapmaX += (kx - sapmaX) * 0.09;
-      sapmaY += (ky - sapmaY) * 0.09;
+      /* İKİ KADEMELİ ATALET — uçuş hissini veren şey bu.
+         Önce KUMANDA yüzeyleri girdiye yaklaşıyor (sapma), sonra
+         GÖVDE o eğime göre hızlanıyor (hizX/hizY). Tek kademeli
+         yumuşatmada tuşa basınca mekik anında kayıyordu: hafif, ıvır
+         zıvır bir his. Şimdi önce yatıyor, sonra sürükleniyor; tuşu
+         bırakınca da bir süre kaymaya devam ediyor. */
+      sapmaX += (kx - sapmaX) * 0.052;
+      sapmaY += (ky - sapmaY) * 0.052;
+      hizX += (sapmaX * YANAL - hizX) * 0.045;
+      hizY += (sapmaY * YANAL - hizY) * 0.045;
 
       if (kartEl.hidden) {
         /* Kart kapandıktan sonra mekik ekseni bulana kadar toparlanır */
@@ -11967,10 +12096,10 @@ DIL.uygula();
         if (kamera.position.z > 1000) kamera.position.z = 1000;
         if (kamera.position.z < -DERINLIK - 400) kamera.position.z = -DERINLIK - 400;
 
-        /* Tünel içinde sağa sola, yukarı aşağı */
+        /* Tünel içinde sağa sola, yukarı aşağı — gövdenin kendi hızıyla */
         if (!ortayaDon) {
-          kamera.position.x += sapmaX * YANAL;
-          kamera.position.y += sapmaY * YANAL;
+          kamera.position.x += hizX;
+          kamera.position.y += hizY;
         }
         var yaricap = Math.sqrt(
           kamera.position.x * kamera.position.x + kamera.position.y * kamera.position.y
@@ -11982,18 +12111,61 @@ DIL.uygula();
         }
       }
 
-      /* Mekik dönüşe hafifçe yatar, alev hıza göre uzar */
-      mekik.rotation.z += (-sapmaX * 0.45 - mekik.rotation.z) * 0.08;
-      mekik.rotation.x += (sapmaY * 0.2 - mekik.rotation.x) * 0.08;
-      var alevBoy = 0.4 + Math.max(0, manivela) * 2.6;
-      mekik.userData.alev.scale.z += (alevBoy - mekik.userData.alev.scale.z) * 0.12;
-      mekik.userData.alev.material.opacity = 0.35 + Math.max(0, manivela) * 0.6;
+      /* ── MEKİĞİN DURUŞU ──
+         Yatış (roll) bilerek ABARTILI: uçağın döndüğünü anlatan şey
+         yön değil, kanadın yere göre açısı. Buna sapma (yaw) ve
+         yunuslama (pitch) ekleniyor; üçü birlikte "manevra" oluyor.
+         Ayrıca mekik dinlenme noktasından KAYIYOR — kamera onu bir
+         yay gibi geriden takip ediyor, dönüşte gövde biraz dışarı
+         çıkıyor. Tek başına dönme yetmiyordu, gövde sabit kalınca
+         maket gibi duruyordu. */
+      mekik.rotation.z += (-sapmaX * 0.85 - mekik.rotation.z) * 0.07;
+      mekik.rotation.y += (-sapmaX * 0.22 - mekik.rotation.y) * 0.07;
+      mekik.rotation.x += (sapmaY * 0.3 - mekik.rotation.x) * 0.07;
+      mekik.position.x += (MEKIK_YER.x + sapmaX * 3.4 - mekik.position.x) * 0.06;
+      mekik.position.y += (MEKIK_YER.y + sapmaY * 2.6 - mekik.position.y) * 0.06;
+      /* Hızlanırken gövde geriye yaslanıyor, frende öne düşüyor. */
+      mekik.position.z += (MEKIK_YER.z + Math.max(0, manivela) * 2.2 - mekik.position.z) * 0.05;
+
+      /* Alevler: boy manivelaya bağlı, üstüne küçük bir titreşim —
+         sabit boy alev "çizim" gibi duruyordu. */
+      var t = performance.now() / 1000;      // alev titremesi için
+      var alevBoy = 0.35 + Math.max(0, manivela) * 3.0;
+      var alevler = mekik.userData.alevler;
+      for (var ai = 0; ai < alevler.length; ai++){
+        var titre = 1 + Math.sin(t * (7 + ai * 1.7) + ai) * 0.09;
+        var al = alevler[ai];
+        al.scale.z += (alevBoy * titre - al.scale.z) * 0.16;
+        al.scale.x = al.scale.y = 0.85 + Math.max(0, manivela) * 0.5;
+        al.material.opacity = 0.22 + Math.max(0, manivela) * 0.6;
+        var ck = al.userData.cekirdek;
+        if (ck){
+          ck.scale.z = al.scale.z * 0.55;
+          ck.scale.x = ck.scale.y = al.scale.x;
+          ck.material.opacity = 0.3 + Math.max(0, manivela) * 0.55;
+        }
+      }
 
       /* hız çizgileri yalnızca hızlanınca görünür, tam gazda tünel çizgileşir */
       cizgiMal.opacity += (Math.max(0, Math.abs(manivela) - 0.25) * 0.95 - cizgiMal.opacity) * 0.1;
 
-      /* Bakış hafifçe dönüşe eşlik eder; fazlası hedefi kaydırdığı için az */
-      kamera.rotation.set(sapmaY * 0.08, -sapmaX * 0.09, 0, 'YXZ');
+      /* Bakış dönüşe eşlik eder. YATIŞ da eklendi: tünel biraz yana
+         devrilince dönüş gerçekten hissediliyor — kokpitten bakmak
+         buna benziyor. Fazlası hedefi kaydırdığı için ölçülü. */
+      kameraYat += (-sapmaX * 0.16 - kameraYat) * 0.05;
+      kamera.rotation.set(sapmaY * 0.08, -sapmaX * 0.09, kameraYat, 'YXZ');
+
+      /* GÖRÜŞ AÇISI HIZLA AÇILIYOR.
+         Hız hissini veren en güçlü ipucu bu: gaz verince kenarlar
+         savrulur, yavaşlayınca dünya toplanır. Yalnız konum değişimiyle
+         hız anlatılmaya çalışılınca tünel hep aynı hızda akıyormuş gibi
+         duruyordu — çünkü tel kafes düzenli ve göz düzenli şeye alışıyor.
+         71°'den 88°'ye: fazlası balık gözü, azı fark edilmiyor. */
+      var hedefGorus = 71 + Math.min(1, Math.abs(manivela)) * 17;
+      if (Math.abs(kamera.fov - hedefGorus) > 0.05){
+        kamera.fov += (hedefGorus - kamera.fov) * 0.055;
+        kamera.updateProjectionMatrix();
+      }
       kamera.updateMatrixWorld(true);
       kamera.matrixWorldInverse.copy(kamera.matrixWorld).invert();
 
