@@ -4068,7 +4068,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v91 · 2026-08-15';
+const SURUM = 'v93 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -10715,11 +10715,28 @@ function frame(now){
   /* Masaüstünde bir pencere öndeyken ağaç durmaz: kenardaki şeritte
      yaşamaya devam ediyor ve tünelde sesi de oradan geliyor. Yalnızca
      yükü yarıya indirmek için iki karede bir çiziliyor. */
-  if ((tunelAcik || triAcik || basvuruAcik || likyaAcik) && (++tunelKare & 1)){ requestAnimationFrame(frame); return; }
+  /* Pencere öndeyken ağaç ÜÇ karede bir çiziliyor (eskiden ikide bir).
+     Ağaç 333 düğüme çıkınca dal sayısı da arttı; tünel tam gazda kendi
+     üç boyutlu sahnesini çizerken aynı karede binlerce çizgi daha
+     çekmek görüntüyü aksatıyordu. Kenardaki şerit yavaş yaşamaya
+     devam ediyor — orada hareket zaten arka plan. */
+  if ((tunelAcik || triAcik || basvuruAcik || likyaAcik) && (++tunelKare % 3)){ requestAnimationFrame(frame); return; }
   try { draw(now); } catch(e){
     if (++frameErr < 4) console.error('çizim hatası:', e);   // döngü yaşamaya devam eder
   }
   requestAnimationFrame(frame);
+}
+/* Güneş ışığının ton tablosu — bkz. kullanıldığı yer. */
+let gunesTablo = null, gunesTabloRenk = null;
+function gunesTonu(a){
+  if (gunesTabloRenk !== sunc){
+    gunesTabloRenk = sunc;
+    gunesTablo = new Array(25);
+    for (let i = 0; i <= 24; i++) gunesTablo[i] = rgba(sunc, i / 48);  // 0 … 0.5
+  }
+  let i = (a * 48) | 0;
+  if (i < 0) i = 0; else if (i > 24) i = 24;
+  return gunesTablo[i];
 }
 function draw(now){
   const dt = Math.min((now-prev)/1000, 0.05); prev = now;
@@ -10777,10 +10794,15 @@ function draw(now){
       if (d > pr && d <= rp.r && Math.random() < 0.3+e*0.35) budBrush(bd, e);
     }
     // link taşıyan node'lar: dalga bunları çalmaz, sadece görsel olarak titretir
+    /* Karekök YOK: iki yarıçapın da karesiyle karşılaştırıyoruz.
+       Bu döngü her DALGA için bütün node'ları geziyor; ağaç 245'ten
+       333 düğüme çıkınca kare başına yapılan `hypot` sayısı da öyle
+       arttı ve dalga halkaları takılmaya başladı. */
+    const pr2 = pr*pr, rr2 = rp.r*rp.r;
     for (const n of allNodes){
       if (n.cool > 0 || n.x == null) continue;
-      const d = Math.hypot(n.x-rp.x, n.y-rp.y);
-      if (d > pr && d <= rp.r){ n.glow = Math.max(n.glow, e*0.8); n.cool = 0.4; }
+      const ndx = n.x-rp.x, ndy = n.y-rp.y, d2 = ndx*ndx + ndy*ndy;
+      if (d2 > pr2 && d2 <= rr2){ n.glow = Math.max(n.glow, e*0.8); n.cool = 0.4; }
     }
   }
 
@@ -10795,44 +10817,107 @@ function draw(now){
   }
 
   ctx.lineCap = 'round';
-  const SR = Math.max(W,H)*0.62;
+  const SR = Math.max(W,H)*0.62, SR2 = SR*SR;
+  /* Derinlik başına bir yol; döngü bitince hepsi tek tek çiziliyor. */
+  const kovalar = new Map();
   for (const b of branches){
     if (b.cool > 0) b.cool -= dt;
     b.tr += (b.trT - b.tr) * Math.min(1, dt*9);
     // derinlik artık 15'e çıkabiliyor; kalınlık ve ton sabit sayıya değil
     // ağacın gerçek derinliğine göre ölçekleniyor
-    const u = b.d / MAXDEPTH;
-    const w = 0.55 + 6.6*Math.pow(1-u, 1.9);
+    /* Kalınlık ve taban saydamlığı yalnızca DERİNLİĞE bağlı, yani
+       ağaç kurulduktan sonra sabit. Her karede `Math.pow` çağırmak
+       binlerce dal için boşuna işti — bir kez hesaplanıp saklanıyor. */
+    if (b.w0 === undefined || b.mdSon !== MAXDEPTH){
+      const u0 = b.d / MAXDEPTH;
+      b.w0 = 0.55 + 6.6*Math.pow(1-u0, 1.9);
+      b.a0 = Math.max(0.16, 0.46 - u0*0.28);
+      b.mdSon = MAXDEPTH;
+      b.renkInk = null;                       // renk önbelleği de tazelensin
+    }
+    const w = b.w0;
     const zt = b.zone ? zc[b.zone] : ink;
 
-    // güneş ışığı: dala olan uzaklık + dalın güneşe dönüklüğü
+    /* Güneş ışığı: önce KARESEL uzaklık. Güneşin erim alanının dışında
+       kalan dal zaten ışık almıyor; `atan2` ve `sin` yalnızca erimin
+       içindekiler için hesaplanıyor. Ağacın çoğu dalı her an erimin
+       dışında olduğu için bu, kare başına binlerce trigonometri
+       çağrısını siliyor. */
     const dx = sunPos.x - b.mx, dy = sunPos.y - b.my;
-    const dist = Math.hypot(dx, dy);
-    const face = Math.abs(Math.sin(b.a - Math.atan2(dy, dx)));   // dike yakınsa çok ışık alır
-    const lit = Math.max(0, 1 - dist/SR) * (0.35 + face*0.65);
+    const d2 = dx*dx + dy*dy;
+    let lit = 0;
+    if (d2 < SR2){
+      const face = Math.abs(Math.sin(b.a - Math.atan2(dy, dx)));  // dike yakınsa çok ışık alır
+      lit = (1 - Math.sqrt(d2)/SR) * (0.35 + face*0.65);
+    }
 
-    ctx.beginPath(); ctx.moveTo(b.x1,b.y1); ctx.lineTo(b.x2,b.y2);
-    ctx.lineWidth = w + b.tr*1.5;
     /* DİZİN AÇIKKEN GERİ KALAN SÖNER.
        Bir satırın üstüne gelince ilgili dal aydınlanıyordu ama ağacın
        geri kalanı aynı parlaklıkta durduğu için seçilenin nerede olduğu
        okunmuyordu. Seçim varken seçilmeyen dallar `KISIK` kadar
        söndürülüyor — seçilen dal aynı kalıyor, fark kendiliğinden çıkıyor. */
     const kisik = (menuOpen && traceOwner) ? (0.42 + b.tr*0.58) : 1;
-    ctx.strokeStyle = b.tr > 0.01
-      ? rgba(zt, (0.26 + b.tr*0.66))
-      : rgba(ink, Math.max(0.16, 0.46 - u*0.28) * kisik);   // taban: asla görünmez olmasın
-    ctx.stroke();
-
-    if (lit > 0.04 && b.tr < 0.4 && kisik > 0.9){
+    /* İZLENMEYEN dalın rengi her karede AYNI dize: `rgba()` her
+       çağrıda yeni bir metin üretiyordu ve binlerce dal × 60 kare
+       çöp toplayıcıyı meşgul ediyordu. İki hâl var (tam ve kısık),
+       ikisi de dal üstünde saklanıyor; tema değişince tazeleniyor. */
+    if (b.renkInk !== ink){
+      b.renkInk = ink;
+      b.renkTam  = rgba(ink, b.a0);
+      b.renkKisik = rgba(ink, b.a0 * 0.42);
+    }
+    /* ── TABAN GEÇİŞİ KOVALARDA ──
+       Eskiden her dal kendi `beginPath`/`stroke` çiftini çağırıyordu:
+       iki bin dörtyüz dal = kare başına iki bin dörtyüz çizim çağrısı.
+       Oysa İZLENMEYEN bir dalın hem kalınlığı hem rengi yalnızca
+       DERİNLİĞİNE bağlı — aynı derinlikteki bütün dallar tek bir yolda
+       toplanıp bir kez çizilebiliyor. On üç derinlik = on üç çağrı.
+       İzlenen dallar (`tr > 0.01`) kendi rengini taşıdığı için tek tek
+       kalıyor; onlar da zaten bir avuç. */
+    if (b.tr > 0.01){
       ctx.beginPath(); ctx.moveTo(b.x1,b.y1); ctx.lineTo(b.x2,b.y2);
-      ctx.lineWidth = w;
-      ctx.strokeStyle = rgba(sunc, lit*0.5);
+      ctx.lineWidth = w + b.tr*1.5;
+      ctx.strokeStyle = rgba(zt, (0.26 + b.tr*0.66));
+      ctx.stroke();
+    } else {
+      const anahtar = b.d * 2 + (kisik < 1 ? 1 : 0);
+      let kova = kovalar.get(anahtar);
+      if (!kova){
+        kova = { yol: new Path2D(), w: w, renk: kisik < 1 ? b.renkKisik : b.renkTam };
+        kovalar.set(anahtar, kova);
+      }
+      kova.yol.moveTo(b.x1, b.y1); kova.yol.lineTo(b.x2, b.y2);
+    }
+
+    /* Işık ve parıltı İKİNCİ geçişte: taban kovaları bu döngüden sonra
+       çiziliyor, burada çizilseler tabanın ALTINDA kalırlardı. */
+    b.lit = lit;
+    b.kisik = kisik;
+  }
+
+  /* Taban: derinlik başına tek çizim çağrısı. */
+  kovalar.forEach(kova => {
+    ctx.lineWidth = kova.w;
+    ctx.strokeStyle = kova.renk;
+    ctx.stroke(kova.yol);
+  });
+
+  /* İkinci geçiş — güneş ışığı ve parıltı, tabanın ÜSTÜNE. İkisi de
+     azınlıkta olduğu için tek tek çiziliyor. */
+  for (const b of branches){
+    if (b.lit > 0.04 && b.tr < 0.4 && b.kisik > 0.9){
+      ctx.beginPath(); ctx.moveTo(b.x1,b.y1); ctx.lineTo(b.x2,b.y2);
+      ctx.lineWidth = b.w0;
+      /* Işık rengi 24 kademeye yuvarlanıp önceden üretilmiş dizeden
+         alınıyor. Sürekli değerle `rgba()` çağırmak her ışık alan dal
+         için yeni bir metin demekti; göz 24 kademeyi zaten ayırt
+         etmiyor. Tablo güneşin rengi değişince yeniden kuruluyor. */
+      ctx.strokeStyle = gunesTonu(b.lit * 0.5);
       ctx.stroke();
     }
     if (b.glow > 0.01){
       ctx.beginPath(); ctx.moveTo(b.x1,b.y1); ctx.lineTo(b.x2,b.y2);
-      ctx.lineWidth = w + b.glow*3;
+      ctx.lineWidth = b.w0 + b.glow*3;
       ctx.strokeStyle = rgba(b.zone?zc[b.zone]:ink, b.glow*0.7);
       ctx.stroke();
       b.glow -= dt*0.9;
