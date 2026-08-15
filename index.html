@@ -334,7 +334,11 @@
   .vw-dinle:hover,.vw-dinle:focus-visible{color:var(--ink);border-color:var(--ink);outline:none}
   .vw-dinle[hidden]{display:none}
 
-  .controls{position:fixed;bottom:1.9rem;right:2.4rem;z-index:7;display:flex;gap:1.4rem}
+  /* Köşe HİZALI: her şey aynı ALT çizgide oturuyor. `stretch` (öntanımlı)
+     ile fader, dil ve iki satırlık tarih üç ayrı yükseklikte kutuydu ve
+     satırlar birbirini tutmuyordu. */
+  .controls{position:fixed;bottom:1.9rem;right:2.4rem;z-index:7;
+    display:flex;align-items:flex-end;gap:1.4rem}
   /* Dil seçici: düğme kumandaların içinde, liste YUKARI açılıyor —
      köşede aşağıda yer yok. */
   /* Dokunmatikte kartın sabit yeri: üstte, ≡ düğmesinin sağında. */
@@ -358,12 +362,16 @@
   .ctrl:hover,.ctrl:focus-visible{color:var(--ink);outline:none}
   /* Son güncelleme: köşenin en sessiz bilgisi. Ses ve dilden bir tık
      küçük, etiketi tarihten de sönük — okumak isteyen okur. */
+  /* Harf aralığı SON harften sonra da bırakılıyor; sağa yaslı iki satır
+     bu yüzden birkaç piksel kaçık duruyordu. Her satır kendi aralığı
+     kadar sağa çekiliyor. */
   #ver{font-size:.62rem;letter-spacing:.1em;color:var(--ink-soft);
-    display:flex;flex-direction:column;line-height:1.35;text-align:right}
+    display:flex;flex-direction:column;line-height:1.35;text-align:right;
+    margin-right:-.1em}
   /* Etiket tarihten geri çekiliyor: soru "neyin tarihi" idi, cevap bir
      kez okunuyor; tarihin kendisi okunur kalmalı. */
   #ver i{font-style:normal;font-size:.54rem;letter-spacing:.14em;
-    color:var(--ink-faint)}
+    color:var(--ink-faint);margin-right:-.04em}
 
   /* ── ses faderi: uzun yatay üçgen ──
      Açık/kapalı düğmesi yerine sürgü. Sola dayadığında ses kapalı sayılır,
@@ -1245,6 +1253,15 @@
   .ld-kagit.ld-fonlu .ld-sayfa{
     text-shadow:0 0 .28em var(--paper),0 0 .28em var(--paper),
                 0 0 .55em var(--paper),0 0 1em var(--paper)}
+  /* KAPAK SAYFASI. Kare kapak `cover` ile kırpılıyordu; `contain` ile
+     tamamı görünüyor. Sayfada yazı olmadığı için metin bulutu ve hâle
+     de kapatılıyor — ikisi de boş bir sayfanın ortasında leke bırakıyor. */
+  .ld-kagit.ld-fonlu:has(.ld-d-kapak.acik)::before{
+    background-size:contain;background-repeat:no-repeat}
+  .ld-sayfa.ld-d-kapak{max-width:none}
+  .ld-sayfa.ld-d-kapak.acik{display:block;height:100%}
+  .ld-kagit.ld-fonlu .ld-d-kapak::after{display:none}
+  .ld-kagit.ld-fonlu .ld-d-kapak{text-shadow:none}
   .ld-kagit > .ld-sayfalar{position:relative;z-index:1}
 
 
@@ -3950,7 +3967,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v80 · 2026-08-15';
+const SURUM = 'v82 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8297,6 +8314,8 @@ const LD_PARCALAR = [
   '5rzfjTuixKMhY7htbWfqRt','1YX9qsP9GLovj5IgB79SZF',   // 8 Aşık Ol
   '2yLCWaFcQ4ZQecabSDRgvy','3d3qfBzJpg46K6o2MP4RMk'    // 9 Işık Ol
 ];
+/* Albüm ikinci parçadan açılıyor — bkz. ldCalarKur. */
+const LD_BASLANGIC = 1;
 const likyaEl = document.getElementById('likyaPencere');
 const likyaGovdeEl = document.getElementById('likyaGovde');
 let likyaAcik = false, likyaKuruldu = false;
@@ -8594,6 +8613,15 @@ const LD_ORTAK = {
    bulunamadı — uydurmaktansa açıkça "bilinmiyor" yazıyoruz. */
 /* Sayfa 2'den sonrası: albüm PDF'inin bölümleri, sırasıyla. */
 const LD_ICERIK = [
+  /* KAPAK — pencerenin ilk sayfası. Yazı yok: albüm kapağı tek başına
+     duruyor, künyesi köşedeki büyütecin arkasında. Fon `cover` değil
+     `contain` ile geliyor (bkz. `.ld-d-kapak`), kare kapak kırpılmasın. */
+  { ad:{tr:'Kapak', en:'Cover'}, duzen:'kapak',
+    fon:{url:'site/assets/img/likya-album/kapak.jpg', buyutulebilir:true,
+         kunye:{tr:'<b>Likya Dede</b> — albüm kapağı · CT Music Productions · 19 Eylül 2025',
+                en:'<b>Likya Dede</b> — album cover · CT Music Productions · 19 September 2025'}},
+    blok:[] },
+
   { ad:{tr:'Masalın özeti', en:'The tale in short'}, duzen:'dar',
     /* Künye sayfada DEĞİL: köşedeki büyüteçle fotoğraf açılınca görünüyor. */
     fon:{url:'site/assets/img/likya-album/adrasan.jpg', buyutulebilir:true,
@@ -8765,14 +8793,28 @@ function ldKisiler(metin){
   }).join(', ');
 }
 
-/* Sayfa adları: 1 = Albüm, sonrası LD_ICERIK sırası */
+/* Sayfa numarasından LD_ICERIK indeksine. Bölüm sayfası için -1.
+   `ldIcerikNo`nun tersi; ikisi de LD_BOLUM_SIRA'ya bakıyor. */
+function ldIcerikIndeks(no){
+  if (no === LD_BOLUM_SIRA) return -1;
+  return no < LD_BOLUM_SIRA ? no - 1 : no - 2;
+}
 function ldSayfaAdi(no){
   const d = DIL.get() === 'en' ? 'en' : 'tr';
-  if (no === 1) return d === 'en' ? 'Album' : 'Albüm';
-  const s = LD_ICERIK[no - 2];
+  if (no === LD_BOLUM_SIRA) return d === 'en' ? 'Album' : 'Albüm';
+  const s = LD_ICERIK[ldIcerikIndeks(no)];
   return s ? s.ad[d] : '';
 }
 function ldSayfaSayisi(){ return LD_ICERIK.length + 1; }
+/* ── SAYFA SIRASI ──
+   Bölüm sayfası (çizim + tirat) elle üretiliyor, ötekiler LD_ICERIK'ten
+   geliyor. Bölüm sayfası eskiden hep 1'di; kapak eklenince öne geçmesi
+   gerekti. `LD_BOLUM_SIRA` bölüm sayfasının kaçıncı olacağını söylüyor:
+   ondan ÖNCEKİ LD_ICERIK sayfaları kendi sıralarını alıyor, sonrakiler
+   bir kayıyor. Tek yerden ayarlanıyor ki üçüncü bir sayfa araya girince
+   numaralar yine tutsun. */
+const LD_BOLUM_SIRA = 2;                 // 1 = kapak, 2 = bölüm
+function ldIcerikNo(i){ return i + 1 < LD_BOLUM_SIRA ? i + 1 : i + 2; }
 
 /* ── sayfaları üret ── */
 function ldSayfalariKur(){
@@ -8780,10 +8822,10 @@ function ldSayfalariKur(){
   const d = DIL.get() === 'en' ? 'en' : 'tr';
   kap.innerHTML = '';
 
-  /* 1 · Albüm — çalan bölümün çizimi ve tiradı */
+  /* Albüm — çalan bölümün çizimi ve tiradı. Sırası LD_BOLUM_SIRA. */
   const s1 = document.createElement('section');
-  s1.className = 'ld-sayfa'; s1.dataset.s = '1';
   s1.className = 'ld-sayfa ld-d-bolum';
+  s1.dataset.s = String(LD_BOLUM_SIRA);
   s1.innerHTML =
     /* Başlık ve numaralar en üstte: yer kazanıyor ve gezinme göz
        hizasında kalıyor. Altında sahne: görsel + tirat. */
@@ -8809,7 +8851,7 @@ function ldSayfalariKur(){
   LD_ICERIK.forEach((sayfa, i) => {
     const sec = document.createElement('section');
     sec.className = 'ld-sayfa' + (sayfa.duzen ? ' ld-d-' + sayfa.duzen : '');
-    sec.dataset.s = String(i + 2);
+    sec.dataset.s = String(ldIcerikNo(i));
     sec.setAttribute('aria-label', sayfa.ad[d]);
     /* Başlık yalnızca ŞERİTTE: sayfa içinde tekrar etmesi hem yer yiyor
        hem aynı şeyi iki kez söylüyordu. (1. sayfa ayrı: orada başlık
@@ -9007,7 +9049,10 @@ function ldBolumGezKur(){
 /* ── çalan bölüm ──
    Albüm 18 parça: her bölüm önce ANLATI sonra MÜZİK olarak iki kez.
    Yani bölüm = floor(parça / 2). */
-let ldParca = 0;
+/* Başlangıç ikinci parça — ilk parça (anlatı) çok sessiz açılıyor.
+   Değer LD_BASLANGIC'ten geliyor ki çalar ile sahne aynı yerden başlasın;
+   ldCalarKur da aynı sabiti kullanıyor. */
+let ldParca = LD_BASLANGIC;
 function ldCalanBolum(){ return Math.min(LD_BOLUMLER.length - 1, Math.floor(ldParca / 2)); }
 function ldBolumNo(){ return ldElle == null ? ldCalanBolum() : ldElle; }
 /* Çift sıra = ANLATI → metin öne çıkar, görsel yana kayar.
@@ -9170,7 +9215,7 @@ function ldSayfaAc(no){
      ile verildiğinde tüm görüntü alanını kaplayıp çaların üstünü
      örtüyordu (Spotify iki fonlu sayfada kayboluyordu). */
   const kagit = document.querySelector('.ld-kagit');
-  const sayfaVerisi = no > 1 ? LD_ICERIK[no-2] : null;
+  const sayfaVerisi = LD_ICERIK[ldIcerikIndeks(no)] || null;
   const fon = sayfaVerisi ? sayfaVerisi.fon : null;
   kagit.classList.toggle('ld-fonlu', !!fon);
   if (fon) kagit.style.setProperty('--ld-fon', 'url("' + fon.url + '")');
@@ -9218,11 +9263,15 @@ function ldCalarKur(){
   const yerlestir = (API) => {
     /* 80 = en ince oynatıcı: tek satır. 152'de altında boşluk kalıyordu,
        352'de parça listesi açılıyordu. */
-    /* Albüm yerine İLK PARÇA yükleniyor: kuyruk bizde. Albüm bağlamı
+    /* Albüm yerine TEK PARÇA yükleniyor: kuyruk bizde. Albüm bağlamı
        verilince Spotify kendi sırasını sürdürüyor ve bizim "parça bitti →
-       sonraki" mantığımızla çakışıyordu. */
+       sonraki" mantığımızla çakışıyordu.
+       BAŞLANGIÇ İKİNCİ PARÇA: birincisi çok sessiz açılıyor, dinleyici
+       çalmaya başladığını anlamıyor. `ldParca` da 1'e alınıyor ki sahne
+       ilk andan çalanla aynı yeri göstersin. */
+    ldParca = LD_BASLANGIC;
     API.createController(document.getElementById('ldCalar'),
-      { uri: 'spotify:track:' + LD_PARCALAR[0], width: '100%', height: 80 },
+      { uri: 'spotify:track:' + LD_PARCALAR[LD_BASLANGIC], width: '100%', height: 80 },
       (ctrl) => {
         ldCtrl = ctrl;
         /* ── çalan parçayı izle ──
