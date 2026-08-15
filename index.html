@@ -3943,7 +3943,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v78 · 2026-08-15';
+const SURUM = 'v79 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -6568,9 +6568,11 @@ const STRUCTURE = [
           "https://www.youtube.com/playlist?list=OLAK5uy_lCM8eWcSE_WiKT0tGZtjE4oZfzJuKKz90"
          ]
         ],
-        "dinle": {
+        "media": {
+         "type": "spotify",
          "tur": "album",
-         "id": "12CbmibH4HYYOwTvofI57E"
+         "id": "12CbmibH4HYYOwTvofI57E",
+         "kapak": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02da4f136b4388c3b9f4a8db7a"
         }
        },
        {
@@ -6584,7 +6586,8 @@ const STRUCTURE = [
          "type": "spotify",
          "tur": "album",
          "id": "3wHcAH3w0DJgw8qpjisqZa",
-         "url": "site/assets/img/albumler/acoustic-works.jpg"
+         "url": "site/assets/img/albumler/acoustic-works.jpg",
+         "kapak": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0229ee26a4cd0b6c0d76f4fa87"
         }
        }
       ]
@@ -6713,7 +6716,8 @@ const STRUCTURE = [
          "type": "spotify",
          "tur": "track",
          "id": "3pxyjvopt0WkrzzAPShATD",
-         "url": "site/assets/img/albumler/50-jaar-nieuwjaarsconcert.jpg"
+         "url": "site/assets/img/albumler/50-jaar-nieuwjaarsconcert.jpg",
+         "kapak": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02fa812a2d964441f975f33a4f"
         }
        },
        {
@@ -6739,7 +6743,8 @@ const STRUCTURE = [
          "type": "spotify",
          "tur": "album",
          "id": "4ppAUFZqSJUnZ0ecHQekaP",
-         "url": "site/assets/img/albumler/glazbeni-mostovi.jpg"
+         "url": "site/assets/img/albumler/glazbeni-mostovi.jpg",
+         "kapak": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e020b6ebb3651763ce1cc187822"
         }
        },
        {
@@ -6753,7 +6758,8 @@ const STRUCTURE = [
          "type": "spotify",
          "tur": "track",
          "id": "2BjU92AapvwK55USjyBVon",
-         "url": "site/assets/img/albumler/in-godsnaam.jpg"
+         "url": "site/assets/img/albumler/in-godsnaam.jpg",
+         "kapak": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e021febe1c78c808cebd2f81802"
         }
        },
        {
@@ -6767,7 +6773,8 @@ const STRUCTURE = [
          "type": "spotify",
          "tur": "track",
          "id": "6fhrgNOlfpKt3FjKJ0F4cN",
-         "url": "site/assets/img/albumler/voices-from-the-east.jpg"
+         "url": "site/assets/img/albumler/voices-from-the-east.jpg",
+         "kapak": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0251817492a72498df5849ba01"
         }
        },
        {
@@ -6817,7 +6824,8 @@ const STRUCTURE = [
          "type": "spotify",
          "tur": "album",
          "id": "650EHx14R7wqWmAUhBgR6c",
-         "url": "site/assets/img/albumler/iplerin-kopusu.jpg"
+         "url": "site/assets/img/albumler/iplerin-kopusu.jpg",
+         "kapak": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02083c0375d9a54cfafe819443"
         }
        },
        {
@@ -6842,7 +6850,8 @@ const STRUCTURE = [
          "type": "spotify",
          "tur": "album",
          "id": "6yQN8J846efrZblrhJnKVS",
-         "url": "site/assets/img/albumler/odamda-yolculuk.jpg"
+         "url": "site/assets/img/albumler/odamda-yolculuk.jpg",
+         "kapak": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02f1e00bc67b4252d7f280bc6d"
         }
        }
       ]
@@ -7903,6 +7912,14 @@ function fillThumb(m){
        zaman aynı şekilde temiz olan mqdefault'a düşüyoruz. */
     img.src = 'https://i.ytimg.com/vi/' + m.id + '/maxresdefault.jpg';
     img.dataset.yedek = 'https://i.ytimg.com/vi/' + m.id + '/mqdefault.jpg';
+  } else if (m.type === 'spotify' && m.kapak){
+    /* SPOTIFY KAPAĞI. Küçük kart yalnızca YouTube'u ve `m.url`i biliyordu;
+       Spotify albümlerinde ikisi de yoktu, yer tutucu basılıyordu —
+       "kart boş açılıyor" denen şey buydu. Kapak adresleri Spotify'ın
+       oEmbed'inden bir kez alınıp veriye yazıldı; çalışma anında ağ
+       isteği yok. */
+    img.src = m.kapak;
+    pvThumb.classList.add('tam');
   } else if (m.url){
     img.src = m.url;
     pvThumb.classList.add('tam');       // çizim ya da sayfa: kırpma yok
