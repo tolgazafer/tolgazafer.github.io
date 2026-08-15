@@ -938,13 +938,18 @@
      koyulaşıyor. Dokunmatikte büyüyor ve çerçeve kazanıyorlar. */
   .sayfa-oklar{flex:none;display:flex;align-items:center;gap:.3rem;
     margin-right:auto}
-  .sayfa-ok{flex:none;width:26px;height:26px;display:grid;place-items:center;
-    background:none;border:1px solid transparent;border-radius:2px;
-    cursor:pointer;color:var(--ink-faint);font:inherit;
-    font-size:1rem;line-height:1;padding:0 0 .1em;
-    transition:color .18s,border-color .18s,opacity .18s}
+  /* ‹ › ÇOK SÖNÜKTÜ — Tolga uzun süre aradı. Üç şey değişti: işaret
+     ok oldu (← →: caret bir yön değil bir noktalama gibi okunuyordu),
+     renk `ink-faint`ten `ink-soft`a çıktı, ve düğmenin çerçevesi hep
+     duruyor. Üstüne gelince mürekkep koyulaşıyor. */
+  .sayfa-ok{flex:none;width:30px;height:26px;display:grid;place-items:center;
+    background:none;border:1px solid var(--ink-faint);border-radius:2px;
+    cursor:pointer;color:var(--ink-soft);font:inherit;
+    font-size:.95rem;line-height:1;padding:0;
+    transition:color .18s,border-color .18s,background .18s,opacity .18s}
   .sayfa-ok:hover,.sayfa-ok:focus-visible{color:var(--ink);
-    border-color:var(--ink-faint);outline:none}
+    border-color:var(--ink);
+    background:color-mix(in srgb,var(--ink) 8%,transparent);outline:none}
   /* Sonu ya da başı: düğme kaybolmuyor, SÖNÜYOR. Kaybolsaydı yanındaki
      düğme yer değiştirirdi ve nerede olduğun okunmazdı. */
   .sayfa-ok[disabled]{opacity:.28;pointer-events:none}
@@ -1253,15 +1258,56 @@
   .ld-kagit.ld-fonlu .ld-sayfa{
     text-shadow:0 0 .28em var(--paper),0 0 .28em var(--paper),
                 0 0 .55em var(--paper),0 0 1em var(--paper)}
-  /* KAPAK SAYFASI. Kare kapak `cover` ile kırpılıyordu; `contain` ile
-     tamamı görünüyor. Sayfada yazı olmadığı için metin bulutu ve hâle
-     de kapatılıyor — ikisi de boş bir sayfanın ortasında leke bırakıyor. */
-  .ld-kagit.ld-fonlu:has(.ld-d-kapak.acik)::before{
-    background-size:contain;background-repeat:no-repeat}
+  /* KAPAK SAYFASI — görsel fon değil, gerçek bir <img>.
+     Figürün eni görselin eniyle aynı (`width:fit-content`), böylece
+     başlık ve büyüteç sayfanın değil RESMİN köşelerine yapışıyor.
+     Fon düzeneği bu sayfada hiç devreye girmiyor; metin bulutu ve hâle
+     de kapalı. */
   .ld-sayfa.ld-d-kapak{max-width:none}
-  .ld-sayfa.ld-d-kapak.acik{display:block;height:100%}
+  /* Kapak KARE. Kutusunu doğrudan hesaplıyoruz: kabın kısa kenarı.
+     Esnek düzende denendi — flex, görseli çapraz eksende esnetiyor ve
+     figür resimden geniş kalıyordu; `fit-content` ise yüzdelik en-boy
+     yüzünden döngüye giriyordu. Kap sorgusu ikisini de aşıyor. */
+  .ld-sayfa.ld-d-kapak.acik{display:grid;place-items:center;
+    height:100%;min-height:0;container-type:size}
   .ld-kagit.ld-fonlu .ld-d-kapak::after{display:none}
   .ld-kagit.ld-fonlu .ld-d-kapak{text-shadow:none}
+  /* Figür GÖRSELİ SARIYOR, sayfayı değil: başlık ve büyüteç resmin
+     köşelerine yapışsın diye. Esnek düzende `max-height:100%` kabın
+     kesin boyuna göre çözülüyor; `display:block` + `fit-content` ile
+     denendi, yüzdelik en-boy döngüye giriyor ve görsel taşıyordu. */
+  .ld-kapak{position:relative;margin:0;display:block;
+    width:min(100cqw,100cqh);height:min(100cqw,100cqh)}
+  .ld-kapak img{display:block;width:100%;height:100%;
+    object-fit:contain;border-radius:2px}
+  /* Başlık RESMİN sağ alt köşesinde. Kapağın o köşesi orta mavi ve
+     dokulu: beyaz yazı + koyu gölge okunuyor, perde gerekmiyor. */
+  .ld-kapak-ad{position:absolute;right:1.1rem;bottom:1rem;z-index:2;
+    max-width:min(28ch,72%);text-align:right;color:#fff;
+    text-shadow:0 1px 2px rgba(0,0,0,.75),0 0 1.2em rgba(0,0,0,.65)}
+  .ld-kapak-ad b{display:block;font-size:1.35rem;font-weight:600;
+    letter-spacing:.06em;line-height:1.2}
+  .ld-kapak-ad span{display:block;margin-top:.3rem;font-size:.8rem;
+    letter-spacing:.04em;line-height:1.5;color:rgba(255,255,255,.88)}
+  /* Büyüteç karşı köşede — başlıkla çakışmasın diye SOL altta. */
+  /* `.ld-gorsel-ac` genel kuralı `display:block;width:100%` — büyüteç
+     kapakta bütün eni kaplıyordu. Buradaki kural onu eziyor. */
+  .ld-kapak .ld-kapak-ac{position:absolute;left:1rem;bottom:1rem;right:auto;
+    top:auto;width:2.1rem;height:2.1rem;line-height:1;z-index:3;
+    display:grid;place-items:center;
+    border-radius:50%;padding:0;cursor:zoom-in;
+    background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.42);
+    color:rgba(255,255,255,.85);
+    transition:color .2s,border-color .2s,background .2s}
+  .ld-kapak-ac:hover,.ld-kapak-ac:focus-visible{color:#fff;
+    border-color:#fff;background:rgba(0,0,0,.6);outline:none}
+  .ld-kapak-ac svg{width:1rem;height:1rem}
+  @media (max-width:720px){
+    .ld-kapak-ad b{font-size:1.05rem}
+    .ld-kapak-ad span{font-size:.72rem}
+    .ld-kapak-ad{right:.7rem;bottom:.7rem;max-width:80%}
+    .ld-kapak-ac{left:.7rem;bottom:.7rem}
+  }
   .ld-kagit > .ld-sayfalar{position:relative;z-index:1}
 
 
@@ -2079,9 +2125,9 @@
   <header class="pencere-bar">
     <div class="sayfa-oklar">
       <button class="sayfa-ok" id="triGeri" type="button"
-              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
+              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">←</button>
       <button class="sayfa-ok" id="triIleri" type="button"
-              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
+              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">→</button>
     </div>
     <span class="pencere-ad" id="tritonetAd">Tritonet</span>
     <a class="pencere-dis" id="tritonetDis" href="https://tritonet.pages.dev/ui/tritonet-controller" target="_blank" rel="noopener" aria-label="Yeni sekmede aç" data-i18n-aria="Yeni sekmede aç" title="Yeni sekmede aç" data-i18n-title="Yeni sekmede aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4 11.5 12.5"/><path d="M18 14.5V19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/></svg></a>
@@ -2111,9 +2157,9 @@
   <header class="pencere-bar">
     <div class="sayfa-oklar">
       <button class="sayfa-ok" id="ldGeri" type="button"
-              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
+              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">←</button>
       <button class="sayfa-ok" id="ldIleri" type="button"
-              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
+              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">→</button>
     </div>
     <span class="pencere-ad" id="likyaAd">Likya Dede</span>
     <button class="pencere-kapat" id="likyaKapat" aria-label="Ağaca dön" data-i18n-aria="Ağaca dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V10"/><path d="M12 14.4 7.6 9.8"/><path d="M12 12.2 16.4 7.6"/><path d="M7.6 9.8 5.2 6"/><path d="M7.6 9.8 9.2 5.2"/><path d="M16.4 7.6 18.8 4"/><path d="M16.4 7.6 14.9 3.2"/><path d="M8.4 22h7.2"/></svg></button>
@@ -2192,9 +2238,9 @@
   <header class="pencere-bar">
     <div class="sayfa-oklar">
       <button class="sayfa-ok" id="bvGeri" type="button"
-              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">‹</button>
+              aria-label="Önceki sayfa" data-i18n-aria="Önceki sayfa">←</button>
       <button class="sayfa-ok" id="bvIleri" type="button"
-              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">›</button>
+              aria-label="Sonraki sayfa" data-i18n-aria="Sonraki sayfa">→</button>
     </div>
     <span class="pencere-ad" id="basvuruAd" data-i18n="Kilitli belge">Kilitli belge</span>
     <button class="pencere-kapat" id="basvuruKapat" aria-label="Ağaca dön" data-i18n-aria="Ağaca dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V10"/><path d="M12 14.4 7.6 9.8"/><path d="M12 12.2 16.4 7.6"/><path d="M7.6 9.8 5.2 6"/><path d="M7.6 9.8 9.2 5.2"/><path d="M16.4 7.6 18.8 4"/><path d="M16.4 7.6 14.9 3.2"/><path d="M8.4 22h7.2"/></svg></button>
@@ -3967,7 +4013,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v82 · 2026-08-15';
+const SURUM = 'v83 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8617,9 +8663,19 @@ const LD_ICERIK = [
      duruyor, künyesi köşedeki büyütecin arkasında. Fon `cover` değil
      `contain` ile geliyor (bkz. `.ld-d-kapak`), kare kapak kırpılmasın. */
   { ad:{tr:'Kapak', en:'Cover'}, duzen:'kapak',
+    yazi:{ ad:{tr:'Likya Dede', en:'Likya Dede'},
+           alt:{tr:'senfoni orkestrası ve sazendeler için müzikli masal',
+                en:'a musical tale for symphony orchestra and traditional instruments'} },
     fon:{url:'site/assets/img/likya-album/kapak.jpg', buyutulebilir:true,
-         kunye:{tr:'<b>Likya Dede</b> — albüm kapağı · CT Music Productions · 19 Eylül 2025',
-                en:'<b>Likya Dede</b> — album cover · CT Music Productions · 19 September 2025'}},
+         /* Fotoğrafın sahibi aranıyor — uydurulmuş bir künye değil, açık
+            bir çağrı. Adı öğrenilince bu not adla değişecek. */
+         kunye:{tr:'<b>Likya Dede</b> — albüm kapağı · CT Music Productions · 19 Eylül 2025<br><br>' +
+                   'Bu fotoğrafın aslı, 2004 yıllarında konuştuğum ve sonra izini kaybettiğim ' +
+                   'sevgili bir gönüldaşıma ait. Kendisine ulaşırsa, adını seve seve buraya eklerim.',
+                en:'<b>Likya Dede</b> — album cover · CT Music Productions · 19 September 2025<br><br>' +
+                   'The original of this photograph belongs to a dear kindred spirit I spoke with ' +
+                   'around 2004 and later lost touch with. If this reaches them, I would gladly ' +
+                   'add their name here.'}},
     blok:[] },
 
   { ad:{tr:'Masalın özeti', en:'The tale in short'}, duzen:'dar',
@@ -8857,6 +8913,28 @@ function ldSayfalariKur(){
        hem aynı şeyi iki kez söylüyordu. (1. sayfa ayrı: orada başlık
        bölümün adı, pencere adı değil.) */
     let h = '';
+    /* KAPAK: fon yerine gerçek bir <img>. Sebep, künye ve başlığın
+       GÖRSELİN köşesine yapışması gerekmesi — fon `contain` ile
+       geldiğinde görselin ekrandaki kutusu CSS'ten bilinmiyor, yazı
+       sayfanın köşesine, yani çoğu zaman resmin dışındaki karanlığa
+       düşüyordu. Figürün eni görselin eni kadar; iki köşe de artık
+       resmin üstünde. */
+    if (sayfa.duzen === 'kapak' && sayfa.fon){
+      const kn = sayfa.fon.kunye ? sayfa.fon.kunye[d].replace(/"/g,'&quot;') : '';
+      sec.innerHTML =
+        '<figure class="ld-kapak">' +
+          '<img src="' + sayfa.fon.url + '" alt="' + DIL.T('Likya Dede') + '">' +
+          (sayfa.yazi ? '<figcaption class="ld-kapak-ad">' +
+             '<b>' + sayfa.yazi.ad[d] + '</b>' +
+             '<span>' + sayfa.yazi.alt[d] + '</span></figcaption>' : '') +
+          '<button type="button" class="ld-gorsel-ac ld-kapak-ac"' +
+            ' data-buyuk="' + sayfa.fon.url + '"' +
+            (kn ? ' data-kunye="' + kn + '"' : '') +
+            ' aria-label="' + DIL.T('Büyüt') + '">' + BUYUTEC_SVG + '</button>' +
+        '</figure>';
+      kap.appendChild(sec);
+      return;
+    }
     /* İki bölmeli düzenler — ilk metin bloğuna kadarki her şey SOL
        bölmede, kalanı SAĞ bölmede:
          yan  → görsel solda, metin sağda
@@ -9216,7 +9294,10 @@ function ldSayfaAc(no){
      örtüyordu (Spotify iki fonlu sayfada kayboluyordu). */
   const kagit = document.querySelector('.ld-kagit');
   const sayfaVerisi = LD_ICERIK[ldIcerikIndeks(no)] || null;
-  const fon = sayfaVerisi ? sayfaVerisi.fon : null;
+  /* Kapak sayfası fonu KENDİ <img>'i ile taşıyor; kâğıda ayrıca fon
+     verilirse kapak iki kez çiziliyor (biri kırpılmış `cover`, biri
+     tam) ve ikisi üst üste biniyordu. */
+  const fon = (sayfaVerisi && sayfaVerisi.duzen !== 'kapak') ? sayfaVerisi.fon : null;
   kagit.classList.toggle('ld-fonlu', !!fon);
   if (fon) kagit.style.setProperty('--ld-fon', 'url("' + fon.url + '")');
   else kagit.style.removeProperty('--ld-fon');
