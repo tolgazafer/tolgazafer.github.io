@@ -1727,7 +1727,17 @@
               0 0 0 1px rgba(255, 255, 255, 0.09);
   cursor: pointer;
   animation: belir 0.26s var(--yumusak) both;
+  transform-origin: center center;
 }
+/* Sinyalin duvardaki kutusundan büyüyerek geliyor. Yavaşlama eğrisi
+   sonda uzun: son anda yerine "oturuyor", zıplamıyor. */
+@keyframes ucusYaklas {
+  from { transform: translate(var(--yk-x,0), var(--yk-y,0)) scale(var(--yk-o,.18));
+         opacity: 0 }
+  35%  { opacity: 1 }
+  to   { transform: none; opacity: 1 }
+}
+.ucus-kart.yaklas { animation: ucusYaklas 0.52s cubic-bezier(.17,.79,.24,1) both; }
 .ucus-kart[hidden] { display: none; }
 
 .ucus-ust {
@@ -1864,10 +1874,13 @@
     width: auto;
     height: auto;
     max-height: none;
-    /* `.ucus-kart.video` masaüstünde translateY(-50%) ile ortalanıyor;
-       burada üst kenara bağlandığı için o kaydırma kartı yukarı taşırdı. */
-    transform: none !important;
   }
+  /* `.ucus-kart.video` masaüstünde translateY(-50%) ile ortalanıyor;
+     burada üst kenara bağlandığı için o kaydırma kartı yukarı taşırdı.
+     `!important` ile kapatılmıştı ama o, YAKLAŞMA ANİMASYONUNU da
+     eziyordu (önemli bildirim canlandırmayı yener). Yalnızca video
+     kuralı sıfırlanıyor. */
+  .ucus-kart.video { transform: none; }
   .ucus-medya img, .ucus-medya video { max-height: 34vh; }
 }
 
@@ -4068,7 +4081,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v93 · 2026-08-15';
+const SURUM = 'v94 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -11913,6 +11926,34 @@ DIL.uygula();
       kartiKapat();
     });
 
+    /* ── KART YAKLAŞARAK AÇILIYOR ──
+       Eskiden kart olduğu yerde birdenbire belirip büyüyordu; oysa
+       oraya UÇARAK gidiliyor. Şimdi kart, o sinyalin duvardaki
+       önizleme kutusunun bulunduğu yerden ve onun boyundan başlayıp
+       yerine oturuyor — yani gözün az önce baktığı noktadan.
+       Önizleme kutusu ekranda yoksa (çok hızlı geçildi, kutu
+       kullanılmıyor) eski belirme animasyonuna düşülüyor; kart her
+       hâlükârda açılıyor. */
+    function kartaYaklas(i) {
+      kartEl.classList.remove('yaklas');
+      var kutu = null;
+      for (var k = 0; k < kutular.length; k++) {
+        if (kutular[k].indeks === i && !kutular[k].el.hidden) { kutu = kutular[k]; break; }
+      }
+      if (!kutu) return;
+      var kr = kartEl.getBoundingClientRect();
+      var pr = kutu.el.getBoundingClientRect();
+      if (!kr.width || !pr.width) return;
+      var olcek = Math.max(0.06, Math.min(0.9, pr.width / kr.width));
+      kartEl.style.setProperty('--yk-x',
+        Math.round((pr.left + pr.width / 2) - (kr.left + kr.width / 2)) + 'px');
+      kartEl.style.setProperty('--yk-y',
+        Math.round((pr.top + pr.height / 2) - (kr.top + kr.height / 2)) + 'px');
+      kartEl.style.setProperty('--yk-o', olcek.toFixed(3));
+      void kartEl.offsetWidth;                 // animasyon baştan başlasın
+      kartEl.classList.add('yaklas');
+    }
+
     function kartiAc(i) {
       var m = mektuplar[i];
       acikOlan = i;
@@ -11965,6 +12006,7 @@ DIL.uygula();
       kartEl.classList.toggle('solda', noktalar[i].sag);
       kartEl.scrollTop = 0;
       kartEl.hidden = false;
+      kartaYaklas(i);
 
       if (!okunan.has(m.id)) {
         okunan.add(m.id);
@@ -12336,6 +12378,20 @@ DIL.uygula();
          Yanından geçmek yetmez. Sinyalin bulunduğu duvara kadar sokulup
          onunla aynı hizaya gelmen gerekir; bu da sabır ve nişan ister. */
       if (!ortayaDon) {
+        /* ── EN YAKIN ÖNDEKİ SİNYAL ──
+           İki hata birden vardı ve ikisi birlikte "bir öncekini
+           yakalıyor" davranışını üretiyordu:
+
+           1) `adaylar` uzaklığa göre sıralı ama uzaklık `-dz`; ARKADA
+              kalan sinyalin uzaklığı NEGATİF çıkıyor ve sıralamada en
+              başa geçiyordu. Döngü ilk uyanı alıp `break` dediği için
+              önündeki karta yaklaşırken az önce geçtiğin kart açılıyordu.
+           2) Pencere `dz2 > 20` ile yirmi birim ARKAYI da kabul
+              ediyordu; geçtiğin kart o aralıkta hâlâ uygun sayılıyordu.
+
+           Şimdi: yalnızca ÖNDEKİLER (küçük bir kare payı dışında) ve
+           uyanlar arasından EN YAKINI seçiliyor — ilk bulunan değil. */
+        var enIyi = -1, enIyiUzak = Infinity;
         for (var s2 = 0; s2 < adaylar.length; s2++) {
           var aday = adaylar[s2], n2 = noktalar[aday.i];
           if (aday.i === beklet) {
@@ -12343,15 +12399,14 @@ DIL.uygula();
             continue;
           }
           if (okunan.has(mektuplar[aday.i].id)) continue;
-          /* Yalnızca önümüzdeki sinyal. Geride kalmış olanı almasın —
-             bir öncekine kilitlenmesinin sebebi buydu. */
-          var dz2 = n2.z - kamera.position.z;
-          if (dz2 > 20 || dz2 < -BOY) continue;
+          var dz2 = n2.z - kamera.position.z;      // önde ise negatif
+          if (dz2 > 6 || dz2 < -BOY) continue;     // 6 = bir karelik pay
           if (Math.abs(n2.x - kamera.position.x) > YANASMA_X) continue;
           if (Math.abs(n2.y - kamera.position.y) > YANASMA_Y) continue;
-          kartiAc(aday.i);
-          break;
+          var uzak = Math.abs(dz2);
+          if (uzak < enIyiUzak){ enIyiUzak = uzak; enIyi = aday.i; }
         }
+        if (enIyi > -1) kartiAc(enIyi);
       }
 
       boyayici.render(sahne, kamera);
