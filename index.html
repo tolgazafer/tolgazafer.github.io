@@ -1145,7 +1145,12 @@
   .ld-bolum-sag{flex:none;display:flex;flex-direction:column;
     align-items:flex-end;gap:.3rem}
   .ld-bolum-gez{display:flex;gap:.28rem;margin:0}
-  .ld-bolum-ipucu{min-height:1.05em;font-size:.64rem;letter-spacing:.16em;
+  /* Yer BOŞKEN de tam olarak tutuluyor. `min-height:1.05em` yetmiyordu:
+     yazı gelince satır kutusu (line-height normal ≈ 1.2) o değeri aşıyor
+     ve numaraların altındaki her şey bir kez aşağı zıplıyordu. Boy ile
+     satır yüksekliği artık aynı sayı. */
+  .ld-bolum-ipucu{height:1.4em;line-height:1.4;font-size:.64rem;
+    letter-spacing:.16em;
     text-transform:uppercase;color:var(--ink-soft);white-space:nowrap;
     opacity:0;transition:opacity .18s}
   .ld-bolum-ipucu.on{opacity:1}
@@ -1178,6 +1183,34 @@
     background:var(--ink);
     -webkit-mask:var(--ld-cizim) center/contain no-repeat;
             mask:var(--ld-cizim) center/contain no-repeat}
+  /* ── ÇALARKEN NEFES ──
+     Albüm çalarken çizim çok hafif soluk alıp veriyor. Genlik BİLEREK
+     küçük: %1,2 ölçek ve yarım yüzde kayma — bakınca "kıpırdıyor" bile
+     denmiyor, yalnızca sayfa ölü durmuyor.
+     Ses ANALİZİ YOK: Spotify çerçevesi çapraz kaynaklı, dalga biçimine
+     erişilemiyor. O yüzden hareket sesin şiddetine değil ZAMANA bağlı.
+     İki periyot (7,3 sn ve 11,1 sn) tam katı olmadığı için desen
+     tekrarlanmıyor — organik duran şey bu.
+     `prefers-reduced-motion` açıksa hiç kıpırdamıyor. */
+  @keyframes ldNefes{
+    0%   {transform:scale(1)      translateY(0)}
+    50%  {transform:scale(1.012)  translateY(-.5%)}
+    100% {transform:scale(1)      translateY(0)}
+  }
+  @keyframes ldSalin{
+    0%   {transform:translateX(0)      rotate(0deg)}
+    33%  {transform:translateX(.35%)   rotate(.22deg)}
+    66%  {transform:translateX(-.3%)   rotate(-.18deg)}
+    100% {transform:translateX(0)      rotate(0deg)}
+  }
+  .ld-perde.ld-nefes .ld-cizim{
+    animation:ldGir .5s ease, ldNefes 7.3s ease-in-out infinite}
+  .ld-perde.ld-nefes{
+    animation:ldSalin 11.1s ease-in-out infinite;
+    will-change:transform}
+  @media (prefers-reduced-motion:reduce){
+    .ld-perde.ld-nefes,.ld-perde.ld-nefes .ld-cizim{animation:ldGir .5s ease}
+  }
   .ld-tirat{white-space:pre-line;font-size:1.05rem;line-height:1.85;
     color:var(--ink);margin:0;text-align:left;
     max-height:100%;overflow:auto;scrollbar-width:none}
@@ -4021,7 +4054,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v85 · 2026-08-15';
+const SURUM = 'v86 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -9219,6 +9252,13 @@ function ldKumandaYaz(duruyor){
     : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 4.8h3.2v14.4H7.5zM13.3 4.8h3.2v14.4h-3.2z"/></svg>';
   tus.setAttribute('aria-label', DIL.T(dur ? 'Çal' : 'Duraklat'));
 }
+/* Çizim çalarken nefes alsın: durum tek bir sınıfa iniyor, hareketin
+   kendisi CSS'te (bkz. `.ld-perde.ld-nefes`). Burada mantık yok ki
+   hareketi değiştirmek için JS'e dönmek gerekmesin. */
+function ldNefesYaz(oynuyor){
+  const perde = document.getElementById('ldPerde');
+  if (perde) perde.classList.toggle('ld-nefes', !!oynuyor);
+}
 function ldSeritYaz(konum, sure){
   const dolu = document.getElementById('ldSeritDolu');
   if (!dolu) return;
@@ -9386,6 +9426,7 @@ function ldCalarKur(){
           }
           ldSeritYaz(d.position || 0, d.duration || 0);
           const oynuyor = !d.isPaused && d.position > 0;
+          ldNefesYaz(oynuyor);
           if (oynuyor && !ldCaliyor){
             ldCaliyor = true;
             /* Albüm başladı: ağaç ilk dakika boyunca geri çekilsin.
@@ -9454,6 +9495,7 @@ function closeLikya(){
      etmesi Tritonet'te de istenmiyordu. */
   if (ldCtrl){ try { ldCtrl.pause(); } catch(e){} }
   ldCaliyor = false;
+  ldNefesYaz(false);
   ldAgacDon();
   modKilidiAc();
   prev = performance.now();
