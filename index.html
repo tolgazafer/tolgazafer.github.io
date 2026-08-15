@@ -823,6 +823,12 @@
   /* Saydam sayfada pencerenin arkası görünüyor: yan panel de açılırsa
      iki metin üst üste biniyor. Panel o sırada hiç belirmiyor. */
   html.ld-saydam .menu{display:none}
+  /* Ağacın köşe yazıları da saydam sayfanın arkasından sırıtıyordu:
+     "Tolga Zafer Özdemir · müzisyen" metnin altına giriyor ve görüntüyü
+     karıştırıyordu. Sayfa saydamken köşeler susuyor. */
+  html.ld-saydam .wordmark,
+  html.ld-saydam .modebar,
+  html.ld-saydam .baglar{opacity:0;pointer-events:none}
   .pencere.likya.saydam .pencere-bar{
     background:color-mix(in srgb,var(--cerceve) 55%,transparent)}
   .pencere.likya.saydam .ld-sayfa::after{content:'';position:absolute;
@@ -1234,8 +1240,12 @@
      boydan boya kaplıyor. Şiirler ortada iki sütun, Ata Ağaç künyesi
      "i" düğmesiyle en altta. */
   .ld-sayfa.ld-d-tam{max-width:none}
+  /* İki sütun kâğıdın bütün enine yayılıyordu; geniş pencerede araları
+     avuç kadar açılıyor ve göz bir sütunun sonundan öbürünün başına
+     zıplamak için yolculuk yapıyordu. Izgara ortada ve sınırlı enli. */
   .ld-sayfa.ld-d-tam.acik{display:grid;align-content:center;
-    grid-template-columns:repeat(2,minmax(0,1fr));gap:0 2.8rem;
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:0 2.2rem;
+    width:100%;max-width:min(100%,54rem);margin:0 auto;
     padding-bottom:2.6rem}
   /* Asılı girinti (padding-left + negatif text-indent) SARAN satırlar için;
      burada satır sonları elle konduğu için ilk satır dışında hepsini içeri
@@ -1385,6 +1395,10 @@
   .ld-gorsel-ac:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
   /* Sayfanın fonu olan fotoğrafı açan tek düğme: köşede, sessiz.
      Hem fotoğrafın tamamını hem künyesini o açıyor. */
+  /* Kâğıdın kardeşi olduğu için varsayılan olarak GİZLİ; yalnızca kendi
+     sayfası açıkken beliriyor. Konumu kâğıdın sağ alt köşesi. */
+  .ld-sayfalar > .ld-kose-ac{display:none}
+  .ld-sayfalar > .ld-kose-ac.acik{display:grid}
   .ld-kose-ac{position:absolute;right:0;bottom:0;z-index:3;
     width:2.1rem;height:2.1rem;display:grid;place-items:center;
     border-radius:50%;padding:0;cursor:zoom-in;
@@ -4054,7 +4068,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v86 · 2026-08-15';
+const SURUM = 'v88 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8712,11 +8726,11 @@ const LD_ICERIK = [
     fon:{url:'site/assets/img/likya-album/kapak.jpg', buyutulebilir:true,
          /* Fotoğrafın sahibi aranıyor — uydurulmuş bir künye değil, açık
             bir çağrı. Adı öğrenilince bu not adla değişecek. */
-         kunye:{tr:'Ege’de bir yerleşimde, bir evin kapı tokmağı.<br><br>' +
+         kunye:{tr:'Anadolu’nun Ege bölgesinde bir yerleşimde, bir evin kapı tokmağı.<br><br>' +
                    '<b>Likya Dede</b> — albüm kapağı · CT Music Productions · 19 Eylül 2025<br><br>' +
                    'Bu fotoğrafın aslı, 2004 yıllarında konuştuğum ve sonra izini kaybettiğim ' +
                    'sevgili bir gönüldaşıma ait. Kendisine ulaşırsa, adını seve seve buraya eklerim.',
-                en:'A door knocker on a house in a settlement in the Aegean.<br><br>' +
+                en:'A door knocker on a house in a settlement in the Aegean region of Anatolia.<br><br>' +
                    '<b>Likya Dede</b> — album cover · CT Music Productions · 19 September 2025<br><br>' +
                    'The original of this photograph belongs to a dear kindred spirit I spoke with ' +
                    'around 2004 and later lost touch with. If this reaches them, I would gladly ' +
@@ -8922,6 +8936,7 @@ function ldSayfalariKur(){
   const kap = document.getElementById('ldSayfalar');
   const d = DIL.get() === 'en' ? 'en' : 'tr';
   kap.innerHTML = '';
+  const kagitDugmeleri = [];        // sayfaların kardeşi olacak büyüteçler
 
   /* Albüm — çalan bölümün çizimi ve tiradı. Sırası LD_BOLUM_SIRA. */
   const s1 = document.createElement('section');
@@ -9027,11 +9042,22 @@ function ldSayfalariKur(){
     if (bolunmus) h += '</div></div>';
     /* Fon fotoğrafı: sayfada yazı yok, köşede tek bir büyüteç. Fotoğrafın
        künyesi büyütülünce görünüyor — bilgi sahnenin ortasında durmuyor. */
+    /* Büyüteç sayfanın DEĞİL kâğıdın sağ alt köşesine oturuyor.
+       Sayfanın içindeyken dar düzenlerde (`max-width:60ch; margin:auto`)
+       metin sütununun köşesine yapışıyordu — sayfanın ortasında,
+       hizasız. Kâğıdın kendisi konumlandırılmış bir kap olduğu için
+       düğme oraya kardeş olarak konuyor; `data-s` ile hangi sayfaya ait
+       olduğu biliniyor, sayfa değişince öbürleri gibi gizleniyor. */
     if (sayfa.fon && sayfa.fon.buyutulebilir){
-      h += '<button type="button" class="ld-gorsel-ac ld-kose-ac"' +
-           ' data-buyuk="' + sayfa.fon.url + '"' +
-           (sayfa.fon.kunye ? ' data-kunye="' + sayfa.fon.kunye[d].replace(/"/g,'&quot;') + '"' : '') +
-           ' aria-label="' + DIL.T('Büyüt') + '">' + BUYUTEC_SVG + '</button>';
+      const bt = document.createElement('button');
+      bt.type = 'button';
+      bt.className = 'ld-gorsel-ac ld-kose-ac';
+      bt.dataset.s = String(ldIcerikNo(i));
+      bt.dataset.buyuk = sayfa.fon.url;
+      if (sayfa.fon.kunye) bt.dataset.kunye = sayfa.fon.kunye[d];
+      bt.setAttribute('aria-label', DIL.T('Büyüt'));
+      bt.innerHTML = BUYUTEC_SVG;
+      kagitDugmeleri.push(bt);
     }
     if (sayfa.arsiv){
       h += '<div class="ld-yigin" id="ldYigin">' +
@@ -9045,6 +9071,7 @@ function ldSayfalariKur(){
     kap.appendChild(sec);
   });
 
+  kagitDugmeleri.forEach(bt => kap.appendChild(bt));
   ldBolumGezKur();
   ldArsivKur();          /* arşiv sayfası şimdilik kapalı; işlev duruyor */
   ldBolumYaz();
@@ -9359,6 +9386,10 @@ function ldSayfaAc(no){
   document.documentElement.classList.toggle('ld-saydam', saydam);
   document.querySelectorAll('#ldSayfalar .ld-sayfa').forEach(s => {
     s.classList.toggle('acik', s.dataset.s === String(no));
+  });
+  /* Büyüteçler sayfaların KARDEŞİ; kendi sayfaları açıkken görünüyor. */
+  document.querySelectorAll('#ldSayfalar > .ld-kose-ac').forEach(bt => {
+    bt.classList.toggle('acik', bt.dataset.s === String(no));
   });
   /* Gezinme şeritten kalktı; nerede olunduğunu pencerenin adı söylüyor. */
   const ad = ldSayfaAdi(no);
