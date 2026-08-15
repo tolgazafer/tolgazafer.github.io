@@ -299,8 +299,15 @@
   /* Spotify çerçevesi 16/9 DEĞİL: kendi sabit boyu var. Parçada tek satır,
      albümde parça listesi görünsün diye daha uzun. Genel kural onu
      eziyor ve oynatıcıyı yassı bir şeride çeviriyordu. */
-  .vw-media iframe.vw-spotify{aspect-ratio:auto;height:152px}
-  .vw-media iframe.vw-spotify.albüm{height:352px}
+  /* Çalar artık bir YUVANIN içinde: boyunu JS satır içi veriyor (parça
+     152, albüm 352) çünkü Spotify API'si çerçeveyi kendi kuruyor ve
+     bizim sınıfımız ona geçmiyor. Yuvanın işi yalnızca yeri tutmak. */
+  .vw-spotify-yuva{width:100%;overflow:hidden;border-radius:3px}
+  /* Genel `.vw-media iframe{aspect-ratio:16/9}` kuralı Spotify'ın kendi
+     çerçevesini de yakalıyordu; yuvanın içindekini oradan kurtarıyoruz. */
+  .vw-media .vw-spotify-yuva iframe{width:100%;height:100%;border:0;
+    display:block;aspect-ratio:auto}
+  .vw-spotify-yuva > div{width:100%;height:100%}
   .vw-media audio{width:100%;margin:1rem 0}
   .vw-stub{display:grid;place-items:center;gap:.7rem;padding:3.4rem 1rem;text-align:center;
     font-size:.86rem;letter-spacing:.05em;color:var(--ink-soft);line-height:2}
@@ -3943,7 +3950,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v79 · 2026-08-15';
+const SURUM = 'v80 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8102,13 +8109,23 @@ function openViewer(n){
        çekiliyor; bunun için IFrame API'sinin `playback_update`i
        dinleniyor. API zaten albüm çaları için yükleniyor, ikinci kez
        indirilmiyor. */
-    const f = document.createElement('iframe');
-    f.src = 'https://open.spotify.com/embed/' + (m.tur || 'album') + '/' + m.id;
-    f.className = 'vw-spotify' + (m.tur === 'album' ? ' albüm' : '');
-    f.allow = 'clipboard-write; encrypted-media; picture-in-picture';
-    f.loading = 'lazy';
-    vwMedia.appendChild(f);
-    spIzle(f);
+    /* Kendi <iframe>'imizi VERMİYORUZ: `createController` verilen öğeyi
+       KENDİ çerçevesiyle DEĞİŞTİRİYOR — sınıfımız da adresimiz de
+       gidiyordu. Sonuç: 16/9 oranında, içi boş gri bir dikdörtgen.
+       (Aynı tuzağa Likya Dede'nin çalarında da düşülmüştü; oradaki
+       çözüm zaten doğruydu — adresi SEÇENEKLERDE vermek.) */
+    const tur = m.tur || 'album';
+    const boy = tur === 'album' ? 352 : 152;
+    const yuva = document.createElement('div');
+    yuva.className = 'vw-spotify-yuva';
+    yuva.style.height = boy + 'px';
+    /* İÇ İÇE İKİ KUTU. API kendisine verilen öğeyi — div de olsa —
+       kendi çerçevesiyle DEĞİŞTİRİYOR. Boyu taşıyan DIŞ kutu ayakta
+       kalsın diye API'ye içerideki kurbanı veriyoruz. */
+    const ic = document.createElement('div');
+    yuva.appendChild(ic);
+    vwMedia.appendChild(yuva);
+    spKur(yuva, ic, tur, m.id, boy);
   } else if (m && m.type === 'image'){
     const i = document.createElement('img');
     i.src = m.url || placeholderImg(); i.alt = DIL.T(n.name);
@@ -8132,20 +8149,39 @@ function openViewer(n){
   document.getElementById('vwClose').focus();
 }
 
-/* Kart içindeki Spotify çerçevesini izler: çalarken ağaç çekilir,
-   durunca geri gelir. API yoksa (ağ yok, engelli) sessizce vazgeçer —
-   oynatıcı yine çalışır, yalnızca ağaç kısılmaz. */
-function spIzle(cerceve){
-  const bagla = (API) => {
-    try {
-      API.createController(cerceve, {}, (ctrl) => {
-        ctrl.addListener('playback_update', e => {
-          const d = e && e.data; if (!d) return;
-          duck(!d.isPaused && d.position > 0);
-        });
-      });
-    } catch(err){ /* çerçeve yine de çalar */ }
+/* Kart içindeki Spotify çalarını kurar ve izler: çalarken ağaç çekilir,
+   durunca geri gelir.
+   API GELMEZSE (ağ yok, engelli, betik geç kaldı) yuva boş kalmasın diye
+   iki buçuk saniye sonra düz bir gömme çerçevesi konuyor — o da çalar,
+   yalnızca ağaç kısılmaz. Eskiden böyle bir yedek yoktu; API sessizce
+   gelmeyince kartta boş bir kutu kalıyordu. */
+function spKur(yuva, ic, tur, id, boy){
+  let kuruldu = false;
+  const duzCerceve = () => {
+    if (kuruldu || !yuva.isConnected) return;
+    kuruldu = true;
+    yuva.innerHTML = '';
+    const f = document.createElement('iframe');
+    f.src = 'https://open.spotify.com/embed/' + tur + '/' + id;
+    f.width = '100%'; f.height = String(boy); f.style.border = '0';
+    f.allow = 'clipboard-write; encrypted-media; picture-in-picture';
+    yuva.appendChild(f);
   };
+  const bagla = (API) => {
+    if (kuruldu || !yuva.isConnected) return;
+    try {
+      API.createController(ic,
+        { uri: 'spotify:' + tur + ':' + id, width: '100%', height: boy },
+        (ctrl) => {
+          kuruldu = true;
+          ctrl.addListener('playback_update', e => {
+            const d = e && e.data; if (!d) return;
+            duck(!d.isPaused && d.position > 0);
+          });
+        });
+    } catch(err){ duzCerceve(); }
+  };
+  setTimeout(duzCerceve, 2500);
   if (window.__spotifyAPI){ bagla(window.__spotifyAPI); return; }
   const oncekiHazir = window.onSpotifyIframeApiReady;
   window.onSpotifyIframeApiReady = (API) => {
