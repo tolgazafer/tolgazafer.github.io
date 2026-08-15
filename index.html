@@ -1803,10 +1803,17 @@
 .ucus-medya img,
 .ucus-medya video {
   display: block;
-  width: 100%;
-  max-height: 54vh;
+  /* DİKEY MEDYA. Instagram reel'leri ve dikey fotoğraflar `width:100%`
+     ile enine geriliyor, kartın boyunu şişiriyordu. Artık kendi
+     oranında, kutunun içine sığdığı kadar: dik olan ortada durur,
+     yatay olan eni doldurur. */
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   background: #000;
+  margin: 0 auto;
 }
 .ucus-medya video { cursor: default; }
 /* YouTube oynatıcısı — video sinyalleri kartın içinde açılır */
@@ -1837,19 +1844,36 @@
 
 .ucus-govde { padding: 14px 16px 18px; }
 /* Videoda gövde metni yok; kart oynatıcı kadar yer kaplasın, boş uzamasın */
-/* Videoda gövde metni de olabiliyor (bazı sinyallerde var): kart
-   oynatıcı kadar yer kaplasın ama metni de göstersin. `height:auto`
-   ile kısa kalıyor, taşarsa kendi içinde kayıyor. */
+/* ── HER KART ESNEK: BAŞLIK SABİT, MEDYA SINIRLI, METİN KAYAR ──
+   Eskiden kart tek bir kaydırma kutusuydu; dikey bir fotoğraf ya da
+   reel geldiğinde medya bütün boyu yiyor ve METİN ekranın altında
+   kalıyordu. İnsan kartın kaydırılabildiğini görmüyor, mektup okunmadan
+   kapanıyordu. Şimdi medyanın tavanı var ve metin kendi içinde kayıyor;
+   her mektupta yazının başı görünüyor. */
+.ucus-kart {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;             /* kaydırma artık gövdenin işi */
+  /* Önizleme kutuları uzaklığa göre 2000'e kadar katman alıyor; kart
+     onların ALTINDA kalıyor ve duvardaki küçük resimler okunacak şeyin
+     önünü kapatıyordu. Kutular kart açılınca zaten gizleniyor, bu da
+     ikinci emniyet: bir kare gecikse bile kart üstte. */
+  z-index: 2500;
+}
+.ucus-kart .ucus-ust { flex: 0 0 auto; }
+.ucus-kart .ucus-medya { flex: 0 1 auto; min-height: 0; overflow: hidden;
+  display: flex; justify-content: center; align-items: center; max-height: 54%; }
+.ucus-kart .ucus-govde { flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  overscroll-behavior: contain; }
+.ucus-kart .ucus-dis { flex: 0 0 auto; }
+/* Videoda gövde metni de olabiliyor: kart oynatıcı kadar yer kaplasın
+   ama metni de göstersin. */
 .ucus-kart.video {
   height: auto;
   max-height: calc(100% - 28px);
   top: 50%;
   transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
 }
-.ucus-kart.video .ucus-medya { flex: 0 0 auto; }
-.ucus-kart.video .ucus-govde { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .ucus-kart.video .ucus-govde { padding: 0; }
 .ucus-kart.video .ucus-rozet {
   background: linear-gradient(135deg, #b8f2cf, #4fc98a 60%, #2f8f77);
@@ -4111,7 +4135,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v98 · 2026-08-15';
+const SURUM = 'v100 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -4931,9 +4955,19 @@ const STRUCTURE = [
         "blurb": "Kardeş Türküler · Komische Oper Berlin · Cüneyt Yalaz",
         "media": {
          "type": "text",
-         "body": "Yaylı topluluk ve elektronik · Komische Oper Berlin siparişi · Nâzım Hikmet ve Bertolt Brecht şiirleri üzerine müzikli oyun · 3–4 Şubat 2022, iki gösteri · 22 kişilik topluluğun şefliği ve sahnede Ableton Push"
+         "body": "Yaylı topluluk ve elektronik · Komische Oper Berlin siparişi · Nâzım Hikmet’in “Memleketimden İnsan Manzaraları” ve Erich Kästner’in “Das Eisenbahngleichnis” şiirleri üzerine müzikli oyun · Türkçe, Almanca, Kürtçe ve Ermenice · 3–4 Şubat 2022, iki gösteri · 22 kişilik topluluğun şefliği ve sahnede Ableton Push"
         },
-        "role": "Yaylı topluluk ve elektronik"
+        "role": "Yaylı topluluk ve elektronik",
+        "bag": [
+         [
+          "Gazete Duvar",
+          "https://www.gazeteduvar.com.tr/kardes-turkuler-ucuncu-mevki-ile-berlinde-haber-1551508"
+         ],
+         [
+          "Mimesis",
+          "https://www.mimesis-dergi.org/2022/02/kardes-turkuler-ucuncu-mevki-ile-berlinde/"
+         ]
+        ]
        },
        {
         "label": "A",
@@ -5434,6 +5468,14 @@ const STRUCTURE = [
          [
           "concerti",
           "https://www.concerti.de/konzert/komische-oper-berlin-ucuncu-mevki/"
+         ],
+         [
+          "Gazete Duvar",
+          "https://www.gazeteduvar.com.tr/kardes-turkuler-ucuncu-mevki-ile-berlinde-haber-1551508"
+         ],
+         [
+          "Mimesis",
+          "https://www.mimesis-dergi.org/2022/02/kardes-turkuler-ucuncu-mevki-ile-berlinde/"
          ]
         ]
        },
@@ -6828,6 +6870,14 @@ const STRUCTURE = [
          [
           "concerti",
           "https://www.concerti.de/konzert/komische-oper-berlin-ucuncu-mevki/"
+         ],
+         [
+          "Gazete Duvar",
+          "https://www.gazeteduvar.com.tr/kardes-turkuler-ucuncu-mevki-ile-berlinde-haber-1551508"
+         ],
+         [
+          "Mimesis",
+          "https://www.mimesis-dergi.org/2022/02/kardes-turkuler-ucuncu-mevki-ile-berlinde/"
          ]
         ]
        },
@@ -12432,8 +12482,15 @@ DIL.uygula();
       adaylar.sort(function (a, b) { return a.d - b.d; });
       adaylar.length = Math.min(adaylar.length, KUTU);
 
+      /* KART AÇIKKEN ÖNİZLEMELER KAYBOLUYOR.
+         Kutuların z sırası uzaklıkla veriliyor (2000'e kadar) ve kart
+         onların ALTINDA kalıyordu: mektup açıldığında ekranda duvardaki
+         küçük resimler kartın üstünde asılı duruyor, okunacak şeyin
+         önünü kapatıyordu. Okurken zaten uçulmuyor; kutuların işi bitti. */
+      var kartAcik = !kartEl.hidden;
       for (var p = 0; p < kutular.length; p++) {
         var kt2 = kutular[p], ad = adaylar[p];
+        if (kartAcik){ kt2.el.hidden = true; continue; }
         if (!ad) {
           if (kt2.indeks !== -1) { kt2.indeks = -1; kt2.el.hidden = true; }
           continue;
