@@ -2007,7 +2007,13 @@
   aspect-ratio: 1 / 1;
   object-fit: cover;
   background: #080b12;
+  /* Yeni resim çözülene kadar görünmüyor — eskisi kalmasın diye.
+     Geçiş kısa: hızlı uçarken kutular saniyede birkaç kez el
+     değiştiriyor, uzun bir soluklanma kırpışma gibi duruyor. */
+  opacity: 0;
+  transition: opacity 0.14s linear;
 }
+.ucus-onizleme img.hazir { opacity: 1; }
 .ucus-onizleme span {
   display: block;
   padding: 5px 8px 6px;
@@ -4081,7 +4087,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v94 · 2026-08-15';
+const SURUM = 'v95 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -11529,6 +11535,16 @@ DIL.uygula();
         zEgri.push({ z: noktalar[ze].z, t: noktalar[ze].zaman });
       }
     }
+    /* TÜNELİN AĞZI BUGÜN.
+       Eğri yalnızca notaların bulunduğu z aralığını kapsıyordu; kamera
+       tünelin ağzında (z ≈ 900) o aralığın DIŞINDA olduğu için tarih
+       en yeni notanınkine kenetlenip ilk notaya varana kadar hiç
+       değişmiyordu — "ilk başta tarihlerde takılı kalıyor" denen şey
+       buydu. Ağza bugünün tarihi bir çapa olarak konuyor; aradaki yol
+       artık ara değerle geçiliyor.
+       Derin uçta çapa YOK: en eski notadan daha geriye tarih uydurmak
+       olurdu, orada kenetlenmek doğru. */
+    zEgri.push({ z: 1000, t: Date.now() });
     zEgri.sort(function (a, b) { return a.z - b.z; });
 
     function zamandaNe(z) {
@@ -11869,6 +11885,37 @@ DIL.uygula();
       }
     }
 
+    /* ── ÖNDEN YÜKLEME ──
+       Kutu el değiştirdiğinde resim henüz inmemişse çerçeve boş kalıyor;
+       hızlı uçarken bu sık oluyor. Uçuş yönünde, henüz GÖRÜNMEYEN ama
+       yaklaşan notaların küçük resimleri sessizce indiriliyor: kutuya
+       sıra geldiğinde tarayıcı önbelleğinden anında geliyor.
+       İstek başına bir kez; ne kadar ileriye bakılacağı hıza bağlı,
+       çünkü yavaşken önden yüklemenin anlamı yok, hızlıyken şart. */
+    var yuklendi = new Set();
+    function resimAdresi(m){
+      return m.tur === 'video'
+        ? 'https://i.ytimg.com/vi/' + m.yt + '/mqdefault.jpg'
+        : (m.gorsel || '');
+    }
+    var onYukleSayac = 0;
+    function ondenYukle(){
+      if (++onYukleSayac % 12) return;          // her karede değil
+      var ileri = BELIRME + Math.abs(hizi()) * 120;
+      var kalan = 6;                            // kare başına en çok altı istek
+      for (var i = 0; i < mektuplar.length && kalan > 0; i++){
+        if (yuklendi.has(i)) continue;
+        var dz = noktalar[i].z - kamera.position.z;
+        var d = manivela < 0 ? dz : -dz;        // gidiş yönünde uzaklık
+        if (d < 0 || d > ileri) continue;
+        var u = resimAdresi(mektuplar[i]);
+        yuklendi.add(i);
+        if (!u) continue;
+        var im = new Image(); im.decoding = 'async'; im.src = u;
+        kalan--;
+      }
+    }
+
     /* ---------- önizleme kutuları ---------- */
     var kutular = [];
     for (var q = 0; q < KUTU; q++) {
@@ -11877,6 +11924,12 @@ DIL.uygula();
       kt.hidden = true;
       kt.innerHTML = '<img alt=""><span></span>';
       kap.appendChild(kt);
+      /* `load` bir kez bağlanıyor: kutu ömür boyu aynı <img>'i taşıyor,
+         her `src` değişiminde yeniden tetikleniyor. */
+      (function (im){
+        im.addEventListener('load', function (){ im.classList.add('hazir'); });
+        im.addEventListener('error', function (){ im.classList.add('hazir'); });
+      })(kt.firstChild);
       kutular.push({ el: kt, resim: kt.firstChild, yazi: kt.lastChild, indeks: -1 });
     }
 
@@ -12298,6 +12351,8 @@ DIL.uygula();
 
       var g = kap.clientWidth, yh = kap.clientHeight;
 
+      ondenYukle();
+
       /* --- konum göstergesi: hangi tarihteyiz, ne kadar önce --- */
       var suanki = zamandaNe(kamera.position.z);
       if (tarihEl) tarihEl.textContent = tarihYaz(suanki);
@@ -12349,9 +12404,20 @@ DIL.uygula();
         var mm = mektuplar[ad.i];
         if (kt2.indeks !== ad.i) {
           kt2.indeks = ad.i;
+          /* KUTU YENİDEN KULLANILIRKEN ESKİ RESİM DURUYORDU.
+             `src` değişince tarayıcı yenisi çözülene kadar ESKİ kareyi
+             göstermeye devam ediyor. Hızlı uçarken on kutu saniyede
+             birkaç kez el değiştirdiği için ekranda hep bir öncekinin
+             resmi kalıyordu — "son görüneni tekrarlıyor" buydu.
+             Resim yüklenene kadar saklanıyor; `load` gelince açılıyor.
+             Yanlış resim göstermektense boş çerçeve göstermek yeğ. */
+          kt2.resim.classList.remove('hazir');
           kt2.resim.src = mm.tur === 'video'
             ? 'https://i.ytimg.com/vi/' + mm.yt + '/mqdefault.jpg'
             : (mm.gorsel || '');
+          if (kt2.resim.complete && kt2.resim.naturalWidth > 0){
+            kt2.resim.classList.add('hazir');       // önbellekten geldi
+          }
           kt2.yazi.textContent = adYaz(mm);
           kt2.el.classList.toggle('okundu', okunan.has(mm.id));
         }
