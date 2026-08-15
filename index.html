@@ -294,7 +294,12 @@
   .vw-title{font-size:1.85rem;font-weight:700;letter-spacing:0;line-height:1.25}
   .vw-media:empty{display:none}
   .vw-media{border-radius:3px;overflow:hidden;background:color-mix(in srgb,var(--ink) 6%,transparent)}
-  .vw-media iframe,.vw-media img,.vw-media video{width:100%;display:block;border:0}
+  .vw-media iframe,.vw-media video{width:100%;display:block;border:0}
+  /* Görsel KENDİ ORANINDA: `width:100%` dik bir görseli (afiş, portre)
+     kutunun enine gerip altını kırpıyordu. Artık sığdığı kadar büyük,
+     ortada ve tamamı görünür. */
+  .vw-media img{display:block;border:0;margin:0 auto;
+    max-width:100%;max-height:min(42vh,420px);width:auto;height:auto;object-fit:contain}
   .vw-media iframe{aspect-ratio:16/9;height:auto}
   /* Spotify çerçevesi 16/9 DEĞİL: kendi sabit boyu var. Parçada tek satır,
      albümde parça listesi görünsün diye daha uzun. Genel kural onu
@@ -3073,6 +3078,8 @@ const EN = {
     "The document previewers in WhatsApp, Telegram and similar apps do not run JavaScript. Save the file to your phone and open it in Safari or Chrome, or ask the sender for a web address.",
   "ağaca dön": "back to the tree",
   "Ağaca dön": "Back to the tree",
+  "Eva Planet — afiş": "Eva Planet — poster",
+  "Kardeş Türküler · Komische Oper Berlin · 3–4 Şubat 2022 · Nâzım Hikmet, Bertolt Brecht, Nelly Sachs, Gülten Akın ve Şerko Bêkes şiirleri üzerine edebî-senfonik tren fantezisi. Afiş illüstrasyonu: Eva Planet.": "Kardeş Türküler · Komische Oper Berlin · 3–4 February 2022 · a literary-symphonic train fantasy on poems by Nâzım Hikmet, Bertolt Brecht, Nelly Sachs, Gülten Akın and Şerko Bêkes. Poster illustration: Eva Planet.",
   "2.2 güncellemesinin armonik motoru — Scaler": "Harmonic engine of the 2.2 update — Scaler",
   "Armonik motor kurulumu, arayüz ve kullanıcı deneyimi tasarımı": "Harmonic engine, UI and UX design",
   "17 Mart 2020": "17 March 2020",
@@ -4135,7 +4142,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v100 · 2026-08-15';
+const SURUM = 'v102 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -4952,13 +4959,21 @@ const STRUCTURE = [
         "href": "/isler/muzik/besteler/im-wagen-dritter-klasse-ucuncu-mevki/",
         "trail": "İşler · Müzik · Besteler",
         "date": "2022-01",
-        "blurb": "Kardeş Türküler · Komische Oper Berlin · Cüneyt Yalaz",
+        "blurb": "Kardeş Türküler · Komische Oper Berlin · 3–4 Şubat 2022 · Nâzım Hikmet, Bertolt Brecht, Nelly Sachs, Gülten Akın ve Şerko Bêkes şiirleri üzerine edebî-senfonik tren fantezisi. Afiş illüstrasyonu: Eva Planet.",
         "media": {
-         "type": "text",
-         "body": "Yaylı topluluk ve elektronik · Komische Oper Berlin siparişi · Nâzım Hikmet’in “Memleketimden İnsan Manzaraları” ve Erich Kästner’in “Das Eisenbahngleichnis” şiirleri üzerine müzikli oyun · Türkçe, Almanca, Kürtçe ve Ermenice · 3–4 Şubat 2022, iki gösteri · 22 kişilik topluluğun şefliği ve sahnede Ableton Push"
+         "type": "image",
+         "url": "site/assets/img/ucuncu-mevki/afis-eva-planet.jpg"
         },
         "role": "Yaylı topluluk ve elektronik",
         "bag": [
+         [
+          "Komische Oper Berlin",
+          "https://www.komische-oper-berlin.de/spielplan/a-z/ueuencue-mevki/"
+         ],
+         [
+          "concerti",
+          "https://www.concerti.de/konzert/komische-oper-berlin-ucuncu-mevki/"
+         ],
          [
           "Gazete Duvar",
           "https://www.gazeteduvar.com.tr/kardes-turkuler-ucuncu-mevki-ile-berlinde-haber-1551508"
@@ -4966,6 +4981,10 @@ const STRUCTURE = [
          [
           "Mimesis",
           "https://www.mimesis-dergi.org/2022/02/kardes-turkuler-ucuncu-mevki-ile-berlinde/"
+         ],
+         [
+          "Eva Planet — afiş",
+          "https://evaplanet.de/works/komische-oper-kardes-tuerkueler"
          ]
         ]
        },
@@ -5476,6 +5495,10 @@ const STRUCTURE = [
          [
           "Mimesis",
           "https://www.mimesis-dergi.org/2022/02/kardes-turkuler-ucuncu-mevki-ile-berlinde/"
+         ],
+         [
+          "Eva Planet — afiş",
+          "https://evaplanet.de/works/komische-oper-kardes-tuerkueler"
          ]
         ]
        },
@@ -6878,6 +6901,10 @@ const STRUCTURE = [
          [
           "Mimesis",
           "https://www.mimesis-dergi.org/2022/02/kardes-turkuler-ucuncu-mevki-ile-berlinde/"
+         ],
+         [
+          "Eva Planet — afiş",
+          "https://evaplanet.de/works/komische-oper-kardes-tuerkueler"
          ]
         ]
        },
