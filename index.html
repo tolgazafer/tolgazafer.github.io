@@ -3943,7 +3943,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v77 · 2026-08-15';
+const SURUM = 'v78 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -7636,8 +7636,15 @@ function growItems(parent, items, sdepth, zoneId, rnd, gd, small){
   if (!items.length){ fractal(parent, gd+1, gd+2, zoneId, rnd); return; }
   const n = items.length;
 
-  // dörtten fazlaysa ikili bölünme — organik dallanma
-  if (n > 4){
+  /* BÖLGENİN KENDİ ÇOCUKLARI HER ZAMAN YELPAZE (sdepth 2).
+     Eşik `n > 4` idi. İşler dörtken yelpaze yoluyla açılıyordu; yeni
+     bölümlerle yediye çıkınca eşiği aştı ve ikili bölünmeye düştü —
+     tacın karakteri o yüzden değişti, benim büküm denememden değil.
+     Bölgenin çocukları ağacın ANA dalları; onların ikili bölünmeye
+     düşmesi gövdenin hemen üstünde yapay bir çatal üretiyor.
+     Yelpaze ADIMI kardeş sayısına göre daralıyor ki toplam açıklık
+     sabit kalsın: dört çocukta 3×1.06 ≈ 182°, yedide de aynı bant. */
+  if (n > 4 && sdepth !== 2){
     const order = [...items].sort((a,b) => (a.date||'9') < (b.date||'9') ? 1 : -1); // yeni → eski
     const rank = it => order.indexOf(it)/(n-1);        // 0 en yeni · 1 en eski
     splitGrow(parent, order, sdepth, zoneId, rnd, gd, small, rank);
@@ -7650,7 +7657,12 @@ function growItems(parent, items, sdepth, zoneId, rnd, gd, small){
      kart bütün alt ağacını o yöne taşır. STRUCTURE'daki bölge çocuk sıraları
      bu yüzden içerik sırası değil, denge sırasıdır (bkz. oradaki not). */
   const rk = ageRank(items);
-  const fan = (FAN[sdepth] || 0.30) * (small ? 0.8 : 1);
+  let fan = (FAN[sdepth] || 0.30) * (small ? 0.8 : 1);
+  /* Bant sabit: dört çocukken en dıştaki dal zaten ~90°'de, yatay.
+     Yediye çıkınca aynı adımı korumak iki dalı yatayın ALTINA indirip
+     tacı gövdenin dibine sarkıtıyordu. Toplam açıklık 2.6 rad (~149°)
+     ile sınırlanıyor — taç yuvarlak kalıyor, gövde görünür kalıyor. */
+  if (sdepth === 2 && n > 4) fan = 2.6 / (n - 1);
   const shrink = SHRINK[sdepth] || 0.62;
   items.forEach((item, j) => {
     const off = (j - (n-1)/2) * fan + (rnd()-0.5)*0.09;
@@ -7899,10 +7911,23 @@ function fillThumb(m){
     pvThumb.classList.add('tam');
   }
   img.alt = '';
+  const yedegeDus = () => {
+    if (img.dataset.yedek){ img.src = img.dataset.yedek; delete img.dataset.yedek; return true; }
+    return false;
+  };
   img.addEventListener('error', () => {
-    if (img.dataset.yedek){ img.src = img.dataset.yedek; delete img.dataset.yedek; return; }
+    if (yedegeDus()) return;
     img.src = placeholderImg();
     pvThumb.classList.add('tam');
+  });
+  /* YOUTUBE'UN SESSİZ VEKİLİ.
+     `maxresdefault.jpg` her videoda yok — ama YouTube olmayanı 404 ile
+     DEĞİL, 200 ile ve 120×90'lık GRİ BİR VEKİL görselle karşılıyor.
+     `onerror` bu yüzden hiç tetiklenmiyordu: yedek devreye girmiyor,
+     kartta 120 pikselden büyütülmüş gri bir bulanıklık duruyordu —
+     "görseli yok" denen şey buydu. Yükleme bitince BOYUTA bakıyoruz. */
+  img.addEventListener('load', () => {
+    if (img.naturalWidth > 0 && img.naturalWidth <= 130) yedegeDus();
   });
   pvThumb.appendChild(img);
 
@@ -7966,8 +7991,21 @@ function ytIzle(iframeId){
 /* Kartın yazılı kısmı ayrı bir işte: dil değişince medyaya (oynayan
    videoya) dokunmadan yalnızca metni yeniden yazmak gerekiyor. */
 let vwSon = null;
+/* TARİH BİR KEZ.
+   Kartta hem tarih satırı hem de açıklama vardı ve açıklamalar çoğu
+   zaman yılı kendisi taşıyor ("Native Instruments · 2025 – 2026").
+   Aynı yıl iki satırda görünüyordu. Açıklama daha zengin — aralık,
+   kurum, şehir taşıyor — o yüzden çakışınca YALNIZ TARİH satırı
+   düşüyor. */
+function tarihGerekli(meta){
+  if (!meta || !meta.date) return false;
+  const yil = String(meta.date).slice(0, 4);
+  const metin = (meta.blurb || '') + ' ' + (meta.role || '');
+  return !metin.includes(yil);
+}
 function vwMetniYaz(n){
-  document.getElementById('vwDate').textContent  = fmtDate(n.meta.date);
+  document.getElementById('vwDate').textContent  =
+    tarihGerekli(n.meta) ? fmtDate(n.meta.date) : '';
   document.getElementById('vwTitle').textContent = DIL.T(n.name);
   document.getElementById('vwTrail').textContent = DIL.Tyol(n.meta.trail);
   document.getElementById('vwRole').textContent  = DIL.T(n.meta.role);
@@ -9827,7 +9865,8 @@ function showPreview(n){
   pvOwner = n;
   pv.dataset.zone = n.zone || '';
   pv.querySelector('.pv-title').textContent = DIL.T(n.name);
-  pv.querySelector('.pv-date').textContent  = fmtDate(n.meta.date);
+  pv.querySelector('.pv-date').textContent  =
+    tarihGerekli(n.meta) ? fmtDate(n.meta.date) : '';
   pv.querySelector('.pv-body').textContent  = DIL.T(n.meta.blurb);
   document.getElementById('pvTrail').textContent = DIL.Tyol(n.meta.trail);
   document.getElementById('pvRole').textContent  = DIL.T(n.meta.role);
