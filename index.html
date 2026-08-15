@@ -1286,14 +1286,17 @@
     object-fit:contain;border-radius:2px}
   /* Başlık RESMİN sağ alt köşesinde. Kapağın o köşesi orta mavi ve
      dokulu: beyaz yazı + koyu gölge okunuyor, perde gerekmiyor. */
+  /* Renk bağırmıyor: saf beyaz yerine sayfanın kendi kâğıt tonundan
+     gelen kırık beyaz, üstelik tam opak değil. Gölge de yumuşadı —
+     görevi okunurluk, vurgu değil. */
   .ld-kapak-ad{position:absolute;right:4cqw;bottom:3.5cqw;z-index:2;
-    max-width:74%;text-align:right;color:#fff;
-    text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 1.4em rgba(0,0,0,.7)}
+    max-width:82%;text-align:right;color:rgba(239,231,218,.88);
+    text-shadow:0 1px 3px rgba(0,0,0,.55),0 0 1.1em rgba(0,0,0,.45)}
   .ld-kapak-ad b{display:block;font-size:clamp(1.5rem,9cqw,4.2rem);
-    font-weight:600;letter-spacing:.04em;line-height:1.08}
-  .ld-kapak-ad span{display:block;margin-top:.45em;
-    font-size:clamp(.78rem,3.4cqw,1.6rem);
-    letter-spacing:.03em;line-height:1.35;color:rgba(255,255,255,.9)}
+    font-weight:500;letter-spacing:.03em;line-height:1.08}
+  .ld-kapak-ad span{display:block;margin-top:.5em;
+    font-size:clamp(.74rem,3.1cqw,1.45rem);
+    letter-spacing:.05em;line-height:1.42;color:rgba(239,231,218,.72)}
   /* Büyüteç karşı köşede — başlıkla çakışmasın diye SOL altta. */
   /* `.ld-gorsel-ac` genel kuralı `display:block;width:100%` — büyüteç
      kapakta bütün eni kaplıyordu. Buradaki kural onu eziyor. */
@@ -4018,7 +4021,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v84 · 2026-08-15';
+const SURUM = 'v85 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -8669,8 +8672,10 @@ const LD_ICERIK = [
      `contain` ile geliyor (bkz. `.ld-d-kapak`), kare kapak kırpılmasın. */
   { ad:{tr:'Kapak', en:'Cover'}, duzen:'kapak',
     yazi:{ ad:{tr:'Likya Dede', en:'Likya Dede'},
-           alt:{tr:'senfoni orkestrası ve sazendeler için müzikli masal',
-                en:'a musical tale for symphony orchestra and traditional instruments'} },
+           /* İKİ SATIR, satır sonu ELLE: sarmaya bırakılınca pencere
+              genişliğine göre bir, iki ya da üç satıra düşüyordu. */
+           alt:{tr:'Senfoni ve Sazendeler için<br>Müzikli Masal',
+                en:'A Musical Tale for<br>Symphony and Traditional Instruments'} },
     fon:{url:'site/assets/img/likya-album/kapak.jpg', buyutulebilir:true,
          /* Fotoğrafın sahibi aranıyor — uydurulmuş bir künye değil, açık
             bir çağrı. Adı öğrenilince bu not adla değişecek. */
