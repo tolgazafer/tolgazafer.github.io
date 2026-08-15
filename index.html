@@ -1814,18 +1814,42 @@
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
+  /* Oynatıcı kartın yarısından fazlasını yemesin: dikey videolarda
+     (Shorts) 16/9 kutu boyu uzatıyor ve ALTINDAKİ METİN ekranın
+     dışında kalıyordu. Kart zaten kendi içinde kayıyor ama insan
+     kaydırılabildiğini görmüyor; en iyisi metnin görünür kalması. */
+  max-height: 46%;
   border: 0;
   background: #000;
+}
+/* DİKEY VİDEO (Shorts/reel). YouTube dikey videoyu 16/9 kutuya siyah
+   bantlarla oturtuyor, görüntü küçücük kalıyor. Notaya `dikey: true`
+   yazılırsa çerçeve dik duruyor ve ortalanıyor.
+   Not: bayrak ELLE konuyor — bir videonun dikey olduğunu adresinden
+   ya da küçük resminden anlamanın yolu yok, ikisi de 16/9 geliyor. */
+.ucus-medya.dikey { display: flex; justify-content: center; }
+.ucus-medya.dikey iframe {
+  aspect-ratio: 9 / 16;
+  width: auto;
+  height: 58vh;
+  max-height: 62%;
 }
 
 .ucus-govde { padding: 14px 16px 18px; }
 /* Videoda gövde metni yok; kart oynatıcı kadar yer kaplasın, boş uzamasın */
+/* Videoda gövde metni de olabiliyor (bazı sinyallerde var): kart
+   oynatıcı kadar yer kaplasın ama metni de göstersin. `height:auto`
+   ile kısa kalıyor, taşarsa kendi içinde kayıyor. */
 .ucus-kart.video {
   height: auto;
   max-height: calc(100% - 28px);
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
 }
+.ucus-kart.video .ucus-medya { flex: 0 0 auto; }
+.ucus-kart.video .ucus-govde { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .ucus-kart.video .ucus-govde { padding: 0; }
 .ucus-kart.video .ucus-rozet {
   background: linear-gradient(135deg, #b8f2cf, #4fc98a 60%, #2f8f77);
@@ -4087,7 +4111,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v95 · 2026-08-15';
+const SURUM = 'v98 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -12015,6 +12039,8 @@ DIL.uygula();
 
       var medya = kartEl.querySelector('.ucus-medya');
       medya.innerHTML = '';
+      /* Dikey video bayrağı veriden geliyor; bkz. `.ucus-medya.dikey`. */
+      medya.classList.toggle('dikey', !!m.dikey);
       if (m.tur === 'video') {
         /* Luka'nın listesinden bir video — YouTube oynatıcısı kartın içinde */
         var f = document.createElement('iframe');
@@ -12257,8 +12283,19 @@ DIL.uygula();
          bırakınca da bir süre kaymaya devam ediyor. */
       sapmaX += (kx - sapmaX) * 0.052;
       sapmaY += (ky - sapmaY) * 0.052;
-      hizX += (sapmaX * YANAL - hizX) * 0.045;
-      hizY += (sapmaY * YANAL - hizY) * 0.045;
+      /* ── YANAL YETKİ HIZLA ARTIYOR ──
+         Asıl "kartlardan sekme" sebebi kabul kutusu değil, DİREKSİYONDU:
+         yanal hız sabit (2,2 birim/kare) olduğu için tam gazda notaya
+         varmadan önce duvara yanaşacak zaman kalmıyordu. Ölçüldü
+         (`araclar/ucus-yaklasma.js`): manivela 0,9 ve 1,0'da nota
+         hiçbir karede kabul kutusuna girmiyordu — kutuyu genişletmek
+         tek başına bunu çözmedi, çünkü sorun erişimdi.
+         Uçakta da böyle: hız arttıkça kumanda yüzeyleri daha çok iş
+         görür. 1,6 kat yetiyor; daha fazlası ölçümde bir şey
+         değiştirmiyor ama alçak hızdaki nişan hissini bozardı. */
+      var yanalHiz = YANAL * (1 + Math.min(1, Math.abs(manivela)) * 1.6);
+      hizX += (sapmaX * yanalHiz - hizX) * 0.045;
+      hizY += (sapmaY * yanalHiz - hizY) * 0.045;
 
       if (kartEl.hidden) {
         /* Kart kapandıktan sonra mekik ekseni bulana kadar toparlanır */
@@ -12457,6 +12494,21 @@ DIL.uygula();
 
            Şimdi: yalnızca ÖNDEKİLER (küçük bir kare payı dışında) ve
            uyanlar arasından EN YAKINI seçiliyor — ilk bulunan değil. */
+        /* ── PENCERE HIZLA AÇILIYOR ──
+           Sabit pencerede belli bir hızın üstünde kartlardan SEKİLİYOR:
+           üstüne uçsan da açılmıyordu. İki sebep birden:
+             · O kare boyunca kat edilen yol pencereden büyük olabiliyor
+               (tam gazda ~29 birim) — nişan alacak kare kalmıyor.
+             · Yanal atalet hızda nişanı zorlaştırıyor; mekik ağırlaştı,
+               bu bilinçliydi ama kabul kutusu ona göre büyümemişti.
+           Kutu hızla ölçeklendi: yavaşken eskisi gibi dar (sabır ve
+           nişan ister), hızlıyken cömert — hızlı geçerken sinyali
+           yakalayamamak zaten fizik değil, aksaklık gibi duruyor.
+           Z penceresi de en az bir karelik yolu kapsıyor. */
+        var hizAn = Math.abs(hizi());
+        var carpan = 1 + Math.min(1, hizAn / 26) * 0.85;   // 1 … 1.85
+        var yanX = YANASMA_X * carpan, yanY = YANASMA_Y * carpan;
+        var onPay = Math.max(6, hizAn * 1.2);              // bir karelik yol
         var enIyi = -1, enIyiUzak = Infinity;
         for (var s2 = 0; s2 < adaylar.length; s2++) {
           var aday = adaylar[s2], n2 = noktalar[aday.i];
@@ -12466,9 +12518,9 @@ DIL.uygula();
           }
           if (okunan.has(mektuplar[aday.i].id)) continue;
           var dz2 = n2.z - kamera.position.z;      // önde ise negatif
-          if (dz2 > 6 || dz2 < -BOY) continue;     // 6 = bir karelik pay
-          if (Math.abs(n2.x - kamera.position.x) > YANASMA_X) continue;
-          if (Math.abs(n2.y - kamera.position.y) > YANASMA_Y) continue;
+          if (dz2 > onPay || dz2 < -BOY) continue;
+          if (Math.abs(n2.x - kamera.position.x) > yanX) continue;
+          if (Math.abs(n2.y - kamera.position.y) > yanY) continue;
           var uzak = Math.abs(dz2);
           if (uzak < enIyiUzak){ enIyiUzak = uzak; enIyi = aday.i; }
         }
