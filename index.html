@@ -1643,7 +1643,7 @@
   margin: 10px 0 8px;
   border-radius: 16px;
   overflow: hidden;
-  background: #060c1a;
+  background: #1B1D1F;   /* sayfanın koyu kâğıdı */
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   touch-action: none;
 }
@@ -2046,7 +2046,7 @@
   pointer-events: none;
   border-radius: 8px;
   overflow: hidden;
-  background: #10141d;
+  background: #24262a;
   box-shadow: 0 0 0 1px rgba(255, 240, 200, 0.3),
               0 10px 34px rgba(0, 0, 0, 0.6);
   transition: opacity 0.2s linear;
@@ -2059,7 +2059,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  background: #080b12;
+  background: #17191b;
   /* Yeni resim çözülene kadar görünmüyor — eskisi kalmasın diye.
      Geçiş kısa: hızlı uçarken kutular saniyede birkaç kez el
      değiştiriyor, uzun bir soluklanma kırpışma gibi duruyor. */
@@ -4142,7 +4142,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v103 · 2026-08-15';
+const SURUM = 'v104 · 2026-08-15';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -11665,7 +11665,14 @@ DIL.uygula();
 
     /* ---------- sahne ---------- */
     var sahne = new THREE.Scene();
-    sahne.fog = new THREE.FogExp2(0x05080f, 0.00030);
+    /* ARKA PLAN SİTENİN ZEMİNİ.
+       Tünel mavi-siyahtı (#05080f), sayfanın kâğıdı ise ılık koyu
+       (#1B1D1F): pencere sayfanın içinde ayrı bir delik gibi duruyordu.
+       Zemin artık sayfanın koyu kâğıdıyla aynı.
+       Açık temada da KOYU kalıyor: tel kafes açık mavi, krem bir zeminde
+       hiç okunmuyor — burası gece, tema değil mesele. */
+    var ZEMIN = 0x1B1D1F;
+    sahne.fog = new THREE.FogExp2(ZEMIN, 0.00030);
 
     var kamera = new THREE.PerspectiveCamera(71, 1, 1, 40000);   // hızla 88°ye açılıyor
     /* Tünelin ağzının biraz dışında başlıyoruz: ilk saniyede ne olduğu görünsün */
@@ -11679,7 +11686,7 @@ DIL.uygula();
       return;
     }
     boyayici.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    boyayici.setClearColor(0x05080f, 1);
+    boyayici.setClearColor(ZEMIN, 1);
 
     /* ---------- tel kafes tünel ---------- */
     var tunel = new THREE.Group();
@@ -11970,6 +11977,13 @@ DIL.uygula();
        kesilmiyor. Dönerken bu noktadan SAPIYOR, geri de buraya
        yaslanıyor (bkz. cerceve). */
     var MEKIK_YER = new THREE.Vector3(0, -6.4, -30);
+    /* Burun konisinin ucu, mekiğin kendi merkezine göre: koni z=-2.5'te
+       ve boyu 2.4 → ucu -3.7; ölçek 1.5 ile 5.55. Kabul testi bu noktayı
+       kullanıyor, kameranın kendisini değil. */
+    var BURUN_UCU = 5.55;
+    /* Bir önceki karedeki burun z'si: değme testi bu iki nokta arasındaki
+       ARALIĞA bakıyor, tek bir noktaya değil. */
+    var oncekiBurunZ = null;
     mekik.position.copy(MEKIK_YER);
     kamera.add(mekik);
     sahne.add(kamera);
@@ -12602,10 +12616,38 @@ DIL.uygula();
            nişan ister), hızlıyken cömert — hızlı geçerken sinyali
            yakalayamamak zaten fizik değil, aksaklık gibi duruyor.
            Z penceresi de en az bir karelik yolu kapsıyor. */
+        /* ── ÖLÇÜ NOKTASI: MEKİĞİN BURNU ──
+           Kabul testi KAMERANIN konumuna bakıyordu. Oysa mekik kameranın
+           35 birim ÖNÜNDE çiziliyor: nota mekiğin burnuna değdiğinde
+           kamera ona daha 35 birim uzakta oluyor, kart açılmıyor; kart
+           ancak nota KAMERAYA ulaşınca açılıyordu — yani ekranda mekik
+           çoktan notanın üstünden geçmiş oluyordu. "Üstünden geçtikten
+           sonra seçiyor" denen şey buydu.
+           Artık ölçü noktası burnun kendisi: mekiğin yeri (kamera
+           uzayında) + koni ucu. Mekik dönüşte yana kaydığı için x/y de
+           ondan alınıyor — göz neyi görüyorsa o. */
+        var burunZ = kamera.position.z + mekik.position.z - BURUN_UCU;
+        if (oncekiBurunZ === null) oncekiBurunZ = burunZ;
+        var burunX = kamera.position.x + mekik.position.x;
+        var burunY = kamera.position.y + mekik.position.y;
+
+        /* ── DEĞME TESTİ ──
+           Eski pencere `-BOY … +pay` idi: nota 220 birim ÖNDEYKEN kart
+           açılıyordu. Yani kart, mekik daha yanına varmadan patlıyordu;
+           ölçüldü, açılma mesafesi hep 220 çıkıyordu.
+           Şimdi kart, burun notayı GEÇTİĞİ karede açılıyor: bu karede
+           burnun kat ettiği z ARALIĞI notayı içine alıyor mu? Test
+           hızdan bağımsız doğru — tam gazda bir karede 29 birim atlansa
+           bile aralık o 29 birimi kapsıyor, nota arada kaybolmuyor.
+           `DEGME` burnun kendi kalınlığı: çok yavaşken aralık sıfıra
+           yaklaşıyor, o zaman da değmek mümkün olsun. */
+        var DEGME = 18;
+        var zA = Math.min(oncekiBurunZ, burunZ) - DEGME;
+        var zB = Math.max(oncekiBurunZ, burunZ) + DEGME;
+
         var hizAn = Math.abs(hizi());
         var carpan = 1 + Math.min(1, hizAn / 26) * 0.85;   // 1 … 1.85
         var yanX = YANASMA_X * carpan, yanY = YANASMA_Y * carpan;
-        var onPay = Math.max(6, hizAn * 1.2);              // bir karelik yol
         /* `beklet` = az önce KAPATILAN mektup; hemen yeniden açılmasın
            diye tutuluyor. Eskiden yalnızca ADAY LİSTESİNDEYKEN serbest
            bırakılıyordu (`aday.d > BOY*4`) — ama uzaklaşınca nota
@@ -12614,7 +12656,7 @@ DIL.uygula();
            açılmıyordu. Serbest bırakma artık listeden bağımsız ve iki
            yönlü: yeterince uzaklaştıysan unutuluyor. */
         if (beklet > -1 &&
-            Math.abs(noktalar[beklet].z - kamera.position.z) > BOY * 2) beklet = -1;
+            Math.abs(noktalar[beklet].z - burunZ) > BOY) beklet = -1;
 
         var enIyi = -1, enIyiUzak = Infinity;
         for (var s2 = 0; s2 < adaylar.length; s2++) {
@@ -12630,14 +12672,14 @@ DIL.uygula();
              işareti için duruyor; okumayı engellemiyor.
              Kapattığın mektubun hemen yeniden açılmasını `beklet`
              engelliyor, o yeter. */
-          var dz2 = n2.z - kamera.position.z;      // önde ise negatif
-          if (dz2 > onPay || dz2 < -BOY) continue;
-          if (Math.abs(n2.x - kamera.position.x) > yanX) continue;
-          if (Math.abs(n2.y - kamera.position.y) > yanY) continue;
-          var uzak = Math.abs(dz2);
+          if (n2.z < zA || n2.z > zB) continue;   // bu karede burun değdi mi
+          if (Math.abs(n2.x - burunX) > yanX) continue;
+          if (Math.abs(n2.y - burunY) > yanY) continue;
+          var uzak = Math.abs(n2.z - burunZ);
           if (uzak < enIyiUzak){ enIyiUzak = uzak; enIyi = aday.i; }
         }
         if (enIyi > -1) kartiAc(enIyi);
+        oncekiBurunZ = burunZ;
       }
 
       boyayici.render(sahne, kamera);
