@@ -16,7 +16,7 @@
 <meta property="og:title" content="Tolga Zafer Özdemir">
 <meta property="og:description" content="Besteci ve müzisyen — besteler, albümler, sahne müzikleri, yazılar. Composer and musician.">
 <meta property="og:url" content="https://www.tolgazaferozdemir.com/">
-<meta property="og:image" content="https://www.tolgazaferozdemir.com/assets/img/portre/tolga-1.jpg">
+<meta property="og:image" content="https://www.tolgazaferozdemir.com/site/assets/img/portre/tolga-1.jpg">
 <meta property="og:locale" content="tr_TR">
 <meta property="og:locale:alternate" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
@@ -26,7 +26,7 @@
 {"@context":"https://schema.org","@type":"Person",
  "name":"Tolga Zafer Özdemir","jobTitle":"Composer",
  "url":"https://www.tolgazaferozdemir.com/",
- "image":"https://www.tolgazaferozdemir.com/assets/img/portre/tolga-1.jpg",
+ "image":"https://www.tolgazaferozdemir.com/site/assets/img/portre/tolga-1.jpg",
  "description":"Besteci, müzisyen ve yazılımcı.",
  "sameAs":["https://open.spotify.com/artist/6ZbFbUbcSDLwTQErqPKPKF",
            "https://www.youtube.com/@tolgazaferozdemir",
@@ -6967,7 +6967,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v106 · 2026-08-25';
+const SURUM = 'v107 · 2026-08-27';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -11189,6 +11189,7 @@ function openViewer(n){
   /* Kaya mezarı eskiden kart açıyordu; 6 Ağu 2026'dan beri albümün
      kendi penceresini açıyor. Üç sembolün üçü de artık birer evren. */
   if (n.meta && n.meta.float === 'tomb'){ openLikya(); return; }
+  adresYaz(n.href);        // kart açıldı: adres çubuğu artık bu kartı gösteriyor
   vwSon = n;
   vwMetniYaz(n);
 
@@ -11302,6 +11303,7 @@ function spKur(yuva, ic, tur, id, boy){
 }
 
 function closeViewer(){
+  adresSil();
   vw.classList.remove('on');
   vw.setAttribute('aria-hidden','true');
   duck(false);                       // Spotify çalıyorduysa ağaç geri gelsin
@@ -11323,6 +11325,7 @@ const tunelEl = document.getElementById('tunel');
 let tunelAcik = false, tunelKuruldu = false, tunelYukleniyor = false;
 
 function openTunnel(){
+  adresYaz('/evren/luka-ya-mektuplar/');
   if (triAcik) closeTritonet();     // pencereler birlikte durmaz
   if (basvuruAcik) closeBasvuru();
   if (likyaAcik) closeLikya();
@@ -11356,6 +11359,7 @@ function openTunnel(){
 }
 
 function closeTunnel(){
+  adresSil();
   tunelAcik = false;
   tunelEl.classList.remove('on');
   tunelEl.setAttribute('aria-hidden','true');
@@ -12486,6 +12490,7 @@ function ldCalarKur(){
 }
 
 function openLikya(){
+  adresYaz('/evren/likya-dede/');
   if (tunelAcik) closeTunnel();
   if (triAcik) closeTritonet();
   if (basvuruAcik) closeBasvuru();
@@ -12504,6 +12509,7 @@ function openLikya(){
 }
 
 function closeLikya(){
+  adresSil();
   likyaAcik = false;
   likyaEl.classList.remove('on','saydam');
   document.documentElement.classList.remove('ld-saydam');
@@ -12876,6 +12882,7 @@ function triKur(){
 }
 
 function openTritonet(){
+  adresYaz('/evren/tritonet/');
   if (tunelAcik) closeTunnel();     // pencereler birlikte durmaz
   if (basvuruAcik) closeBasvuru();
   if (likyaAcik) closeLikya();
@@ -12910,6 +12917,7 @@ function cerceveyeOdaklan(){
 }
 
 function closeTritonet(){
+  adresSil();
   triAcik = false;
   triEl.classList.remove('on');
   triEl.setAttribute('aria-hidden','true');
@@ -14135,6 +14143,103 @@ function drawTombGlyph(hot, alpha){
   }
 }
 
+/* ═══ 7b. ADRES — her kartın kendi bağlantısı ═══
+   Sayfa tek dosya ama düğümlerin veride kalıcı yolları var
+   (/isler/muzik/besteler/sultanahmet/). Buradaki yönlendirici o yolu iki
+   yönde bağlar: adres çubuğundaki yol açılışta o kartı açar, açılan kart
+   da adres çubuğuna kendi yolunu yazar. Böylece bir karta dışarıdan
+   bağlantı verilebiliyor — portfolyodan, e-postadan, CV'den.
+
+   Sunucu tarafı yok: GitHub Pages statik. Yayına hazırlanırken her yol
+   için küçük bir gerçek sayfa üretiliyor (araclar/yayina-hazirla.py);
+   o sayfa başlığı ve özetiyle taranabiliyor, ardından buraya yönlenip
+   kartı açıyor. Üretilmemiş bir yol istenirse 404.html devreye giriyor;
+   o da yolu ?yol= ile köke yollayıp burada bir kez daha aranmasını
+   sağlıyor. Hiçbir düğüme denk gelmiyorsa 404'e geri gider — orada
+   ikinci kez yönlenmesin diye ?bulunamadi işareti var. */
+
+const ADRES_VAR = /^https?:$/.test(location.protocol);   // file:// açılışında kapalı
+let adresKilit = false;        // popstate'i işlerken kendi yazdığımız adres geri yazılmasın
+let acilistaYol = null;        // perdeden sonra açılacak kart
+
+/* Her düğümün yolu → {düğüm verisi, bölge}. hrefIndex yalnızca AĞAÇTA
+   çizilen düğümleri tutuyor (dar ekranda ağaç sığ kalıyor); bu dizin
+   veriden kuruluyor, 333 düğümün hepsi burada. */
+const YOL_DIZIN = new Map();
+(function yolDizini(items, zone){
+  items.forEach(it => {
+    YOL_DIZIN.set(it.href, { it, zone: zone || it.id });
+    if (it.children) yolDizini(it.children, zone || it.id);
+  });
+})(STRUCTURE, null);
+
+function yolDuzelt(y){
+  try { y = decodeURI(y || ''); } catch (e) {}
+  y = y.split('?')[0].split('#')[0];
+  if (!y.startsWith('/')) y = '/' + y;
+  if (!y.endsWith('/')) y += '/';
+  return y;
+}
+
+function adresYaz(yol){
+  if (!ADRES_VAR || adresKilit) return;
+  if (yolDuzelt(location.pathname) === yolDuzelt(yol)) return;
+  try { history.pushState(null, '', yol); } catch (e) {}
+}
+
+/* Kapanışta push değil replace: kart açarken eklediğimiz adımın üstüne
+   yazıyor, böylece geçmiş her açıp kapamada iki adım şişmiyor ve geri
+   tuşu siteden çıkışa götürüyor. */
+function adresSil(){
+  if (!ADRES_VAR || adresKilit) return;
+  if (yolDuzelt(location.pathname) === '/') return;
+  try { history.replaceState(null, '', '/'); } catch (e) {}
+}
+
+function yolAc(yol){
+  const kayit = YOL_DIZIN.get(yolDuzelt(yol));
+  if (!kayit) return false;
+  const nd = hrefIndex.get(kayit.it.href);
+  if (nd) openViewer(nd);                       // ağaçta çizili: kendi yerinden açılır
+  else openMeta(kayit.it, kayit.zone);          // ağaçta yok: karta veriden gidilir
+  return true;
+}
+
+function hepsiniKapat(){
+  if (tunelAcik) closeTunnel();
+  if (triAcik) closeTritonet();
+  if (likyaAcik) closeLikya();
+  if (vw.classList.contains('on')) closeViewer();
+}
+
+/* Geri/ileri tuşu: adres ne diyorsa o açılsın. Kilit açıkken açma ve
+   kapama işlevleri adrese dokunmuyor, yoksa tarayıcının adımını ezerdik. */
+if (ADRES_VAR) addEventListener('popstate', () => {
+  adresKilit = true;
+  const yol = yolDuzelt(location.pathname);
+  hepsiniKapat();
+  if (yol !== '/') yolAc(yol);
+  setTimeout(() => { adresKilit = false; }, 0);
+});
+
+/* Açılışta adresi oku. 404.html'den geliyorsa yol ?yol= içinde;
+   önce adresi temizleyip sonra arıyoruz ki çubukta soru işareti kalmasın. */
+(function adresOku(){
+  if (!ADRES_VAR) return;
+  const q = new URLSearchParams(location.search);
+  let yol = q.get('yol');
+  if (yol){
+    yol = yolDuzelt(yol);
+    if (YOL_DIZIN.has(yol)) { try { history.replaceState(null, '', yol); } catch (e) {} }
+  } else {
+    yol = yolDuzelt(location.pathname);
+  }
+  if (yol === '/') { try { if (location.search) history.replaceState(null, '', '/'); } catch (e) {} return; }
+  if (YOL_DIZIN.has(yol)) acilistaYol = yol;
+  else location.replace('/404.html?bulunamadi=1&yol=' + encodeURIComponent(yol));
+})();
+
+
 /* ═══ 8. KURULUM ═══ */
 function resize(){
   DPR = Math.min(devicePixelRatio||1, 2);
@@ -14160,6 +14265,9 @@ function enterSite(){
   } catch(e){ console.error('ses başlatılamadı:', e); }
   setTimeout(() => gate.remove(), 950);
   setTimeout(kaseSelamla, 1100);       // dokunmatikte köşeler bir kez selam versin
+  /* Bağlantıyla gelindiyse istenen kart perdeden hemen sonra açılır:
+     önce ağaç görünsün, sonra kart üstüne binsin. */
+  if (acilistaYol) setTimeout(() => { const y = acilistaYol; acilistaYol = null; yolAc(y); }, 1250);
   /* iOS Safari ses bağlamını uygulama arkaya alınınca askıya alıyor ve
      bazen perdedeki ilk dokunuşta açmıyor. İki yerden daha uyandırılıyor:
      sayfaya dönüldüğünde ve ilk gerçek dokunuşta. Zararsız — zaten

@@ -25,6 +25,21 @@
   .lang{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--ink-soft);
         opacity:.7;font-size:.95rem}
 </style>
+<script>
+/* Kartların kendi adresleri var (/isler/muzik/besteler/sultanahmet/).
+   Yayına hazırlanırken bu yolların her biri için gerçek bir sayfa
+   üretiliyor; buraya ancak üretilmemiş ya da gerçekten yanlış bir yol
+   düşer. Yine de bir kez şansını deneyelim: yolu köke taşıyıp ağacın
+   yönlendiricisine soralım. O da bulamazsa buraya ?bulunamadi ile geri
+   yollar ve aşağıdaki metin görünür — ikinci turda yönlendirme yok,
+   yoksa iki sayfa arasında dönüp dururdu. */
+(function(){
+  var y = location.pathname;
+  if (location.search.indexOf('bulunamadi') >= 0) return;   // ikinci tur
+  if (y === '/404.html' || y === '/404') return;            // sayfanın kendisi
+  location.replace('/?yol=' + encodeURIComponent(y));
+})();
+</script>
 </head>
 <body>
 <main>
