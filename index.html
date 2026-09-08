@@ -3,6 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- TABAN ADRES — göreli yolların kökte kalması için.
+     Sayfadaki medya yolları göreli yazılı (site/assets ile başlayanlar).
+     Kartların kendi adresleri olduğundan (7b bölümü) kart açılınca
+     history.pushState adresi /isler/muzik/besteler/… yapıyor; o an belgenin
+     TABAN ADRESİ de oraya kayıyor ve o göreli yollar artık kartın klasörü
+     altında aranıyor.
+     NOT: buradaki örnek yolu TIRNAK İÇİNE ALMA — yayina-hazirla.py tırnaklı
+     site/assets dizelerini gerçek dosya sanıp "diskte yok" uyarısı veriyor.
+     8 Eylül 2026'da tam olarak bu oldu: Luka'nın three.js'i ve Likya
+     Dede'nin bölüm görselleri 404 aldı. Taban kökte sabitleniyor.
+     file:// ile açıldığında kök başka anlama geldiği için orada eklenmiyor
+     — zaten yönlendirici de orada kapalı. -->
+<script>
+if (/^https?:$/.test(location.protocol)) {
+  var taban = document.createElement('base');
+  taban.href = '/';
+  document.head.appendChild(taban);
+}
+</script>
 <title>Tolga Zafer Özdemir</title>
 <!-- Google, açıklama bulamayınca sayfadan kendi kesip çıkarıyordu ve
      eline geçen ilk okunur metin DİZİN oluyordu: "Work Software Moments
@@ -7030,7 +7049,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v108 · 2026-09-07';
+const SURUM = 'v109 · 2026-09-08';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
