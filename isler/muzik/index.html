@@ -6,6 +6,9 @@
 <title>Müzik — Tolga Zafer Özdemir</title>
 <meta name="description" content="89 kayıt · Yazdığım, düzenlediğim ve kaydettiğim her şey — türüne göre ayrılmış.">
 <link rel="canonical" href="https://www.tolgazaferozdemir.com/isler/muzik/">
+<link rel="alternate" hreflang="tr" href="https://www.tolgazaferozdemir.com/isler/muzik/">
+<link rel="alternate" hreflang="en" href="https://www.tolgazaferozdemir.com/en/isler/muzik/">
+<link rel="alternate" hreflang="x-default" href="https://www.tolgazaferozdemir.com/isler/muzik/">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Müzik — Tolga Zafer Özdemir">
 <meta property="og:description" content="89 kayıt · Yazdığım, düzenlediğim ve kaydettiğim her şey — türüne göre ayrılmış.">
@@ -15,8 +18,14 @@
 <meta name="twitter:card" content="summary_large_image">
 <script>
 /* Bu sayfa taranabilsin diye var; okuyan bir insansa ağaca gitsin ve
-   kart orada açılsın. Yönlendirici adresi yeniden temiz yola çeviriyor. */
-location.replace("/?yol=/isler/muzik/");
+   kart orada açılsın. Yönlendirici adresi yeniden temiz yola çeviriyor.
+   İngilizce sayfalar ?dil=en de taşıyor: arama motorundan İngilizce
+   sayfaya düşen okuyucu ağacı da İngilizce bulsun.
+   DİKKAT: burası <script>, yani karakter referansları ÇÖZÜLMEZ — ayıraç
+   ham & olmak zorunda. &amp; yazılırsa adrese harfiyen girer, parametrenin
+   adı "amp;dil" olur ve dil hiç okunmaz. Aşağıdaki <a href> ise HTML
+   özniteliği: orada &amp; doğru olan. */
+location.replace("/?yol=/isler/muzik/&dil=tr");
 </script>
 <style>
   :root{ --paper:#EFE7DA; --ink:#2A2622; --ink-soft:#2A2622CC; --sun:#C08A3E; }
@@ -46,7 +55,7 @@ location.replace("/?yol=/isler/muzik/");
   <p class="rol">89 kayıt</p>
   <p>Yazdığım, düzenlediğim ve kaydettiğim her şey — türüne göre ayrılmış.</p>
   <p>7 alt başlık.</p>
-  <p><a href="/?yol=/isler/muzik/">Ağaçta aç</a></p>
+  <p><a href="/?yol=/isler/muzik/&amp;dil=tr">Ağaçta aç</a></p>
 </main>
 </body>
 </html>

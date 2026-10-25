@@ -27,6 +27,14 @@ if (/^https?:$/.test(location.protocol)) {
      <base href="/"> olduğu için yayında /favicon.ico'ya, file:// ile
      açıldığında da HTML'in yanındaki dosyaya çözülüyor. -->
 <link rel="icon" href="favicon.ico" sizes="any">
+<!-- DİL EŞLERİ. Ağaç tek adres ve dilini JavaScript ile değiştiriyor;
+     Google ise bir adreste bir dil görür. /en/ bu sayfanın İngilizce
+     girişi — oradan ?dil=en ile buraya dönülüyor. Eş olmadan Google
+     İngilizce arayana elindeki tek sürümü, yani Türkçesini gösteriyordu.
+     x-default Türkçeye gidiyor: sitenin kendi dili o. -->
+<link rel="alternate" hreflang="tr" href="https://www.tolgazaferozdemir.com/">
+<link rel="alternate" hreflang="en" href="https://www.tolgazaferozdemir.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://www.tolgazaferozdemir.com/">
 <title>Tolga Zafer Özdemir</title>
 <!-- Google, açıklama bulamayınca sayfadan kendi kesip çıkarıyordu ve
      eline geçen ilk okunur metin DİZİN oluyordu: "Work Software Moments
@@ -6877,11 +6885,25 @@ function klavyeIpucu(sonra){
 }
 
 let dil = 'tr';
+/* ADRESTEKİ DİL ÖNCE GELİR. /en/… sayfaları ağaca ?dil=en ile yolluyor:
+   arama motorundan İngilizce sayfaya düşen okuyucu ağacı da İngilizce
+   bulmalı, yoksa tıkladığı dilden başka bir dile iner. Seçim kaydediliyor
+   da — bir kez geldikten sonra dil düğmesine basmış gibi oluyor.
+   Adres yalnızca AÇIK bir istek olduğunda kazanıyor: parametre yoksa
+   kayıt, o da yoksa tarayıcının dili (tahmin) — eski sıra olduğu gibi. */
+let adresDili = null;
 try {
-  const kayit = localStorage.getItem('dil');
-  if (kayit && DILLER_HEPSI.indexOf(kayit) > -1) dil = kayit;
-  else dil = tahmin();
-} catch (e) { dil = tahmin(); }
+  const p = new URLSearchParams(location.search).get('dil');
+  if (p && DILLER_HEPSI.indexOf(p) > -1) adresDili = p;
+} catch (e) {}
+try {
+  if (adresDili) { dil = adresDili; localStorage.setItem('dil', dil); }
+  else {
+    const kayit = localStorage.getItem('dil');
+    if (kayit && DILLER_HEPSI.indexOf(kayit) > -1) dil = kayit;
+    else dil = tahmin();
+  }
+} catch (e) { dil = adresDili || tahmin(); }
 
 const dinleyiciler = [];
 
