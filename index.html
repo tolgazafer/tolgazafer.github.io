@@ -22,6 +22,11 @@ if (/^https?:$/.test(location.protocol)) {
   document.head.appendChild(taban);
 }
 </script>
+<!-- Site simgesi. Tritonet'in simgesiyle aynı — ikisi aynı kişinin işi
+     (Tolga, 25 Ekim 2026). Yol GÖRELİ, tıpkı medya yolları gibi: kökte
+     <base href="/"> olduğu için yayında /favicon.ico'ya, file:// ile
+     açıldığında da HTML'in yanındaki dosyaya çözülüyor. -->
+<link rel="icon" href="favicon.ico" sizes="any">
 <title>Tolga Zafer Özdemir</title>
 <!-- Google, açıklama bulamayınca sayfadan kendi kesip çıkarıyordu ve
      eline geçen ilk okunur metin DİZİN oluyordu: "Work Software Moments
