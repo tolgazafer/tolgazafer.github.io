@@ -15834,5 +15834,21 @@ DIL.uygula();
 
 
 </script>
+<!-- ZİYARET SAYACI — Cloudflare Web Analytics.
+     Çerez koymuyor, kişi takip etmiyor; yalnızca sayfa görüntülemesi sayıyor.
+     Yukarıdaki taban adres script'iyle aynı kural: YALNIZCA http(s) ile
+     açıldığında yükleniyor. file:// ile açıldığında hiç devreye girmiyor —
+     böylece dosyayı yerelde açtığımızda kendi gezinmemiz sayılmıyor ve sayfa
+     dışarıya tek istek bile yapmadan, tek dosya olarak çalışmayı sürdürüyor.
+     Sayaç dinamik eklendiği için zaten async: sayfanın çizimini bekletmiyor. -->
+<script>
+if (/^https?:$/.test(location.protocol)) {
+  var sayac = document.createElement('script');
+  sayac.type = 'module';
+  sayac.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  sayac.setAttribute('data-cf-beacon', '{"token": "d8a0090f54d744649b78921aed1f122f"}');
+  document.body.appendChild(sayac);
+}
+</script>
 </body>
 </html>
