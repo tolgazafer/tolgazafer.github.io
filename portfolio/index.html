@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio · Tolga Zafer Özdemir</title>
+<meta name="description" content="Albums, music software, live composing and inventions by composer and music technologist Tolga Zafer Özdemir.">
+<link rel="canonical" href="https://www.tolgazaferozdemir.com/portfolio/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Portfolio · Tolga Zafer Özdemir">
+<meta property="og:description" content="Albums, music software, live composing and inventions.">
+<meta property="og:url" content="https://www.tolgazaferozdemir.com/portfolio/">
+<meta property="og:image" content="https://www.tolgazaferozdemir.com/site/assets/img/portre/tolga-1.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico">
+<!--
+  Portfolyo sayfası. Ağaçtan ayrı, tek dosya; yayında /portfolio/ adresinde.
+  Kaynak burası (proje kökü), yayına araclar/yayina-hazirla.py taşıyor:
+  yayin/portfolio/index.html olarak yazıyor, yolları ../ ile çeviriyor ve
+  buradaki site/assets/ yollarını medya listesine ekliyor. Kaynakta yollar
+  ağaçla aynı biçimde (site/assets/...), dosya file:// olarak da açılır.
+
+  Oynatıcılar tıklanınca kuruluyor: sayfa açılırken hiçbir YouTube/Spotify
+  çerçevesi yüklenmiyor. Aynı anda tek oynatıcı çalıyor; yenisi başlayınca
+  öncekinin çerçevesi kaldırılıyor (çapraz kaynaklı bir çerçeveyi susturmanın
+  tek güvenilir yolu bu).
+-->
+<style>
+  :root{
+    --paper:#EFE7DA; --paper-2:#E6DCCB; --ink:#2A2622; --ink-soft:#2A2622B3;
+    --rule:#2A26222B; --sun:#C08A3E; --night:#1F3A5F; --on-night:#EFE7DA;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Helvetica Neue",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#1B1D1F; --paper-2:#232629; --ink:#E4DED4; --ink-soft:#E4DED4B3;
+      --rule:#E4DED42B; --sun:#E0AC5C; --night:#14263F; --on-night:#E4DED4;
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+       font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  img{display:block;max-width:100%}
+  button{font:inherit;color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+
+  /* ── Başlık bandı ── */
+  .band{background:var(--night);color:var(--on-night);position:relative;
+        padding:clamp(48px,9vw,104px) 0 clamp(40px,6vw,72px)}
+  .band::after{content:"";position:absolute;left:clamp(16px,4vw,48px);bottom:-6px;
+               width:120px;height:12px;background:var(--sun)}
+  .kicker{font-size:.72rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--sun)}
+  h1{font-size:clamp(2.4rem,7vw,4.6rem);line-height:1;letter-spacing:-.025em;font-weight:700;margin:.35em 0 .25em}
+  .role{font-family:var(--serif);font-style:italic;font-size:clamp(1.1rem,2.4vw,1.45rem);opacity:.9}
+  .intro{font-family:var(--serif);font-size:clamp(1rem,1.8vw,1.15rem);max-width:44em;margin:1.6em 0 1.4em;opacity:.92}
+  .contact{display:flex;flex-wrap:wrap;gap:.4em 1.4em;font-size:.86rem;opacity:.85}
+  .contact a{text-decoration:none;border-bottom:1px solid var(--sun)}
+  .contact a:hover{color:var(--sun)}
+  .jump{display:flex;flex-wrap:wrap;gap:.6em;margin-top:2em}
+  .jump a{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+          border:1px solid #EFE7DA55;padding:.45em .9em;border-radius:99px}
+  .jump a:hover{border-color:var(--sun);color:var(--sun)}
+
+  /* ── Bölümler ── */
+  section{position:relative;padding:clamp(56px,9vw,104px) 0 0}
+  .ghost{position:absolute;right:clamp(8px,3vw,40px);top:clamp(16px,4vw,40px);
+         font-size:clamp(6rem,18vw,13rem);font-weight:800;line-height:1;letter-spacing:-.05em;
+         color:var(--sun);opacity:.13;pointer-events:none;user-select:none}
+  .sec-head{display:flex;align-items:baseline;gap:.5em;position:relative}
+  .num{font-size:clamp(2rem,4vw,2.8rem);font-weight:200;color:var(--sun);line-height:1}
+  h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:600;letter-spacing:-.015em;color:var(--ink)}
+  .sec-note{font-family:var(--serif);font-style:italic;color:var(--ink-soft);margin:.4em 0 2.2em;position:relative;max-width:40em}
+
+  h3{font-size:1.18rem;font-weight:600;line-height:1.3;letter-spacing:-.005em;margin-bottom:.3em}
+  h3 a{text-decoration:none;border-bottom:2px solid var(--sun)}
+  h3 a:hover{color:var(--sun)}
+  .meta{font-size:.7rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.7em}
+  .desc{font-size:.95rem;max-width:38em}
+  .badge{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+         background:var(--night);color:var(--on-night);padding:.25em .7em;margin-bottom:.8em}
+  .badge.pending{background:var(--sun);color:#2A2622}
+
+  /* ── Oynatılabilir kutu (kapak/küçük resim → çerçeve) ── */
+  .media{position:relative;display:block;width:100%;border:0;padding:0;background:#000;cursor:pointer;overflow:hidden}
+  .media.r169{aspect-ratio:16/9}
+  .media.r22{aspect-ratio:2.2/1}
+  .media.sq{aspect-ratio:1/1}
+  .media img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease,opacity .3s}
+  .media:hover img{transform:scale(1.03)}
+  .media iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .play{position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:.6em;
+        background:#1B1D1FD9;color:#EFE7DA;border-radius:99px;padding:.5em 1em .5em .55em;
+        font-size:.78rem;font-weight:600;letter-spacing:.06em;transition:background .2s}
+  .play::before{content:"";width:28px;height:28px;border-radius:50%;background:var(--sun) center/12px no-repeat
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 1.5v9l7.5-4.5z' fill='%232A2622'/%3E%3C/svg%3E")}
+  .media:hover .play,.media:focus-visible .play{background:#1B1D1F}
+  .media:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+  .media.on{cursor:default}
+  .media.on .play{display:none}
+  .underline{position:relative;margin-bottom:1.1em}
+  .underline::after{content:"";position:absolute;left:0;bottom:-7px;width:56px;height:4px;background:var(--sun)}
+
+  /* ── Albümler ── */
+  .albums{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,36px)}
+  .album .cover{position:relative;aspect-ratio:1/1;cursor:pointer;border:0;padding:0;background:var(--paper-2);width:100%;display:block}
+  .album .cover img{width:100%;height:100%;object-fit:cover;box-shadow:10px 10px 0 var(--rule);transition:transform .4s}
+  .album .cover.poster img{object-fit:contain;box-shadow:none;background:var(--paper-2)}
+  .album .cover:hover img{transform:translate(-3px,-3px)}
+  .album .cover:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+  .album.active .cover img{outline:3px solid var(--sun);outline-offset:4px}
+  .album .text{padding-top:1.4em}
+  .stage{margin-top:clamp(24px,4vw,40px);display:none}
+  .stage.on{display:block}
+  .stage-bar{display:flex;justify-content:space-between;align-items:baseline;gap:1em;
+             border-top:1px solid var(--rule);padding-top:.9em;margin-bottom:.9em}
+  .stage-bar .now{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+  .stage-bar .now b{color:var(--ink);letter-spacing:.04em;text-transform:none;font-size:1rem;margin-left:.5em}
+  .stage-bar button{background:none;border:0;cursor:pointer;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .stage-bar button:hover{color:var(--sun)}
+  .stage .frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+  .stage .frame.spotify{aspect-ratio:auto;height:352px;background:transparent}
+  .stage .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0}
+  .stage .hint{font-size:.8rem;color:var(--ink-soft);margin-top:.6em}
+
+  /* ── Izgaralar ── */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,48px) clamp(20px,3vw,36px)}
+  .chips{display:flex;gap:.5em;flex-wrap:wrap;margin:-.2em 0 .8em}
+  .chips button{border:1px solid var(--rule);background:none;border-radius:99px;padding:.25em .8em;
+                font-size:.74rem;cursor:pointer;letter-spacing:.04em}
+  .chips button[aria-pressed="true"]{border-color:var(--sun);background:var(--sun);color:#2A2622}
+
+  .wide{margin-bottom:clamp(36px,5vw,56px)}
+  .cap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:clamp(16px,3vw,40px)}
+
+  .feature .media.tri{aspect-ratio:16/10;background:#0b1622}
+  .feature .media.tri.on{aspect-ratio:auto;height:min(82vh,760px)}
+  .feature h3{font-size:1.6rem}
+  .feature{margin-bottom:clamp(36px,5vw,56px)}
+
+  footer{margin-top:clamp(64px,10vw,120px);border-top:1px solid var(--rule);padding:28px 0 48px;
+         font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1em}
+  footer a{text-decoration:none;border-bottom:1px solid var(--sun)}
+
+  @media (max-width:820px){
+    .albums{grid-template-columns:1fr}
+    .album{display:grid;grid-template-columns:38% 1fr;gap:18px;align-items:start}
+    .album .text{padding-top:0}
+    .grid2{grid-template-columns:1fr}
+    .cap{grid-template-columns:1fr;gap:.4em}
+    .stage .frame.spotify{height:352px}
+  }
+  @media (max-width:480px){
+    .album{grid-template-columns:1fr}
+    .album .text{padding-top:.6em}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;scroll-behavior:auto !important}
+  }
+  @media print{
+    .play,.jump,.chips,.stage{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="band">
+  <div class="wrap">
+    <div class="kicker">Portfolio</div>
+    <h1>Tolga Zafer Özdemir</h1>
+    <div class="role">Composer, music technologist and product designer</div>
+    <p class="intro">Composer and music technologist with twelve years of university teaching, most recently as Associate Professor at Istanbul Bilgi University, followed by four years as Senior Product Designer at Native Instruments. This selection brings together albums, music software, live composing and inventions. Everything on this page plays here.</p>
+    <div class="contact">
+      <span>London</span>
+      <a href="mailto:tolgazaferozdemir@gmail.com">tolgazaferozdemir@gmail.com</a>
+      <span>+44 7918 013 654</span>
+      <a href="https://www.tolgazaferozdemir.com/">tolgazaferozdemir.com</a>
+      <a href="https://www.tritonetcalculator.com/">tritonetcalculator.com</a>
+    </div>
+    <nav class="jump" aria-label="Sections">
+      <a href="#albums">01 Albums</a>
+      <a href="#software">02 Music software</a>
+      <a href="#live">03 Live composing</a>
+      <a href="#inventions">04 Inventions</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- 01 · Albümler -->
+<section id="albums">
+  <div class="ghost" aria-hidden="true">01</div>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">01</span><h2>Albums</h2></div>
+    <p class="sec-note">Composition, recorded. Choose a cover to listen.</p>
+
+    <div class="albums">
+      <article class="album" data-album="likya">
+        <button class="cover" type="button" aria-label="Play Likya Dede"
+                data-kind="yt-list" data-id="OLAK5uy_lCM8eWcSE_WiKT0tGZtjE4oZfzJuKKz90" data-title="Likya Dede">
+          <img src="../site/assets/img/likya-album/kapak.jpg" alt="Likya Dede album cover" loading="lazy">
+          <span class="play">Listen</span>
+        </button>
+        <div class="text">
+          <div class="badge">2025</div>
+          <h3>Likya Dede</h3>
+          <div class="meta">Album · Composer and producer</div>
+          <p class="desc">A musical fairy tale for symphony orchestra and traditional instrumentalists, originally commissioned by Antalya State Opera and Ballet. The album was completed through remote online recording sessions, bringing together 248 channels of recorded parts, and was produced as an open-source community project.</p>
+        </div>
+      </article>
+
+      <article class="album" data-album="acoustic">
+        <button class="cover" type="button" aria-label="Play Acoustic Works"
+                data-kind="yt-list" data-id="OLAK5uy_kJitsZRczefxf7JGjNegmQxnO5p-_I4EI" data-title="Acoustic Works">
+          <img src="../site/assets/img/albumler/acoustic-works.jpg" alt="Acoustic Works album cover" loading="lazy">
+          <span class="play">Listen</span>
+        </button>
+        <div class="text">
+          <div class="badge">2018</div>
+          <h3>Acoustic Works</h3>
+          <div class="meta">Album · Composer and performer · Eight pieces</div>
+          <p class="desc">Affordable Escape, Karşılama, Agantha Burina Burinata, Cem, Prulliyas, Karpathia, Thumbnails and the Selma ve Gölgesi Suite.</p>
+        </div>
+      </article>
+
+      <article class="album" data-album="wagen">
+        <button class="cover poster" type="button" aria-label="Play Im Wagen Dritter Klasse"
+                data-kind="yt" data-id="x51DLg6UQ2k" data-title="Im Wagen Dritter Klasse / Üçüncü Mevki">
+          <img src="../site/assets/img/ucuncu-mevki/afis-eva-planet.jpg" alt="Üçüncü Mevki poster" loading="lazy">
+          <span class="play">Watch</span>
+        </button>
+        <div class="text">
+          <div class="badge pending">Release pending</div>
+          <h3>Im Wagen Dritter Klasse / Üçüncü Mevki</h3>
+          <div class="meta">Album · With Kardeş Türküler · Komische Oper Berlin commission, 2022</div>
+          <p class="desc">A literary and symphonic train fantasy with Kardeş Türküler, premiered at Komische Oper Berlin. Composed the overture and continuous score, transformed train sounds into musical material, and conducted a 22-piece ensemble while performing on Ableton Push.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="stage" id="stage" aria-live="polite">
+      <div class="stage-bar">
+        <span class="now">Now playing <b id="stageTitle"></b></span>
+        <button type="button" id="stageClose">Close ✕</button>
+      </div>
+      <div class="frame" id="stageFrame"></div>
+      <p class="hint" id="stageHint" hidden>Spotify plays 30-second previews unless you are signed in to Spotify in this browser.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · Yazılım -->
+<section id="software">
+  <div class="ghost" aria-hidden="true">02</div>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">02</span><h2>Music software</h2></div>
+    <p class="sec-note">Native Instruments · Senior Product Designer · 2022–2026</p>
+
+    <div class="grid2">
+      <article>
+        <button class="media r169 underline" type="button" data-kind="yt" data-id="OIJMzI5ymfM" aria-label="Play video: Jacob Collier Audience Choir">
+          <img src="https://i.ytimg.com/vi/OIJMzI5ymfM/maxresdefault.jpg" alt="" loading="lazy">
+          <span class="play">Play</span>
+        </button>
+        <h3>Jacob Collier Audience Choir</h3>
+        <div class="meta">Sole product designer · Harmonic engine</div>
+        <p class="desc">A Kontakt instrument built from audience voices recorded at 22 concerts in 22 cities on Jacob Collier's Djesse tour, turning a crowd into a playable instrument.</p>
+      </article>
+
+      <article>
+        <button class="media r169 underline" type="button" data-kind="yt" data-id="G60T5qt0JAk" aria-label="Play video: Moments: Vocal Clouds">
+          <img src="https://i.ytimg.com/vi/G60T5qt0JAk/maxresdefault.jpg" alt="" loading="lazy">
+          <span class="play">Play</span>
+        </button>
+        <h3>Moments: Vocal Clouds</h3>
+        <div class="meta">2025–2026 · Product design · MIDI sequencing</div>
+        <p class="desc">Vocal instrument for the Kontakt ecosystem.</p>
+      </article>
+
+      <article>
+        <button class="media r169 underline" type="button" data-kind="yt" data-id="rPCpvToj2LQ" aria-label="Play video: Action Woodwinds">
+          <img src="https://i.ytimg.com/vi/rPCpvToj2LQ/maxresdefault.jpg" alt="" loading="lazy">
+          <span class="play">Play</span>
+        </button>
+        <h3>Action Woodwinds</h3>
+        <div class="meta">2023 · Harmonic engine design and implementation</div>
+        <p class="desc">Designed and wrote the harmony engine that generates the instrument's chord and harmony behaviour.</p>
+      </article>
+
+      <article>
+        <button class="media r169 underline" type="button" id="toolsMedia" data-kind="yt" data-id="61slAj3DAT4" aria-label="Play video: Kontakt Tools">
+          <img src="https://i.ytimg.com/vi/61slAj3DAT4/maxresdefault.jpg" alt="" loading="lazy">
+          <span class="play">Play</span>
+        </button>
+        <h3>Kontakt Tools: Chords, Phrase and Patterns</h3>
+        <div class="chips" role="group" aria-label="Choose video">
+          <button type="button" aria-pressed="true" data-id="61slAj3DAT4">Chords and Phrase</button>
+          <button type="button" aria-pressed="false" data-id="fOa3NjYrxWo">Patterns</button>
+        </div>
+        <div class="meta">Kontakt 8 · Co-Senior Product Designer</div>
+        <p class="desc">Assistive composition tools addressing the first barrier to musical creativity. Developed the harmonic concept, wrote the harmonic engine and designed the chord-naming logic.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · Canlı besteleme -->
+<section id="live">
+  <div class="ghost" aria-hidden="true">03</div>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">03</span><h2>Live composing</h2></div>
+    <p class="sec-note">We go on stage with nothing planned. The music takes shape there, in the moment.</p>
+
+    <article class="wide">
+      <button class="media r22 underline" type="button" data-kind="yt" data-id="t_ifqVgEOEY" aria-label="Play video: 2+1 Sounds From The Bridge">
+        <img src="https://i.ytimg.com/vi/t_ifqVgEOEY/maxresdefault.jpg" alt="" loading="lazy">
+        <span class="play">Play</span>
+      </button>
+      <div class="cap">
+        <div>
+          <h3>2+1 Sounds From The Bridge</h3>
+          <div class="meta">db Music, London · 2023</div>
+        </div>
+        <p class="desc">From a concert series on the sounds of Anatolia, with Turquazz (Salih Korkut Peker, Ahmet K. Bilgiç) and guest Burak Ersöz.</p>
+      </div>
+    </article>
+
+    <article class="wide">
+      <button class="media r22 underline" type="button" data-kind="yt" data-id="0eK-aq2WZx4" aria-label="Play video: Analog Kültür Experiment">
+        <img src="https://i.ytimg.com/vi/0eK-aq2WZx4/maxresdefault.jpg" alt="" loading="lazy">
+        <span class="play">Play</span>
+      </button>
+      <div class="cap">
+        <div>
+          <h3>Analog Kültür Experiment</h3>
+          <div class="meta">Kırım Anıt Kilisesi, Istanbul · 2018</div>
+        </div>
+        <p class="desc">Recorded live with Korhan Futacı.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 04 · Buluşlar -->
+<section id="inventions">
+  <div class="ghost" aria-hidden="true">04</div>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">04</span><h2>Inventions</h2></div>
+    <p class="sec-note">Systems for seeing, playing and teaching harmony.</p>
+
+    <article class="feature">
+      <button class="media tri underline" type="button" data-kind="tritonet" aria-label="Open the Tritonet controller and play it here">
+        <img src="../site/assets/img/tritonet/patch-master-0-9-4.jpg" alt="Tritonet in Max for Live" loading="lazy">
+        <span class="play">Play Tritonet here</span>
+      </button>
+      <div class="cap">
+        <div>
+          <h3><a href="https://www.tritonetcalculator.com/">Tritonet</a></h3>
+          <div class="meta">Creator · Guthman Musical Instrument Competition semifinalist, 2022</div>
+        </div>
+        <p class="desc">A visual harmony-navigation system and real-time harmony engine for Ableton Live that turns the circle of fifths into a playable field of harmonic direction, tension and release. Theory and method published in <i>The Tritonet Approach to Music Theory</i> (Cambridge Scholars Publishing, 2018).</p>
+      </div>
+    </article>
+
+    <div class="grid2">
+      <article>
+        <button class="media r169 underline" type="button" data-kind="yt" data-id="EJJJyx8lqxY" aria-label="Play video: Real-time Analysis of J. S. Bach, Prelude in C">
+          <img src="https://i.ytimg.com/vi/EJJJyx8lqxY/maxresdefault.jpg" alt="" loading="lazy">
+          <span class="play">Play</span>
+        </button>
+        <h3>Real-time Analysis of J. S. Bach, Prelude in C</h3>
+        <div class="meta">Experimental · 2020</div>
+        <p class="desc">Real-time harmonic analysis of Bach's Prelude in C.</p>
+      </article>
+
+      <article>
+        <button class="media r169 underline" type="button" data-kind="yt" data-id="i75By4g8C4U" aria-label="Play video: Live Scaling with String Orchestra">
+          <img src="https://i.ytimg.com/vi/i75By4g8C4U/maxresdefault.jpg" alt="" loading="lazy">
+          <span class="play">Play</span>
+        </button>
+        <h3>Live Scaling with String Orchestra</h3>
+        <div class="meta">Experimental · 2022–2026</div>
+        <p class="desc">Live harmonic scaling with a string orchestra.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Tolga Zafer Özdemir · Portfolio</span>
+    <a href="https://www.tolgazaferozdemir.com/">tolgazaferozdemir.com</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const TRITONET_ADRES = 'https://tritonet.pages.dev/ui/tritonet-controller';
+
+  /* Bir oynatıcının adresi. YouTube'da nocookie alan adı: izlenmeden çerez
+     bırakmıyor. Spotify albümü 352 px; o yükseklikte parça listesi görünüyor. */
+  function adres(kind, id){
+    switch (kind){
+      case 'yt':      return 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+      case 'yt-list': return 'https://www.youtube-nocookie.com/embed/videoseries?list=' + id + '&autoplay=1&rel=0&modestbranding=1';
+      case 'spotify': return 'https://open.spotify.com/embed/album/' + id + '?utm_source=generator';
+      case 'tritonet':return TRITONET_ADRES;
+    }
+  }
+  function cerceve(kind, id, title){
+    const f = document.createElement('iframe');
+    f.src = adres(kind, id);
+    f.title = title || 'Player';
+    f.allow = kind === 'tritonet'
+      ? 'midi; autoplay; fullscreen'
+      : 'autoplay; encrypted-media; fullscreen; picture-in-picture; clipboard-write';
+    f.allowFullscreen = true;
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    return f;
+  }
+
+  /* ── Tek oynatıcı kuralı ── */
+  let aktif = null;              // { durdur: fn }
+  function tekCal(yeni){
+    if (aktif && aktif !== yeni) aktif.durdur();
+    aktif = yeni;
+  }
+
+  /* ── Küçük resimden çerçeveye ── */
+  document.querySelectorAll('.media').forEach(kutu => {
+    const img = kutu.querySelector('img');
+    // maxresdefault her videoda yok; yoksa YouTube 120 px gri bir kare döndürüyor.
+    if (img && img.src.includes('i.ytimg.com')) {
+      const yedek = () => { img.src = img.src.replace('maxresdefault', 'hqdefault'); };
+      img.addEventListener('load', () => { if (img.naturalWidth && img.naturalWidth <= 120) yedek(); }, { once:true });
+      img.addEventListener('error', yedek, { once:true });
+    }
+    const kayit = {
+      durdur(){
+        const f = kutu.querySelector('iframe');
+        if (f) f.remove();
+        kutu.classList.remove('on');
+        if (img) img.hidden = false;
+      }
+    };
+    kutu.addEventListener('click', () => {
+      if (kutu.classList.contains('on')) return;
+      tekCal(kayit);
+      const h3 = kutu.parentElement.querySelector('h3');
+      kutu.appendChild(cerceve(kutu.dataset.kind, kutu.dataset.id, h3 ? h3.textContent : ''));
+      kutu.classList.add('on');
+      if (img) img.hidden = true;
+      if (kutu.dataset.kind === 'tritonet') kutu.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+  });
+
+  /* ── Kontakt Tools: iki video arasında seçim ── */
+  const toolsMedia = document.getElementById('toolsMedia');
+  document.querySelectorAll('.chips button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.chips button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      toolsMedia.dataset.id = b.dataset.id;
+      const img = toolsMedia.querySelector('img');
+      img.src = 'https://i.ytimg.com/vi/' + b.dataset.id + '/maxresdefault.jpg';
+      const f = toolsMedia.querySelector('iframe');
+      if (f) f.src = adres('yt', b.dataset.id);
+    });
+  });
+
+  /* ── Albümler: ortak sahne ── */
+  const sahne = document.getElementById('stage');
+  const sahneCerceve = document.getElementById('stageFrame');
+  const sahneAd = document.getElementById('stageTitle');
+  const sahneNot = document.getElementById('stageHint');
+  const sahneKayit = {
+    durdur(){
+      sahneCerceve.innerHTML = '';
+      sahne.classList.remove('on');
+      document.querySelectorAll('.album').forEach(a => a.classList.remove('active'));
+    }
+  };
+  document.querySelectorAll('.album .cover').forEach(kapak => {
+    kapak.addEventListener('click', () => {
+      tekCal(sahneKayit);
+      document.querySelectorAll('.album').forEach(a => a.classList.toggle('active', a.contains(kapak)));
+      const { kind, id, title } = kapak.dataset;
+      sahneCerceve.innerHTML = '';
+      sahneCerceve.className = 'frame' + (kind === 'spotify' ? ' spotify' : '');
+      sahneCerceve.appendChild(cerceve(kind, id, title));
+      sahneAd.textContent = title;
+      sahneNot.hidden = kind !== 'spotify';
+      sahne.classList.add('on');
+      sahne.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    });
+  });
+  document.getElementById('stageClose').addEventListener('click', () => {
+    sahneKayit.durdur();
+    if (aktif === sahneKayit) aktif = null;
+  });
+})();
+</script>
+</body>
+</html>
