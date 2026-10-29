@@ -2197,9 +2197,12 @@ if (/^https?:$/.test(location.protocol)) {
            data-i18n-placeholder="parola" autocomplete="off">
     <button type="submit" data-i18n="aç">aç</button>
   </form>
-  <button class="kilit-ac" id="kilitAc" aria-label="Kilitli bölüm"
-          data-i18n-aria="Kilitli bölüm" aria-expanded="false">
-    <!-- BEYİN — fikir. Asma kilit "burada saklanan bir şey var" diye
+  <button class="kilit-ac" id="kilitAc" aria-label="Kısa portfolyo"
+          data-i18n-aria="Kısa portfolyo" title="Kısa portfolyo" data-i18n-title="Kısa portfolyo">
+    <!-- 29 Eki 2026: beyin artık KISA PORTFOLYOYU açıyor (/portfolio/).
+         Önceden iş başvurusunun parolalı kilidiydi; o giriş kalktı, şifreli
+         belge ve çözme kodu sayfada duruyor ama ona giden bir yol yok.
+         BEYİN — fikir. Asma kilit "burada saklanan bir şey var" diye
          bağırıyordu; ampul de biraz afiş gibiydi. Bu sembol ağaçtaki
          öbür üçüyle (üçgen, mekik, kaya mezarı) aynı dilde: çerçevesiz,
          dolgusuz, tek kalınlıkta çizgi, aynı boy. Tek farkı ağaca bağlı
@@ -3234,6 +3237,7 @@ const EN = {
 
   /* kilit ve başvuru penceresi */
   "Kilitli bölüm": "Locked section",
+  "Kısa portfolyo": "Short portfolio",
   "Parola": "Password",
   "parola": "password",
   "aç": "open",
@@ -3805,6 +3809,7 @@ const DILLER = {
     "Katkıda bulunduklarım": "Mitwirkungen",
     "Kilitli belge": "Verschlossenes Dokument",
     "Kilitli bölüm": "Verschlossener Bereich",
+    "Kısa portfolyo": "Kurzportfolio",
     "Kim": "Wer",
     "Kimim": "Wer ich bin",
     "Konserler": "Konzerte",
@@ -4289,6 +4294,7 @@ const DILLER = {
     "Katkıda bulunduklarım": "Contributions",
     "Kilitli belge": "Document verrouillé",
     "Kilitli bölüm": "Section verrouillée",
+    "Kısa portfolyo": "Portfolio court",
     "Kim": "Qui",
     "Kimim": "Qui je suis",
     "Konserler": "Concerts",
@@ -4773,6 +4779,7 @@ const DILLER = {
     "Katkıda bulunduklarım": "Colaboraciones",
     "Kilitli belge": "Documento cerrado",
     "Kilitli bölüm": "Sección cerrada",
+    "Kısa portfolyo": "Portafolio breve",
     "Kim": "Quién",
     "Kimim": "Quién soy",
     "Konserler": "Conciertos",
@@ -5257,6 +5264,7 @@ const DILLER = {
     "Katkıda bulunduklarım": "Collaborazioni",
     "Kilitli belge": "Documento bloccato",
     "Kilitli bölüm": "Sezione bloccata",
+    "Kısa portfolyo": "Portfolio breve",
     "Kim": "Chi",
     "Kimim": "Chi sono",
     "Konserler": "Concerti",
@@ -5741,6 +5749,7 @@ const DILLER = {
     "Katkıda bulunduklarım": "Участие",
     "Kilitli belge": "Закрытый документ",
     "Kilitli bölüm": "Закрытый раздел",
+    "Kısa portfolyo": "Краткое портфолио",
     "Kim": "Кто",
     "Kimim": "Кто я",
     "Konserler": "Концерты",
@@ -6225,6 +6234,7 @@ const DILLER = {
     "Katkıda bulunduklarım": "参与作品",
     "Kilitli belge": "加锁文档",
     "Kilitli bölüm": "加锁部分",
+    "Kısa portfolyo": "简短作品集",
     "Kim": "关于",
     "Kimim": "我是谁",
     "Konserler": "音乐会",
@@ -6709,6 +6719,7 @@ const DILLER = {
     "Katkıda bulunduklarım": "参加作品",
     "Kilitli belge": "施錠された文書",
     "Kilitli bölüm": "施錠された領域",
+    "Kısa portfolyo": "ショートポートフォリオ",
     "Kim": "プロフィール",
     "Kimim": "私について",
     "Konserler": "演奏会",
@@ -7076,7 +7087,7 @@ return {
 <script>
 (() => {
 'use strict';
-const SURUM = 'v109 · 2026-09-08';
+const SURUM = 'v115 · 2026-10-29';
 console.log('%cağaç ' + SURUM, 'color:#C08A3E');
 /* Köşede sürüm numarası değil SON GÜNCELLEME TARİHİ yazıyor: ziyaretçi
    için "v58" hiçbir şey söylemiyor, "13 Ağustos 2026" söylüyor. Sürüm
@@ -13159,12 +13170,13 @@ function kilidiSars(){
   kilitParolaEl.select();
 }
 
-kilitAcEl.addEventListener('click', () => {
-  if (basvuruGovdesi){ openBasvuru(); return; }   // bu sayfa açılışında çözülmüştü
-  const acik = kilitEl.classList.toggle('acik');
-  kilitAcEl.setAttribute('aria-expanded', String(acik));
-  if (acik) kilitParolaEl.focus();
-});
+/* Beyin artık kısa portfolyoyu açıyor (29 Eki 2026); başvurunun parola
+   penceresine giden giriş kalktı. Aşağıdaki çözme kodu yerinde duruyor,
+   yalnızca ona ulaşan düğme yok. Yayında /portfolio/ (yayina-hazirla.py
+   portfolio-baloncuk.html'i oraya koyuyor); file:// ya da localhost'ta kaynak dosya. */
+const PORTFOLYO_YEREL = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const PORTFOLYO_ADRES = PORTFOLYO_YEREL ? 'portfolio-baloncuk.html' : '/portfolio/';
+kilitAcEl.addEventListener('click', () => { location.href = PORTFOLYO_ADRES; });
 
 kilitFormEl.addEventListener('submit', async e => {
   e.preventDefault();

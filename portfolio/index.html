@@ -2,508 +2,917 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portfolio · Tolga Zafer Özdemir</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Short portfolio · Tolga Zafer Özdemir</title>
 <meta name="description" content="Albums, music software, live composing and inventions by composer and music technologist Tolga Zafer Özdemir.">
 <link rel="canonical" href="https://www.tolgazaferozdemir.com/portfolio/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Portfolio · Tolga Zafer Özdemir">
+<meta property="og:title" content="Short portfolio · Tolga Zafer Özdemir">
 <meta property="og:description" content="Albums, music software, live composing and inventions.">
 <meta property="og:url" content="https://www.tolgazaferozdemir.com/portfolio/">
 <meta property="og:image" content="https://www.tolgazaferozdemir.com/site/assets/img/portre/tolga-1.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../favicon.ico">
 <!--
-  Portfolyo sayfası. Ağaçtan ayrı, tek dosya; yayında /portfolio/ adresinde.
-  Kaynak burası (proje kökü), yayına araclar/yayina-hazirla.py taşıyor:
-  yayin/portfolio/index.html olarak yazıyor, yolları ../ ile çeviriyor ve
-  buradaki site/assets/ yollarını medya listesine ekliyor. Kaynakta yollar
-  ağaçla aynı biçimde (site/assets/...), dosya file:// olarak da açılır.
+  KISA PORTFOLYO. Yayında /portfolio/ (araclar/yayina-hazirla.py buradan
+  yayin/portfolio/index.html üretiyor, yolları ../ ile çeviriyor). Ağaçtaki
+  beyin simgesi buraya getiriyor. İçerik portfolio.html (liste sürümü,
+  yayına gitmiyor) ile aynı, tek ekranda.
 
-  Oynatıcılar tıklanınca kuruluyor: sayfa açılırken hiçbir YouTube/Spotify
-  çerçevesi yüklenmiyor. Aynı anda tek oynatıcı çalıyor; yenisi başlayınca
-  öncekinin çerçevesi kaldırılıyor (çapraz kaynaklı bir çerçeveyi susturmanın
-  tek güvenilir yolu bu).
+  Köpük: baloncuklar suyun üstündeki sabun köpüğü gibi birbirine yapışık.
+  İki baloncuğun değdiği yerde ortak bir duvar var; duvar iki çemberin
+  radikal ekseni (|p-ci|²-ri² = |p-cj|²-rj²). Her baloncuk kendi çemberinin
+  komşularıyla paylaştığı eksenlerin kendi tarafında kalan parçası; bu
+  çokgen clip-path olarak veriliyor.
+
+  Kase: köpüğün tamamı yuvarlak bir kasenin içinde; dış sınır tam bir çember.
+
+  Hareket ağdalı: momentum yok, sekme yok. Üzerine gelinen baloncuk yavaşça
+  büyüyüp renkleniyor, komşuları kayarak ona yer açıyor.
+
+  Güneş ve ses ağaç sayfasından (Tolga Zafer Ozdemir website.html) alındı:
+  aynı yörünge (96 sn'de yarım elips, sağdan doğup solda batıyor), aynı yedi
+  makam (lokriyenden lidyene), aynı rezonatör (reso: süzgeçli gürültü +
+  sinüs, konvolüsyon odası, gecikme). Köpüğe tepeden bakıyoruz: güneşin
+  kendisi görünmüyor, köpüğün üstünden geçiyor. Görünen yalnızca onun
+  kubbelerdeki beyaz yansıması; güneş doğudan batıya geçerken yansıma da
+  her kubbenin üstünde birlikte kayıyor. Kasenin bir yüksekliği var: duvarı
+  içeriye ve dışarıya güneşin karşı yönünde gölge düşürüyor. Güneş alçaldıkça
+  gölge uzuyor; gölgede kalan kubbelerde yansıma sönüyor.
+
+  Pano kapanınca oynatıcı kaldırılıyor: ses kesilir. Pano açıkken köpüğün
+  sesi kısılıyor, kapanınca geri geliyor.
 -->
 <style>
   :root{
-    --paper:#EFE7DA; --paper-2:#E6DCCB; --ink:#2A2622; --ink-soft:#2A2622B3;
-    --rule:#2A26222B; --sun:#C08A3E; --night:#1F3A5F; --on-night:#EFE7DA;
+    --paper:#EFE7DA; --paper-2:#E3D9C8; --ink:#2A2622; --ink-soft:#2A2622B3; --rule:#2A262229;
+    --panel:#F7F2E9; --shade:#2A262247; --sun:#C08A3E; --sunc:226 168 72;
     --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
     --sans:"Helvetica Neue",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
   }
   @media (prefers-color-scheme: dark){
-    :root{
-      --paper:#1B1D1F; --paper-2:#232629; --ink:#E4DED4; --ink-soft:#E4DED4B3;
-      --rule:#E4DED42B; --sun:#E0AC5C; --night:#14263F; --on-night:#E4DED4;
-    }
+    :root{ --paper:#1B1D1F; --paper-2:#2A2D31; --ink:#E4DED4; --ink-soft:#E4DED4B3; --rule:#E4DED429;
+           --panel:#24272B; --shade:#00000088; --sun:#E0AC5C; --sunc:236 184 98; }
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{background:var(--paper);color:var(--ink);font-family:var(--sans);
-       font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  html,body{height:100%;overflow:hidden}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+       touch-action:none;user-select:none}
   a{color:inherit}
-  img{display:block;max-width:100%}
-  button{font:inherit;color:inherit}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
-  /* ── Başlık bandı ── */
-  .band{background:var(--night);color:var(--on-night);position:relative;
-        padding:clamp(48px,9vw,104px) 0 clamp(40px,6vw,72px)}
-  .band::after{content:"";position:absolute;left:clamp(16px,4vw,48px);bottom:-6px;
-               width:120px;height:12px;background:var(--sun)}
-  .kicker{font-size:.72rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--sun)}
-  h1{font-size:clamp(2.4rem,7vw,4.6rem);line-height:1;letter-spacing:-.025em;font-weight:700;margin:.35em 0 .25em}
-  .role{font-family:var(--serif);font-style:italic;font-size:clamp(1.1rem,2.4vw,1.45rem);opacity:.9}
-  .intro{font-family:var(--serif);font-size:clamp(1rem,1.8vw,1.15rem);max-width:44em;margin:1.6em 0 1.4em;opacity:.92}
-  .contact{display:flex;flex-wrap:wrap;gap:.4em 1.4em;font-size:.86rem;opacity:.85}
-  .contact a{text-decoration:none;border-bottom:1px solid var(--sun)}
-  .contact a:hover{color:var(--sun)}
-  .jump{display:flex;flex-wrap:wrap;gap:.6em;margin-top:2em}
-  .jump a{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
-          border:1px solid #EFE7DA55;padding:.45em .9em;border-radius:99px}
-  .jump a:hover{border-color:var(--sun);color:var(--sun)}
+  #zemin,#golge,#film{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+  #alan{position:fixed;inset:0}
 
-  /* ── Bölümler ── */
-  section{position:relative;padding:clamp(56px,9vw,104px) 0 0}
-  .ghost{position:absolute;right:clamp(8px,3vw,40px);top:clamp(16px,4vw,40px);
-         font-size:clamp(6rem,18vw,13rem);font-weight:800;line-height:1;letter-spacing:-.05em;
-         color:var(--sun);opacity:.13;pointer-events:none;user-select:none}
-  .sec-head{display:flex;align-items:baseline;gap:.5em;position:relative}
-  .num{font-size:clamp(2rem,4vw,2.8rem);font-weight:200;color:var(--sun);line-height:1}
-  h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:600;letter-spacing:-.015em;color:var(--ink)}
-  .sec-note{font-family:var(--serif);font-style:italic;color:var(--ink-soft);margin:.4em 0 2.2em;position:relative;max-width:40em}
+  /* ── Köşeler ── */
+  .kose{position:fixed;z-index:5;pointer-events:none}
+  .kose > *{pointer-events:auto}
+  .sol-ust{left:clamp(16px,3vw,36px);top:clamp(14px,3vw,32px);max-width:min(420px,70vw)}
+  .sol-ust .kicker{font-size:.66rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-soft)}
+  .sol-ust h1{font-size:clamp(1.5rem,3.4vw,2.5rem);line-height:1.02;letter-spacing:-.02em;font-weight:700;margin:.25em 0 .2em}
+  .sol-ust .role{font-family:var(--serif);font-style:italic;font-size:clamp(.92rem,1.5vw,1.08rem);color:var(--ink-soft)}
+  .sol-ust .hint{font-size:.78rem;color:var(--ink-soft);margin-top:.9em}
+  .sol-ust .geri{display:inline-block;margin-top:.55em;font-size:.74rem;letter-spacing:.06em;color:var(--ink-soft);
+                 text-decoration:none;border-bottom:1px solid var(--rule)}
+  .sol-ust .geri:hover{color:var(--ink);border-color:var(--ink)}
+  .sag-ust{right:clamp(16px,3vw,36px);top:clamp(14px,3vw,32px);display:flex;flex-direction:column;align-items:flex-end;gap:.45em}
+  .chip{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.38em .9em;border-radius:99px;
+        border:1px solid var(--rule);transition:border-color .2s,background .2s,color .2s}
+  .chip:hover{border-color:var(--ink)}
+  .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .sol-alt{left:clamp(16px,3vw,36px);bottom:clamp(14px,3vw,28px);font-size:.76rem;color:var(--ink-soft);
+           display:flex;flex-wrap:wrap;gap:.3em 1.2em;max-width:60vw}
+  .sol-alt a{text-decoration:none;border-bottom:1px solid var(--rule)}
+  .sol-alt a:hover{border-color:var(--ink);color:var(--ink)}
+  .sag-alt{right:clamp(16px,3vw,36px);bottom:clamp(14px,3vw,28px);display:flex;align-items:center;gap:1em;
+           font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .sag-alt b{color:var(--sun);font-weight:500}
+  #sesDugme{border:1px solid var(--rule);border-radius:99px;padding:.35em .85em;letter-spacing:.12em;text-transform:uppercase;font-size:.68rem}
+  #sesDugme:hover{border-color:var(--ink)}
+  #sesDugme[aria-pressed="true"]{border-color:var(--sun);color:var(--sun)}
 
-  h3{font-size:1.18rem;font-weight:600;line-height:1.3;letter-spacing:-.005em;margin-bottom:.3em}
-  h3 a{text-decoration:none;border-bottom:2px solid var(--sun)}
-  h3 a:hover{color:var(--sun)}
-  .meta{font-size:.7rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.7em}
-  .desc{font-size:.95rem;max-width:38em}
-  .badge{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
-         background:var(--night);color:var(--on-night);padding:.25em .7em;margin-bottom:.8em}
-  .badge.pending{background:var(--sun);color:#2A2622}
+  /* ── Baloncuk ── */
+  .b{position:absolute;left:0;top:0;cursor:pointer;will-change:transform,clip-path;transition:opacity .5s;
+     --rr:100; --lx:100; --ly:80; --rx:100; --ry:120; --sx:100; --sy:104; --li:.7}
+  .b.surukle{cursor:grabbing}
+  .b .yuz{position:absolute;inset:0;overflow:hidden;background:var(--paper-2)}
+  .b img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);pointer-events:none;-webkit-user-drag:none;
+         filter:grayscale(1) brightness(.74) contrast(.95);transition:filter .5s}
+  .b.poster img{object-position:center 30%}
+  .b.renkli img{filter:brightness(.92)}
+  /* Kubbe: parlama güneşe bakıyor (--lx/--ly), gölge karşı yanda (--gx/--gy),
+     zayıf yansıma alt tarafta (--rx/--ry). Değerler her karede güneşten. */
+  .b .kubbe{position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(circle calc(var(--rr) * .55px) at calc(var(--lx) * 1px) calc(var(--ly) * 1px), rgb(255 255 255 / calc(var(--li) * 1)) 0%, rgb(255 255 255 / calc(var(--li) * .8)) 8%, rgb(255 255 255 / calc(var(--li) * .32)) 24%, rgb(255 255 255 / calc(var(--li) * .09)) 52%, transparent 100%),
+      radial-gradient(ellipse calc(var(--rr) * .34px) calc(var(--rr) * .14px) at calc(var(--rx) * 1px) calc(var(--ry) * 1px), rgb(255 255 255 / calc(var(--li) * .26)) 0%, transparent 100%),
+      radial-gradient(circle calc(var(--rr) * 1.2px) at calc(var(--sx) * 1px) calc(var(--sy) * 1px), transparent 48%, #00000024 74%, #00000061 100%);}
+  /* Ad: görünen hücrenin ortasında (--cx/--cy hücrenin ağırlık merkezi). */
+  .b .ad{position:absolute;left:var(--cx,50%);top:var(--cy,50%);transform:translate(-50%,-50%);
+         width:calc(var(--r) * 1.3px);text-align:center;color:#FFFFFF;
+         font-size:clamp(.82rem,calc(var(--r) * .13px),1.45rem);font-weight:650;line-height:1.15;letter-spacing:-.01em;
+         pointer-events:none;text-shadow:0 0 14px #000000B0,0 1px 3px #000000E0;text-wrap:balance;
+         opacity:0;transition:opacity .35s}
+  /* Ad yalnızca üzerine gelinince (ya da klavyeyle odaklanınca) görünür. */
+  .b.ustunde .ad{opacity:1}
+  .b .ad small{display:block;font-size:.5em;font-weight:500;letter-spacing:.16em;text-transform:uppercase;opacity:.85;margin-top:.45em}
+  .b:focus-visible{outline:none}
+  .b.soluk{opacity:.45}
 
-  /* ── Oynatılabilir kutu (kapak/küçük resim → çerçeve) ── */
-  .media{position:relative;display:block;width:100%;border:0;padding:0;background:#000;cursor:pointer;overflow:hidden}
-  .media.r169{aspect-ratio:16/9}
-  .media.r22{aspect-ratio:2.2/1}
-  .media.sq{aspect-ratio:1/1}
-  .media img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease,opacity .3s}
-  .media:hover img{transform:scale(1.03)}
-  .media iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .play{position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:.6em;
-        background:#1B1D1FD9;color:#EFE7DA;border-radius:99px;padding:.5em 1em .5em .55em;
-        font-size:.78rem;font-weight:600;letter-spacing:.06em;transition:background .2s}
-  .play::before{content:"";width:28px;height:28px;border-radius:50%;background:var(--sun) center/12px no-repeat
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 1.5v9l7.5-4.5z' fill='%232A2622'/%3E%3C/svg%3E")}
-  .media:hover .play,.media:focus-visible .play{background:#1B1D1F}
-  .media:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
-  .media.on{cursor:default}
-  .media.on .play{display:none}
-  .underline{position:relative;margin-bottom:1.1em}
-  .underline::after{content:"";position:absolute;left:0;bottom:-7px;width:56px;height:4px;background:var(--sun)}
+  /* ── Açılan iş ── */
+  #perde{position:fixed;inset:0;background:var(--shade);opacity:0;pointer-events:none;transition:opacity .35s;z-index:8}
+  #perde.acik{opacity:1;pointer-events:auto}
+  #pano{position:fixed;z-index:9;left:50%;top:50%;width:min(880px,92vw);max-height:90vh;overflow:auto;
+        background:var(--panel);border-radius:22px;box-shadow:0 30px 80px -20px #0007;
+        transform:translate(-50%,-50%) scale(.7);opacity:0;visibility:hidden;
+        transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s,visibility 0s .45s;user-select:text;touch-action:auto}
+  #pano.acik{transform:translate(-50%,-50%) scale(1);opacity:1;visibility:visible;
+             transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+  .sahne{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:22px 22px 0 0;overflow:hidden}
+  .sahne.tri{aspect-ratio:auto;height:min(68vh,640px);background:#0b1622}
+  .sahne iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .yazi{position:relative;padding:22px 26px 26px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:10px 32px}
+  .yazi h2{font-size:1.45rem;line-height:1.2;letter-spacing:-.01em;margin-bottom:.3em}
+  .yazi h2 a{text-decoration:none;border-bottom:2px solid currentColor}
+  .yazi .meta{font-size:.68rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .yazi .badge{display:inline-block;font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+               border:1px solid var(--ink);padding:.25em .7em;margin-bottom:.7em}
+  .yazi .desc{font-size:.95rem;line-height:1.6;padding-right:44px}
+  .secim{display:flex;gap:.5em;margin-top:.9em}
+  .secim button{border:1px solid var(--rule);border-radius:99px;padding:.25em .8em;font-size:.74rem}
+  .secim button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  /* Kapat düğmesi oynatıcının üstünde DEĞİL, yazı alanında: Tritonet'in sağ
+     üst köşesindeki düğmeleri örtüyordu. */
+  .kapat{position:absolute;right:18px;top:18px;z-index:2;width:38px;height:38px;border-radius:50%;
+         border:1px solid var(--rule);font-size:1rem;display:grid;place-items:center}
+  .kapat:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
-  /* ── Albümler ── */
-  .albums{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,36px)}
-  .album .cover{position:relative;aspect-ratio:1/1;cursor:pointer;border:0;padding:0;background:var(--paper-2);width:100%;display:block}
-  .album .cover img{width:100%;height:100%;object-fit:cover;box-shadow:10px 10px 0 var(--rule);transition:transform .4s}
-  .album .cover.poster img{object-fit:contain;box-shadow:none;background:var(--paper-2)}
-  .album .cover:hover img{transform:translate(-3px,-3px)}
-  .album .cover:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
-  .album.active .cover img{outline:3px solid var(--sun);outline-offset:4px}
-  .album .text{padding-top:1.4em}
-  .stage{margin-top:clamp(24px,4vw,40px);display:none}
-  .stage.on{display:block}
-  .stage-bar{display:flex;justify-content:space-between;align-items:baseline;gap:1em;
-             border-top:1px solid var(--rule);padding-top:.9em;margin-bottom:.9em}
-  .stage-bar .now{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
-  .stage-bar .now b{color:var(--ink);letter-spacing:.04em;text-transform:none;font-size:1rem;margin-left:.5em}
-  .stage-bar button{background:none;border:0;cursor:pointer;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
-  .stage-bar button:hover{color:var(--sun)}
-  .stage .frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
-  .stage .frame.spotify{aspect-ratio:auto;height:352px;background:transparent}
-  .stage .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0}
-  .stage .hint{font-size:.8rem;color:var(--ink-soft);margin-top:.6em}
-
-  /* ── Izgaralar ── */
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,48px) clamp(20px,3vw,36px)}
-  .chips{display:flex;gap:.5em;flex-wrap:wrap;margin:-.2em 0 .8em}
-  .chips button{border:1px solid var(--rule);background:none;border-radius:99px;padding:.25em .8em;
-                font-size:.74rem;cursor:pointer;letter-spacing:.04em}
-  .chips button[aria-pressed="true"]{border-color:var(--sun);background:var(--sun);color:#2A2622}
-
-  .wide{margin-bottom:clamp(36px,5vw,56px)}
-  .cap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:clamp(16px,3vw,40px)}
-
-  .feature .media.tri{aspect-ratio:16/10;background:#0b1622}
-  .feature .media.tri.on{aspect-ratio:auto;height:min(82vh,760px)}
-  .feature h3{font-size:1.6rem}
-  .feature{margin-bottom:clamp(36px,5vw,56px)}
-
-  footer{margin-top:clamp(64px,10vw,120px);border-top:1px solid var(--rule);padding:28px 0 48px;
-         font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
-  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1em}
-  footer a{text-decoration:none;border-bottom:1px solid var(--sun)}
-
-  @media (max-width:820px){
-    .albums{grid-template-columns:1fr}
-    .album{display:grid;grid-template-columns:38% 1fr;gap:18px;align-items:start}
-    .album .text{padding-top:0}
-    .grid2{grid-template-columns:1fr}
-    .cap{grid-template-columns:1fr;gap:.4em}
-    .stage .frame.spotify{height:352px}
-  }
-  @media (max-width:480px){
-    .album{grid-template-columns:1fr}
-    .album .text{padding-top:.6em}
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{transition:none !important;scroll-behavior:auto !important}
-  }
-  @media print{
-    .play,.jump,.chips,.stage{display:none !important}
+  @media (max-width:640px){
+    .sag-ust{top:auto;bottom:12px;left:12px;right:12px;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:.35em}
+    .chip{font-size:.6rem;padding:.3em .7em}
+    .sol-ust .hint,.sol-alt{display:none}
+    .sag-alt{top:clamp(14px,3vw,32px);bottom:auto;flex-direction:column;align-items:flex-end;gap:.5em}
+    .yazi{grid-template-columns:1fr;padding:18px}
+    #pano{width:100vw;max-height:100vh;height:100%;border-radius:0}
+    .sahne{border-radius:0}
   }
 </style>
 </head>
 <body>
 
-<header class="band">
-  <div class="wrap">
-    <div class="kicker">Portfolio</div>
-    <h1>Tolga Zafer Özdemir</h1>
-    <div class="role">Composer, music technologist and product designer</div>
-    <p class="intro">Composer and music technologist with twelve years of university teaching, most recently as Associate Professor at Istanbul Bilgi University, followed by four years as Senior Product Designer at Native Instruments. This selection brings together albums, music software, live composing and inventions. Everything on this page plays here.</p>
-    <div class="contact">
-      <span>London</span>
-      <a href="mailto:tolgazaferozdemir@gmail.com">tolgazaferozdemir@gmail.com</a>
-      <span>+44 7918 013 654</span>
-      <a href="https://www.tolgazaferozdemir.com/">tolgazaferozdemir.com</a>
-      <a href="https://www.tritonetcalculator.com/">tritonetcalculator.com</a>
+<canvas id="zemin" aria-hidden="true"></canvas>
+<div id="alan" role="list" aria-label="Works"></div>
+<canvas id="golge" aria-hidden="true"></canvas>
+<canvas id="film" aria-hidden="true"></canvas>
+
+<div class="kose sol-ust">
+  <div class="kicker">Short portfolio</div>
+  <h1>Tolga Zafer Özdemir</h1>
+  <div class="role">Composer, music technologist and product designer</div>
+  <p class="hint">Twelve works. Choose one to play.</p>
+  <a class="geri" href="https://www.tolgazaferozdemir.com/">← Back to the full website</a>
+</div>
+
+<nav class="kose sag-ust" aria-label="Sections">
+  <button class="chip" data-cat="albums" aria-pressed="false">Albums</button>
+  <button class="chip" data-cat="software" aria-pressed="false">Music software</button>
+  <button class="chip" data-cat="live" aria-pressed="false">Live composing</button>
+  <button class="chip" data-cat="inv" aria-pressed="false">Inventions</button>
+</nav>
+
+<div class="kose sol-alt">
+  <span>London</span>
+  <a href="mailto:tolgazaferozdemir@gmail.com">tolgazaferozdemir@gmail.com</a>
+  <a href="https://www.tolgazaferozdemir.com/">tolgazaferozdemir.com</a>
+  <a href="https://www.tritonetcalculator.com/">tritonetcalculator.com</a>
+</div>
+
+<div class="kose sag-alt">
+  <span>Mode <b id="modAd">—</b></span>
+  <button type="button" id="sesDugme" aria-pressed="true">Sound on</button>
+</div>
+
+<div id="perde"></div>
+<section id="pano" role="dialog" aria-modal="true" aria-labelledby="panoAd">
+  <div class="sahne" id="sahne"></div>
+  <div class="yazi">
+    <button class="kapat" id="panoKapat" aria-label="Close">✕</button>
+    <div>
+      <div class="badge" id="panoRozet"></div>
+      <h2 id="panoAd"></h2>
+      <div class="meta" id="panoMeta"></div>
+      <div class="secim" id="panoSecim" hidden></div>
     </div>
-    <nav class="jump" aria-label="Sections">
-      <a href="#albums">01 Albums</a>
-      <a href="#software">02 Music software</a>
-      <a href="#live">03 Live composing</a>
-      <a href="#inventions">04 Inventions</a>
-    </nav>
-  </div>
-</header>
-
-<main>
-
-<!-- 01 · Albümler -->
-<section id="albums">
-  <div class="ghost" aria-hidden="true">01</div>
-  <div class="wrap">
-    <div class="sec-head"><span class="num">01</span><h2>Albums</h2></div>
-    <p class="sec-note">Composition, recorded. Choose a cover to listen.</p>
-
-    <div class="albums">
-      <article class="album" data-album="likya">
-        <button class="cover" type="button" aria-label="Play Likya Dede"
-                data-kind="yt-list" data-id="OLAK5uy_lCM8eWcSE_WiKT0tGZtjE4oZfzJuKKz90" data-title="Likya Dede">
-          <img src="../site/assets/img/likya-album/kapak.jpg" alt="Likya Dede album cover" loading="lazy">
-          <span class="play">Listen</span>
-        </button>
-        <div class="text">
-          <div class="badge">2025</div>
-          <h3>Likya Dede</h3>
-          <div class="meta">Album · Composer and producer</div>
-          <p class="desc">A musical fairy tale for symphony orchestra and traditional instrumentalists, originally commissioned by Antalya State Opera and Ballet. The album was completed through remote online recording sessions, bringing together 248 channels of recorded parts, and was produced as an open-source community project.</p>
-        </div>
-      </article>
-
-      <article class="album" data-album="acoustic">
-        <button class="cover" type="button" aria-label="Play Acoustic Works"
-                data-kind="yt-list" data-id="OLAK5uy_kJitsZRczefxf7JGjNegmQxnO5p-_I4EI" data-title="Acoustic Works">
-          <img src="../site/assets/img/albumler/acoustic-works.jpg" alt="Acoustic Works album cover" loading="lazy">
-          <span class="play">Listen</span>
-        </button>
-        <div class="text">
-          <div class="badge">2018</div>
-          <h3>Acoustic Works</h3>
-          <div class="meta">Album · Composer and performer · Eight pieces</div>
-          <p class="desc">Affordable Escape, Karşılama, Agantha Burina Burinata, Cem, Prulliyas, Karpathia, Thumbnails and the Selma ve Gölgesi Suite.</p>
-        </div>
-      </article>
-
-      <article class="album" data-album="wagen">
-        <button class="cover poster" type="button" aria-label="Play Im Wagen Dritter Klasse"
-                data-kind="yt" data-id="x51DLg6UQ2k" data-title="Im Wagen Dritter Klasse / Üçüncü Mevki">
-          <img src="../site/assets/img/ucuncu-mevki/afis-eva-planet.jpg" alt="Üçüncü Mevki poster" loading="lazy">
-          <span class="play">Watch</span>
-        </button>
-        <div class="text">
-          <div class="badge pending">Release pending</div>
-          <h3>Im Wagen Dritter Klasse / Üçüncü Mevki</h3>
-          <div class="meta">Album · With Kardeş Türküler · Komische Oper Berlin commission, 2022</div>
-          <p class="desc">A literary and symphonic train fantasy with Kardeş Türküler, premiered at Komische Oper Berlin. Composed the overture and continuous score, transformed train sounds into musical material, and conducted a 22-piece ensemble while performing on Ableton Push.</p>
-        </div>
-      </article>
-    </div>
-
-    <div class="stage" id="stage" aria-live="polite">
-      <div class="stage-bar">
-        <span class="now">Now playing <b id="stageTitle"></b></span>
-        <button type="button" id="stageClose">Close ✕</button>
-      </div>
-      <div class="frame" id="stageFrame"></div>
-      <p class="hint" id="stageHint" hidden>Spotify plays 30-second previews unless you are signed in to Spotify in this browser.</p>
-    </div>
+    <p class="desc" id="panoDesc"></p>
   </div>
 </section>
-
-<!-- 02 · Yazılım -->
-<section id="software">
-  <div class="ghost" aria-hidden="true">02</div>
-  <div class="wrap">
-    <div class="sec-head"><span class="num">02</span><h2>Music software</h2></div>
-    <p class="sec-note">Native Instruments · Senior Product Designer · 2022–2026</p>
-
-    <div class="grid2">
-      <article>
-        <button class="media r169 underline" type="button" data-kind="yt" data-id="OIJMzI5ymfM" aria-label="Play video: Jacob Collier Audience Choir">
-          <img src="https://i.ytimg.com/vi/OIJMzI5ymfM/maxresdefault.jpg" alt="" loading="lazy">
-          <span class="play">Play</span>
-        </button>
-        <h3>Jacob Collier Audience Choir</h3>
-        <div class="meta">Sole product designer · Harmonic engine</div>
-        <p class="desc">A Kontakt instrument built from audience voices recorded at 22 concerts in 22 cities on Jacob Collier's Djesse tour, turning a crowd into a playable instrument.</p>
-      </article>
-
-      <article>
-        <button class="media r169 underline" type="button" data-kind="yt" data-id="G60T5qt0JAk" aria-label="Play video: Moments: Vocal Clouds">
-          <img src="https://i.ytimg.com/vi/G60T5qt0JAk/maxresdefault.jpg" alt="" loading="lazy">
-          <span class="play">Play</span>
-        </button>
-        <h3>Moments: Vocal Clouds</h3>
-        <div class="meta">2025–2026 · Product design · MIDI sequencing</div>
-        <p class="desc">Vocal instrument for the Kontakt ecosystem.</p>
-      </article>
-
-      <article>
-        <button class="media r169 underline" type="button" data-kind="yt" data-id="rPCpvToj2LQ" aria-label="Play video: Action Woodwinds">
-          <img src="https://i.ytimg.com/vi/rPCpvToj2LQ/maxresdefault.jpg" alt="" loading="lazy">
-          <span class="play">Play</span>
-        </button>
-        <h3>Action Woodwinds</h3>
-        <div class="meta">2023 · Harmonic engine design and implementation</div>
-        <p class="desc">Designed and wrote the harmony engine that generates the instrument's chord and harmony behaviour.</p>
-      </article>
-
-      <article>
-        <button class="media r169 underline" type="button" id="toolsMedia" data-kind="yt" data-id="61slAj3DAT4" aria-label="Play video: Kontakt Tools">
-          <img src="https://i.ytimg.com/vi/61slAj3DAT4/maxresdefault.jpg" alt="" loading="lazy">
-          <span class="play">Play</span>
-        </button>
-        <h3>Kontakt Tools: Chords, Phrase and Patterns</h3>
-        <div class="chips" role="group" aria-label="Choose video">
-          <button type="button" aria-pressed="true" data-id="61slAj3DAT4">Chords and Phrase</button>
-          <button type="button" aria-pressed="false" data-id="fOa3NjYrxWo">Patterns</button>
-        </div>
-        <div class="meta">Kontakt 8 · Co-Senior Product Designer</div>
-        <p class="desc">Assistive composition tools addressing the first barrier to musical creativity. Developed the harmonic concept, wrote the harmonic engine and designed the chord-naming logic.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- 03 · Canlı besteleme -->
-<section id="live">
-  <div class="ghost" aria-hidden="true">03</div>
-  <div class="wrap">
-    <div class="sec-head"><span class="num">03</span><h2>Live composing</h2></div>
-    <p class="sec-note">We go on stage with nothing planned. The music takes shape there, in the moment.</p>
-
-    <article class="wide">
-      <button class="media r22 underline" type="button" data-kind="yt" data-id="t_ifqVgEOEY" aria-label="Play video: 2+1 Sounds From The Bridge">
-        <img src="https://i.ytimg.com/vi/t_ifqVgEOEY/maxresdefault.jpg" alt="" loading="lazy">
-        <span class="play">Play</span>
-      </button>
-      <div class="cap">
-        <div>
-          <h3>2+1 Sounds From The Bridge</h3>
-          <div class="meta">db Music, London · 2023</div>
-        </div>
-        <p class="desc">From a concert series on the sounds of Anatolia, with Turquazz (Salih Korkut Peker, Ahmet K. Bilgiç) and guest Burak Ersöz.</p>
-      </div>
-    </article>
-
-    <article class="wide">
-      <button class="media r22 underline" type="button" data-kind="yt" data-id="0eK-aq2WZx4" aria-label="Play video: Analog Kültür Experiment">
-        <img src="https://i.ytimg.com/vi/0eK-aq2WZx4/maxresdefault.jpg" alt="" loading="lazy">
-        <span class="play">Play</span>
-      </button>
-      <div class="cap">
-        <div>
-          <h3>Analog Kültür Experiment</h3>
-          <div class="meta">Kırım Anıt Kilisesi, Istanbul · 2018</div>
-        </div>
-        <p class="desc">Recorded live with Korhan Futacı.</p>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- 04 · Buluşlar -->
-<section id="inventions">
-  <div class="ghost" aria-hidden="true">04</div>
-  <div class="wrap">
-    <div class="sec-head"><span class="num">04</span><h2>Inventions</h2></div>
-    <p class="sec-note">Systems for seeing, playing and teaching harmony.</p>
-
-    <article class="feature">
-      <button class="media tri underline" type="button" data-kind="tritonet" aria-label="Open the Tritonet controller and play it here">
-        <img src="../site/assets/img/tritonet/patch-master-0-9-4.jpg" alt="Tritonet in Max for Live" loading="lazy">
-        <span class="play">Play Tritonet here</span>
-      </button>
-      <div class="cap">
-        <div>
-          <h3><a href="https://www.tritonetcalculator.com/">Tritonet</a></h3>
-          <div class="meta">Creator · Guthman Musical Instrument Competition semifinalist, 2022</div>
-        </div>
-        <p class="desc">A visual harmony-navigation system and real-time harmony engine for Ableton Live that turns the circle of fifths into a playable field of harmonic direction, tension and release. Theory and method published in <i>The Tritonet Approach to Music Theory</i> (Cambridge Scholars Publishing, 2018).</p>
-      </div>
-    </article>
-
-    <div class="grid2">
-      <article>
-        <button class="media r169 underline" type="button" data-kind="yt" data-id="EJJJyx8lqxY" aria-label="Play video: Real-time Analysis of J. S. Bach, Prelude in C">
-          <img src="https://i.ytimg.com/vi/EJJJyx8lqxY/maxresdefault.jpg" alt="" loading="lazy">
-          <span class="play">Play</span>
-        </button>
-        <h3>Real-time Analysis of J. S. Bach, Prelude in C</h3>
-        <div class="meta">Experimental · 2020</div>
-        <p class="desc">Real-time harmonic analysis of Bach's Prelude in C.</p>
-      </article>
-
-      <article>
-        <button class="media r169 underline" type="button" data-kind="yt" data-id="i75By4g8C4U" aria-label="Play video: Live Scaling with String Orchestra">
-          <img src="https://i.ytimg.com/vi/i75By4g8C4U/maxresdefault.jpg" alt="" loading="lazy">
-          <span class="play">Play</span>
-        </button>
-        <h3>Live Scaling with String Orchestra</h3>
-        <div class="meta">Experimental · 2022–2026</div>
-        <p class="desc">Live harmonic scaling with a string orchestra.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="wrap">
-    <span>Tolga Zafer Özdemir · Portfolio</span>
-    <a href="https://www.tolgazaferozdemir.com/">tolgazaferozdemir.com</a>
-  </div>
-</footer>
 
 <script>
 (() => {
   'use strict';
-  const TRITONET_ADRES = 'https://tritonet.pages.dev/ui/tritonet-controller';
+  const AZ_HAREKET = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* Bir oynatıcının adresi. YouTube'da nocookie alan adı: izlenmeden çerez
-     bırakmıyor. Spotify albümü 352 px; o yükseklikte parça listesi görünüyor. */
+  /* ═══ İçerik — portfolio.html ile aynı ═══ */
+  const KAT = { albums:'Albums', software:'Music software', live:'Live composing', inv:'Inventions' };
+  const yt = id => 'https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg';
+  const ISLER = [
+    { kat:'albums', w:1.25, ad:'Likya Dede', rozet:'2025', meta:'Album · Composer and producer',
+      img:'../site/assets/img/likya-album/kapak.jpg', kind:'yt-list', id:'OLAK5uy_lCM8eWcSE_WiKT0tGZtjE4oZfzJuKKz90',
+      desc:'A musical fairy tale for symphony orchestra and traditional instrumentalists, originally commissioned by Antalya State Opera and Ballet. The album was completed through remote online recording sessions, bringing together 248 channels of recorded parts, and was produced as an open-source community project.' },
+    { kat:'albums', w:1.0, ad:'Acoustic Works', rozet:'2018', meta:'Album · Composer and performer · Eight pieces',
+      img:'../site/assets/img/albumler/acoustic-works.jpg', kind:'yt-list', id:'OLAK5uy_kJitsZRczefxf7JGjNegmQxnO5p-_I4EI',
+      desc:'Affordable Escape, Karşılama, Agantha Burina Burinata, Cem, Prulliyas, Karpathia, Thumbnails and the Selma ve Gölgesi Suite.' },
+    { kat:'albums', w:1.1, ad:'Im Wagen Dritter Klasse', ad2:'Im Wagen Dritter Klasse / Üçüncü Mevki', rozet:'Release pending', poster:true,
+      meta:'Album · With Kardeş Türküler · Komische Oper Berlin commission, 2022',
+      img:'../site/assets/img/ucuncu-mevki/afis-eva-planet.jpg', kind:'yt', id:'x51DLg6UQ2k',
+      desc:'A literary and symphonic train fantasy with Kardeş Türküler, premiered at Komische Oper Berlin. Composed the overture and continuous score, transformed train sounds into musical material, and conducted a 22-piece ensemble while performing on Ableton Push.' },
+    { kat:'software', w:1.05, ad:'Jacob Collier Audience Choir', rozet:'Native Instruments', meta:'Sole product designer · Harmonic engine',
+      img:yt('OIJMzI5ymfM'), kind:'yt', id:'OIJMzI5ymfM',
+      desc:"A Kontakt instrument built from audience voices recorded at 22 concerts in 22 cities on Jacob Collier's Djesse tour, turning a crowd into a playable instrument." },
+    { kat:'software', w:0.85, ad:'Moments: Vocal Clouds', rozet:'Native Instruments', meta:'2025–2026 · Product design · MIDI sequencing',
+      img:yt('G60T5qt0JAk'), kind:'yt', id:'G60T5qt0JAk',
+      desc:'Vocal instrument for the Kontakt ecosystem.' },
+    { kat:'software', w:0.85, ad:'Action Woodwinds', rozet:'Native Instruments', meta:'2023 · Harmonic engine design and implementation',
+      img:yt('rPCpvToj2LQ'), kind:'yt', id:'rPCpvToj2LQ',
+      desc:"Designed and wrote the harmony engine that generates the instrument's chord and harmony behaviour." },
+    { kat:'software', w:1.0, ad:'Kontakt Tools', ad2:'Kontakt Tools: Chords, Phrase and Patterns', rozet:'Native Instruments', meta:'Kontakt 8 · Co-Senior Product Designer',
+      img:yt('61slAj3DAT4'), kind:'yt', id:'61slAj3DAT4',
+      secim:[['Chords and Phrase','61slAj3DAT4'],['Patterns','fOa3NjYrxWo']],
+      desc:'Assistive composition tools addressing the first barrier to musical creativity. Developed the harmonic concept, wrote the harmonic engine and designed the chord-naming logic.' },
+    { kat:'live', w:1.0, ad:'2+1 Sounds From The Bridge', rozet:'Live composing', meta:'db Music, London · 2023',
+      img:yt('t_ifqVgEOEY'), kind:'yt', id:'t_ifqVgEOEY',
+      desc:'From a concert series on the sounds of Anatolia, with Turquazz (Salih Korkut Peker, Ahmet K. Bilgiç) and guest Burak Ersöz.' },
+    { kat:'live', w:0.88, ad:'Analog Kültür Experiment', rozet:'Live composing', meta:'Kırım Anıt Kilisesi, Istanbul · 2018',
+      img:yt('0eK-aq2WZx4'), kind:'yt', id:'0eK-aq2WZx4',
+      desc:'Recorded live with Korhan Futacı.' },
+    { kat:'inv', w:1.35, ad:'Tritonet', rozet:'Invention', meta:'Creator · Guthman Musical Instrument Competition semifinalist, 2022',
+      link:'https://www.tritonetcalculator.com/',
+      img:'../site/assets/img/tritonet/patch-master-0-9-4.jpg', kind:'tritonet',
+      desc:'A visual harmony-navigation system and real-time harmony engine for Ableton Live that turns the circle of fifths into a playable field of harmonic direction, tension and release. Theory and method published in The Tritonet Approach to Music Theory (Cambridge Scholars Publishing, 2018). Play it here.' },
+    { kat:'inv', w:0.8, ad:'Bach, Prelude in C', ad2:'Real-time Analysis of J. S. Bach, Prelude in C', rozet:'Invention', meta:'Experimental · 2020',
+      img:yt('EJJJyx8lqxY'), kind:'yt', id:'EJJJyx8lqxY',
+      desc:"Real-time harmonic analysis of Bach's Prelude in C." },
+    { kat:'inv', w:0.8, ad:'Live Scaling', ad2:'Live Scaling with String Orchestra', rozet:'Invention', meta:'Experimental · 2022–2026',
+      img:yt('i75By4g8C4U'), kind:'yt', id:'i75By4g8C4U',
+      desc:'Live harmonic scaling with a string orchestra.' }
+  ];
+
   function adres(kind, id){
-    switch (kind){
-      case 'yt':      return 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
-      case 'yt-list': return 'https://www.youtube-nocookie.com/embed/videoseries?list=' + id + '&autoplay=1&rel=0&modestbranding=1';
-      case 'spotify': return 'https://open.spotify.com/embed/album/' + id + '?utm_source=generator';
-      case 'tritonet':return TRITONET_ADRES;
+    if (kind === 'yt')      return 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+    if (kind === 'yt-list') return 'https://www.youtube-nocookie.com/embed/videoseries?list=' + id + '&autoplay=1&rel=0&modestbranding=1';
+    if (kind === 'tritonet')return 'https://tritonet.pages.dev/ui/tritonet-controller';
+  }
+
+  /* ═══ GÜNEŞ → MAKAM (ağaç sayfasından) ═══
+     Doğuştan batışa parlaklık sırası: en karanlık makamdan en aydınlığa. */
+  const MODES = [
+    { n:'Locrian',    s:[0,1,3,5,6,8,10] },
+    { n:'Phrygian',   s:[0,1,3,5,7,8,10] },
+    { n:'Aeolian',    s:[0,2,3,5,7,8,10] },
+    { n:'Dorian',     s:[0,2,3,5,7,9,10] },
+    { n:'Mixolydian', s:[0,2,4,5,7,9,10] },
+    { n:'Ionian',     s:[0,2,4,5,7,9,11] },
+    { n:'Lydian',     s:[0,2,4,6,7,9,11] }
+  ];
+  const ORBIT = 96, ROOT_MIDI = 45;    // A2
+  let sunPhase = 0.42, modeIdx = -1;   // öğleden biraz önce başlasın: ışık üstten gelsin
+  const sunPos = { x:0, y:0 };
+  function currentMode(){
+    const oran = ((sunPhase % 1) + 1) % 1;
+    return MODES[Math.max(0, Math.min(MODES.length - 1, Math.floor(oran * MODES.length)))];
+  }
+  function degFreq(deg, oct){
+    const sc = currentMode().s;
+    return 440 * Math.pow(2, (ROOT_MIDI + (oct || 0) * 12 + sc[deg] - 69) / 12);
+  }
+  function snap(f){
+    const sc = currentMode().s;
+    const m = 69 + 12 * Math.log2(f / 440);
+    const oct = Math.floor((m - ROOT_MIDI) / 12);
+    const pc = ((m - ROOT_MIDI) % 12 + 12) % 12;
+    let best = sc[0], bd = 99;
+    for (const s of sc){ const d = Math.abs(pc - s); if (d < bd){ bd = d; best = s; } }
+    return 440 * Math.pow(2, (ROOT_MIDI + oct * 12 + best - 69) / 12);
+  }
+
+  /* ═══ SES (ağaç sayfasından) ═══
+     Tamamen sentetik: süzgeçli gürültü + sinüs, konvolüsyon odası, gecikme.
+     Ses açık geliyor. Tarayıcı izin verirse sayfa açılır açılmaz başlıyor;
+     vermezse (çoğu tarayıcı ilk dokunuşu bekliyor) ilk tıklamada ya da tuşta.
+     Köşedeki düğmeyle kapatılır. */
+  let ac = null, bus = null, master = null, noise = null, voices = 0;
+  let sesAcik = true, sesBasladi = false, kisik = false;
+  const SEVIYE = 0.5, CAP_AMBIENT = 11, CAP_NODE = 21;
+
+  function initAudio(){
+    if (ac) return;
+    try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; return; }
+    master = ac.createGain(); master.gain.value = 0;
+    bus = ac.createGain(); bus.gain.value = 0.60;
+    const IR_SEC = 3.6, N = Math.floor(ac.sampleRate * IR_SEC);
+    const ir = ac.createBuffer(2, N, ac.sampleRate);
+    for (let ch = 0; ch < 2; ch++){
+      const d = ir.getChannelData(ch);
+      for (let i = 0; i < N; i++){
+        const t = i / N;
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 2.4) * Math.min(1, i / (ac.sampleRate * 0.012));
+      }
     }
+    const verb = ac.createConvolver(); verb.buffer = ir;
+    const vhi = ac.createBiquadFilter(); vhi.type = 'highpass'; vhi.frequency.value = 150;
+    const vlo = ac.createBiquadFilter(); vlo.type = 'lowpass';  vlo.frequency.value = 3800;
+    const wet = ac.createGain(); wet.gain.value = 0.95;
+    const dly = ac.createDelay(1.6); dly.delayTime.value = 0.41;
+    const fb = ac.createGain(); fb.gain.value = 0.40;
+    const damp = ac.createBiquadFilter(); damp.type = 'lowpass'; damp.frequency.value = 1800;
+    const dwet = ac.createGain(); dwet.gain.value = 0.34;
+    bus.connect(vhi); vhi.connect(verb); verb.connect(vlo); vlo.connect(wet);
+    bus.connect(dly); dly.connect(damp); damp.connect(fb); fb.connect(dly);
+    damp.connect(dwet); dwet.connect(vhi);
+    bus.connect(master); wet.connect(master); master.connect(ac.destination);
+    noise = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+    const nd = noise.getChannelData(0);
+    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
   }
-  function cerceve(kind, id, title){
-    const f = document.createElement('iframe');
-    f.src = adres(kind, id);
-    f.title = title || 'Player';
-    f.allow = kind === 'tritonet'
-      ? 'midi; autoplay; fullscreen'
-      : 'autoplay; encrypted-media; fullscreen; picture-in-picture; clipboard-write';
-    f.allowFullscreen = true;
-    f.referrerPolicy = 'strict-origin-when-cross-origin';
-    return f;
+  function seviyeyiAyarla(sure){
+    if (!ac) return;
+    const hedef = (sesAcik && !kisik) ? SEVIYE : 0;
+    const t = ac.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(hedef, t + (sure || 0.6));
+  }
+  function sesiBaslat(){
+    if (sesBasladi || !sesAcik) return;
+    initAudio();
+    if (!ac) return;
+    if (ac.state === 'suspended') ac.resume();
+    sesBasladi = true;
+    seviyeyiAyarla(1.2);
+    modeChord();
+    sesDugmesi();
   }
 
-  /* ── Tek oynatıcı kuralı ── */
-  let aktif = null;              // { durdur: fn }
-  function tekCal(yeni){
-    if (aktif && aktif !== yeni) aktif.durdur();
-    aktif = yeni;
+  function reso(f, amp, pan, atk, dec, q, cap){
+    if (!ac || ac.state !== 'running' || !sesAcik || kisik || voices >= (cap || CAP_AMBIENT)) return;
+    if (!isFinite(f) || f <= 20 || f > 18000) return;
+    atk = Math.max(0.001, isFinite(atk) ? atk : 0.01);
+    dec = Math.max(0.05, isFinite(dec) ? dec : 1);
+    amp = Math.max(0.0002, Math.min(0.6, isFinite(amp) ? amp : 0.1));
+    pan = isFinite(pan) ? Math.max(-1, Math.min(1, pan)) : 0;
+    q = Math.max(1, Math.min(200, isFinite(q) ? q : 30));
+    voices++;
+    const t = ac.currentTime;
+    const src = ac.createBufferSource();
+    src.buffer = noise; src.loop = true;
+    src.playbackRate.value = 0.5 + Math.random() * 0.8;
+    const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = q;
+    const bp2 = ac.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = f; bp2.Q.value = q * 0.55;
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(amp, t + atk);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + atk + dec);
+    const pn = ac.createStereoPanner(); pn.pan.value = pan;
+    const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = f;
+    const og = ac.createGain();
+    og.gain.setValueAtTime(0.0001, t);
+    og.gain.exponentialRampToValueAtTime(amp * 0.40, t + atk * 1.3 + 0.004);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + atk + dec * 0.92);
+    src.connect(bp).connect(bp2).connect(g).connect(pn);
+    osc.connect(og).connect(pn);
+    pn.connect(bus);
+    const end = t + atk + dec + 0.08;
+    src.start(t); src.stop(end); osc.start(t); osc.stop(end);
+    src.onended = () => { voices--; };
+  }
+  function modeChord(){
+    if (!ac) return;
+    [0, 2, 4].forEach((deg, i) => {
+      const f = degFreq(deg, 1);
+      setTimeout(() => {
+        reso(f, 0.10, (i - 1) * 0.55, 0.85 + i * 0.18, 5.2, 26 + i * 8, CAP_NODE);
+        reso(f * 2, 0.035, (1 - i) * 0.4, 1.15, 4.4, 40, CAP_NODE);
+      }, i * 260);
+    });
+  }
+  /* Baloncuğun notası boyundan: büyük baloncuk pes. Makamın içine oturur. */
+  function nota(d){ return snap(26000 / Math.max(30, d.rTaban)); }
+  function pan(d){ return Math.max(-1, Math.min(1, (d.x / W - 0.5) * 1.7)); }
+  /* üzerine gelince: sert atak, çalınır */
+  function pluck(d){
+    const f = nota(d) * 2;
+    reso(f, 0.26, pan(d), 0.0025, 3.4, 26, CAP_NODE);
+    setTimeout(() => reso(f * 2, 0.09, pan(d), 0.002, 1.9, 34, CAP_NODE), 14);
+  }
+  /* kayan baloncuk: yumuşak atak, yalnızca rezone eder */
+  function brush(d, e){
+    reso(nota(d), Math.min(0.08, 0.02 + e * 0.04), pan(d), 0.12 + Math.random() * 0.2, 2.2 + Math.random() * 1.4, 58 + Math.random() * 38);
   }
 
-  /* ── Küçük resimden çerçeveye ── */
-  document.querySelectorAll('.media').forEach(kutu => {
-    const img = kutu.querySelector('img');
-    // maxresdefault her videoda yok; yoksa YouTube 120 px gri bir kare döndürüyor.
-    if (img && img.src.includes('i.ytimg.com')) {
+  const sesBtn = document.getElementById('sesDugme');
+  function sesDugmesi(){
+    const on = sesAcik;
+    sesBtn.textContent = on ? 'Sound on' : 'Sound off';
+    sesBtn.setAttribute('aria-pressed', String(on));
+  }
+  sesBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (!sesBasladi){ sesAcik = true; sesiBaslat(); return; }
+    sesAcik = !sesAcik;
+    seviyeyiAyarla(0.5);
+    sesDugmesi();
+  });
+  // ilk dokunuş sesi açar (tarayıcının kuralı); düğme kendi işini görür
+  addEventListener('pointerdown', () => sesiBaslat(), { capture:true });
+  addEventListener('keydown', () => sesiBaslat(), { capture:true });
+  addEventListener('touchstart', () => sesiBaslat(), { capture:true, passive:true });
+  /* İzin varsa hemen başla: bağlam askıda değil, çalışır durumda doğarsa. */
+  try {
+    initAudio();
+    if (ac && ac.state === 'running') sesiBaslat();
+    else if (ac) ac.addEventListener('statechange', () => { if (ac.state === 'running') sesiBaslat(); });
+  } catch (e) {}
+
+  /* ═══ Baloncuklar ═══ */
+  const alan = document.getElementById('alan');
+  let W = innerWidth, H = innerHeight;
+  const dugum = ISLER.map(is => {
+    const el = document.createElement('div');
+    el.className = 'b' + (is.poster ? ' poster' : '');
+    el.setAttribute('role', 'listitem');
+    el.tabIndex = 0;
+    el.setAttribute('aria-label', (is.ad2 || is.ad) + ', ' + KAT[is.kat] + '. Press Enter to play.');
+    el.innerHTML = '<div class="yuz"><img alt="" draggable="false"><div class="kubbe"></div></div><div class="ad"></div>';
+    const img = el.querySelector('img');
+    img.src = is.img;
+    if (is.img.includes('i.ytimg.com')) {
       const yedek = () => { img.src = img.src.replace('maxresdefault', 'hqdefault'); };
-      img.addEventListener('load', () => { if (img.naturalWidth && img.naturalWidth <= 120) yedek(); }, { once:true });
+      img.addEventListener('load', () => { if (img.naturalWidth <= 120) yedek(); }, { once:true });
       img.addEventListener('error', yedek, { once:true });
     }
-    const kayit = {
-      durdur(){
-        const f = kutu.querySelector('iframe');
-        if (f) f.remove();
-        kutu.classList.remove('on');
-        if (img) img.hidden = false;
+    el.querySelector('.ad').innerHTML = is.ad.replace(/&/g,'&amp;') + '<small>' + KAT[is.kat] + '</small>';
+    alan.appendChild(el);
+    return { is, el, x:0, y:0, r:40, rTaban:40, rHedef:40, cokgen:[], yol:0 };
+  });
+
+  /* Köşe yazıları kasenin değmemesi gereken alanlar. */
+  let engeller = [];
+  function engelleriOlc(){
+    engeller = [...document.querySelectorAll('.sol-ust,.sag-ust,.sol-alt,.sag-alt')]
+      .map(e => ({ el:e, r:e.getBoundingClientRect() }))
+      .filter(o => o.r.width > 0 && o.r.height > 0)
+      .map(o => ({ kim:o.el.classList[1], l:o.r.left - 10, t:o.r.top - 10, r:o.r.right + 10, b:o.r.bottom + 10 }));
+  }
+
+  /* ═══ Kase ═══ */
+  const kase = { x:0, y:0, R:100 };
+  function kaseOlc(){
+    W = innerWidth; H = innerHeight;
+    if (W < 640){
+      const ust = Math.max(...engeller.filter(e => e.kim === 'sol-ust' || e.kim === 'sag-alt').map(e => e.b), 0);
+      const alt = Math.min(...engeller.filter(e => e.kim === 'sag-ust').map(e => e.t), H);
+      kase.x = W / 2; kase.y = (ust + alt) / 2;
+      kase.R = Math.min(W / 2 - 10 - 9, (alt - ust) / 2 - 6 - 9);
+    } else {
+      kase.x = W / 2; kase.y = H / 2;
+      let R = Math.min(W / 2, H / 2) - 28 - 9;
+      for (const e of engeller){
+        const px = Math.max(e.l, Math.min(kase.x, e.r)), py = Math.max(e.t, Math.min(kase.y, e.b));
+        R = Math.min(R, Math.hypot(kase.x - px, kase.y - py) - 14 - 9);
       }
-    };
-    kutu.addEventListener('click', () => {
-      if (kutu.classList.contains('on')) return;
-      tekCal(kayit);
-      const h3 = kutu.parentElement.querySelector('h3');
-      kutu.appendChild(cerceve(kutu.dataset.kind, kutu.dataset.id, h3 ? h3.textContent : ''));
-      kutu.classList.add('on');
-      if (img) img.hidden = true;
-      if (kutu.dataset.kind === 'tritonet') kutu.scrollIntoView({ behavior:'smooth', block:'start' });
-    });
-  });
-
-  /* ── Kontakt Tools: iki video arasında seçim ── */
-  const toolsMedia = document.getElementById('toolsMedia');
-  document.querySelectorAll('.chips button').forEach(b => {
-    b.addEventListener('click', () => {
-      document.querySelectorAll('.chips button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-      toolsMedia.dataset.id = b.dataset.id;
-      const img = toolsMedia.querySelector('img');
-      img.src = 'https://i.ytimg.com/vi/' + b.dataset.id + '/maxresdefault.jpg';
-      const f = toolsMedia.querySelector('iframe');
-      if (f) f.src = adres('yt', b.dataset.id);
-    });
-  });
-
-  /* ── Albümler: ortak sahne ── */
-  const sahne = document.getElementById('stage');
-  const sahneCerceve = document.getElementById('stageFrame');
-  const sahneAd = document.getElementById('stageTitle');
-  const sahneNot = document.getElementById('stageHint');
-  const sahneKayit = {
-    durdur(){
-      sahneCerceve.innerHTML = '';
-      sahne.classList.remove('on');
-      document.querySelectorAll('.album').forEach(a => a.classList.remove('active'));
+      kase.R = Math.max(120, R);
     }
+  }
+  function merkez(){ return [kase.x, kase.y]; }
+
+  let uyanik = 90;
+  function uyandir(){ uyanik = 90; }
+  let ustunde = null, secili = null;
+
+  /* ═══ Köpük: kaseyi boşluksuz dolduran hücreler ═══
+     Her baloncuk bir merkez (x, y) ve bir ağırlık (s). Hücresi, kasenin
+     dairesinden komşularıyla paylaştığı duvarların kendi tarafında kalan
+     parça; duvar iki baloncuğun radikal ekseni (|p-ci|²-si = |p-cj|²-sj).
+     Bu bir güç (Laguerre) bölüntüsü: hücreler kaseyi eksiksiz kaplar,
+     arada hiç boşluk kalmaz. Her baloncuğun bir hedef alanı var; ağırlık
+     alanı hedefe doğru, merkez hücrenin ortasına doğru yavaşça kayar.
+     Momentum yok: sabun gibi ağdalı, sekmeden yerine oturuyor. */
+  function olcekle(){
+    const eskiR = kase.R, eskiX = kase.x, eskiY = kase.y;
+    kaseOlc();
+    if (dugum[0].s != null && eskiR > 0){
+      const k = kase.R / eskiR;
+      dugum.forEach(d => { d.x = kase.x + (d.x - eskiX) * k; d.y = kase.y + (d.y - eskiY) * k; d.s *= k * k; });
+    }
+    const toplam = ISLER.reduce((t, is) => t + is.w * is.w, 0);
+    dugum.forEach(d => { d.rTaban = d.is.w * kase.R / Math.sqrt(toplam); });
+    hedefler();
+  }
+  /* Üzerine gelinen büyür, seçili bölüm büyür; toplam hep kasenin alanı,
+     yani biri büyüyünce ötekiler kendiliğinden küçülür. */
+  function hedefler(){
+    let toplam = 0;
+    dugum.forEach(d => {
+      let f = 1;
+      if (secili) f = d.is.kat === secili ? 1.22 : 0.72;
+      if (ustunde) f *= d === ustunde ? 1.45 : 1;
+      d.agirlik = Math.pow(d.is.w * f, 2); toplam += d.agirlik;
+      d.el.classList.toggle('renkli', d === ustunde || (!!secili && d.is.kat === secili));
+      d.el.classList.toggle('ustunde', d === ustunde);
+    });
+    const A = Math.PI * kase.R * kase.R;
+    dugum.forEach(d => { d.hedefAlan = A * d.agirlik / toplam; });
+    uyandir();
+  }
+
+  function yerlestir(){
+    olcekle();
+    dugum.forEach((d, i) => {
+      const a = i * 2.4, rr = kase.R * 0.8 * Math.sqrt((i + 0.5) / dugum.length);
+      d.x = kase.x + Math.cos(a) * rr; d.y = kase.y + Math.sin(a) * rr;
+      d.s = d.hedefAlan / Math.PI;
+    });
+  }
+
+  const KOSE = 96;
+  function kirp(poly, ux, uy, sinir){
+    const cik = [];
+    for (let i = 0; i < poly.length; i++){
+      const p = poly[i], q = poly[(i + 1) % poly.length];
+      const dp = p[0] * ux + p[1] * uy - sinir, dq = q[0] * ux + q[1] * uy - sinir;
+      if (dp <= 0) cik.push(p);
+      if ((dp <= 0) !== (dq <= 0)){
+        const t = dp / (dp - dq);
+        cik.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]);
+      }
+    }
+    return cik;
+  }
+  function hucreler(){
+    const daire = [];
+    for (let k = 0; k < KOSE; k++){
+      const t = k / KOSE * Math.PI * 2;
+      daire.push([kase.x + Math.cos(t) * kase.R, kase.y + Math.sin(t) * kase.R]);
+    }
+    for (const a of dugum){
+      let poly = daire;
+      for (const b of dugum){
+        if (b === a) continue;
+        const dx = b.x - a.x, dy = b.y - a.y, dist = Math.hypot(dx, dy);
+        if (dist < 0.01) continue;
+        const ux = dx / dist, uy = dy / dist;
+        const eks = (dist * dist + a.s - b.s) / (2 * dist);
+        poly = kirp(poly, ux, uy, a.x * ux + a.y * uy + eks);
+        if (poly.length < 3) break;
+      }
+      a.cokgen = poly.length >= 3 ? poly : [];
+      let A = 0, gx = 0, gy = 0;
+      for (let i = 0; i < a.cokgen.length; i++){
+        const p = a.cokgen[i], q = a.cokgen[(i + 1) % a.cokgen.length], k = p[0] * q[1] - q[0] * p[1];
+        A += k; gx += (p[0] + q[0]) * k; gy += (p[1] + q[1]) * k;
+      }
+      a.alan = Math.abs(A) / 2;
+      if (a.alan > 1){ a.gx = gx / (3 * A); a.gy = gy / (3 * A); } else { a.gx = a.x; a.gy = a.y; }
+    }
+  }
+
+  let tutulan = null;
+  /* hizli: açılışta ve ekran değişince, köpük görünmeden oturtulurken. */
+  function adim(hizli, sessiz){
+    hucreler();
+    const kapa = hizli ? 0.45 : 0.035;     // alan → hedef
+    const yer = hizli ? 0.5 : 0.05;        // merkez → hücrenin ortası
+    const tavan = hizli ? 30 : 1.1;        // karede en çok bu kadar piksel
+    let en = 0, ort = 0;
+    for (const d of dugum){
+      const fark = d.hedefAlan - d.alan;
+      d.s += fark * (2 / Math.PI) * kapa;
+      ort += d.s;
+      en = Math.max(en, Math.abs(fark) / d.hedefAlan * 8);
+      if (d === tutulan) continue;
+      let mx = (d.gx - d.x) * yer, my = (d.gy - d.y) * yer;
+      const boy = Math.hypot(mx, my);
+      if (boy > tavan){ mx *= tavan / boy; my *= tavan / boy; }
+      d.x += mx; d.y += my;
+      en = Math.max(en, boy);
+      // kayan baloncuk yolunu biriktirir; yeterince kayınca hafifçe tınlar
+      if (!sessiz){
+        d.yol = (d.yol || 0) + boy;
+        const rr = d.rr || 40;
+        if (d.yol > rr * 0.35){ brush(d, Math.min(1, d.yol / rr)); d.yol = 0; }
+      }
+    }
+    ort /= dugum.length;
+    dugum.forEach(d => { d.s -= ort; });     // ağırlıkların ortalaması sabit: bölüntü değişmez
+    return en;
+  }
+
+  /* ═══ Çizim ═══ */
+  const film = document.getElementById('film'), fz = film.getContext('2d');
+  const zemin = document.getElementById('zemin'), zz = zemin.getContext('2d');
+  const golge = document.getElementById('golge'), gz = golge.getContext('2d');
+  function tuvalBoyut(){
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    for (const [c, z] of [[film, fz], [zemin, zz], [golge, gz]]){
+      c.width = innerWidth * dpr; c.height = innerHeight * dpr;
+      z.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+  }
+  const renkler = () => {
+    const cs = getComputedStyle(document.documentElement);
+    return { sun: cs.getPropertyValue('--sun').trim(), ink: cs.getPropertyValue('--ink').trim() };
   };
-  document.querySelectorAll('.album .cover').forEach(kapak => {
-    kapak.addEventListener('click', () => {
-      tekCal(sahneKayit);
-      document.querySelectorAll('.album').forEach(a => a.classList.toggle('active', a.contains(kapak)));
-      const { kind, id, title } = kapak.dataset;
-      sahneCerceve.innerHTML = '';
-      sahneCerceve.className = 'frame' + (kind === 'spotify' ? ' spotify' : '');
-      sahneCerceve.appendChild(cerceve(kind, id, title));
-      sahneAd.textContent = title;
-      sahneNot.hidden = kind !== 'spotify';
-      sahne.classList.add('on');
-      sahne.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  let RENK = renkler();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { RENK = renkler(); });
+  function rgba(hex, a){
+    const h = hex.replace('#', '');
+    const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h.slice(0, 6), 16);
+    return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+
+  /* Hücre geometrisi: yalnızca köpük hareket ederken. Her baloncuk hücresinin
+     çevreleyen kutusu kadar; görüntü clip-path ile hücreye kırpılıyor. */
+  function geometri(){
+    for (const d of dugum){
+      const c = d.cokgen;
+      if (c.length < 3){ d.el.style.clipPath = 'polygon(0 0,0 0,0 0)'; continue; }
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (const p of c){ if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; }
+      const w = Math.max(1, x1 - x0), h = Math.max(1, y1 - y0);
+      d.ox = x0; d.oy = y0; d.rr = Math.sqrt(d.alan / Math.PI);
+      const st = d.el.style;
+      st.width = w + 'px'; st.height = h + 'px';
+      st.transform = 'translate3d(' + x0 + 'px,' + y0 + 'px,0)';
+      st.setProperty('--r', d.rr.toFixed(0));
+      st.setProperty('--rr', d.rr.toFixed(1));
+      st.setProperty('--cx', ((d.gx - x0) / w * 100).toFixed(1) + '%');
+      st.setProperty('--cy', ((d.gy - y0) / h * 100).toFixed(1) + '%');
+      st.clipPath = 'polygon(' + c.map(p => (p[0] - x0).toFixed(1) + 'px ' + (p[1] - y0).toFixed(1) + 'px').join(',') + ')';
+    }
+  }
+
+  /* ═══ Güneş: görünmez, yalnızca yansıması ═══
+     Köpüğe tepeden bakıyoruz. Güneş ağaç sayfasındaki gibi 96 saniyede yarım
+     tur atıyor: doğudan (sağ) doğup tepeye çıkıyor, batıda (sol) batıyor.
+     Yol ekranın biraz üstünden geçiyor (güneş tam tepeye çıkmıyor).
+     Bir kubbede yansıma, ışık yönü L ile bakış yönü V=(0,0,1) arasındaki
+     yarı vektörün (N = normalize(L+V)) düştüğü yerdedir; güneş tepedeyken
+     ortada, alçaldıkça kenara kayar. Güneş uzakta olduğundan bütün
+     kubbelerde yansıma aynı yerde: köpüğün üstünde birlikte kayıyorlar. */
+  const ISIK = { x:0, y:0, li:0.7 };
+  function gunes(){
+    const p = ((sunPhase % 1) + 1) % 1;
+    const yay = Math.sin(p * Math.PI);                 // 0 ufukta, 1 tepede
+    const el = yay * 1.15;                             // en yüksekte ~66°
+    const az = Math.PI * p;                            // 0 doğu (sağ) → π batı (sol)
+    const yx = Math.cos(az), yy = -Math.sin(az) * 0.55;  // yerdeki izdüşüm: yol biraz yukarıdan
+    const yl = Math.hypot(yx, yy) || 1;
+    const L = [Math.cos(el) * yx / yl, Math.cos(el) * yy / yl, Math.sin(el)];
+    const N = [L[0], L[1], L[2] + 1], nl = Math.hypot(N[0], N[1], N[2]);
+    ISIK.x = N[0] / nl; ISIK.y = N[1] / nl;
+    ISIK.ux = yx / yl; ISIK.uy = yy / yl;            // yerde güneşe doğru birim yön
+    // kasenin duvar yüksekliği ve gölgenin boyu: h / tan(yükseklik açısı)
+    const h = kase.R * 0.16;
+    ISIK.golge = Math.min(kase.R * 1.1, h / Math.tan(Math.max(el, 0.06)));
+    // ufka yakınken parlama söner: yarım turun sonundaki sıçrama görünmesin
+    ISIK.li = 0.2 + 0.8 * Math.pow(yay, 0.5);
+  }
+  /* Bir nokta, güneşe doğru gölge boyu kadar gidince hâlâ kasenin içindeyse
+     duvarın üstünden güneşi görüyor demektir: aydınlıktadır. */
+  function aydinlik(px, py){
+    const qx = px + ISIK.ux * ISIK.golge - kase.x, qy = py + ISIK.uy * ISIK.golge - kase.y;
+    const fark = kase.R - Math.hypot(qx, qy);
+    return Math.max(0, Math.min(1, 0.5 + fark / (kase.R * 0.12)));
+  }
+  /* Yansıma her hücrenin kendi kubbesinde: ortası hücrenin ağırlık merkezi,
+     yarıçapı hücrenin eşdeğer yarıçapı. Yansıma merkezden N·r kadar uzakta;
+     baloncuk büyüyüp küçüldükçe, yer değiştirdikçe yansıma da onunla gider. */
+  function isik(){
+    const ux = ISIK.x, uy = ISIK.y;
+    for (const d of dugum){
+      if (d.ox == null) continue;
+      // yansımanın dayanağı yumuşatılıyor: ağırlık merkezi ve yarıçap ani
+      // değişse de parlama süzülerek yetişiyor
+      if (d.lgx == null){ d.lgx = d.gx; d.lgy = d.gy; d.lrr = d.rr; }
+      d.lgx += (d.gx - d.lgx) * 0.25; d.lgy += (d.gy - d.lgy) * 0.25; d.lrr += (d.rr - d.lrr) * 0.25;
+      const st = d.el.style, rr = d.lrr, cx = d.lgx - d.ox, cy = d.lgy - d.oy;
+      const li = (ISIK.li * (0.18 + 0.82 * aydinlik(d.gx, d.gy))).toFixed(3);
+      st.setProperty('--lx', (cx + ux * rr).toFixed(1));
+      st.setProperty('--ly', (cy + uy * rr).toFixed(1));
+      st.setProperty('--rx', (cx - ux * rr * 0.62).toFixed(1));
+      st.setProperty('--ry', (cy - uy * rr * 0.62).toFixed(1));
+      st.setProperty('--sx', (cx - ux * rr * 0.16).toFixed(1));
+      st.setProperty('--sy', (cy - uy * rr * 0.16).toFixed(1));
+      st.setProperty('--li', li);
+    }
+  }
+
+  /* Sabun filmi ve kasenin ağzı. */
+  function filmCiz(){
+    fz.clearRect(0, 0, W, H);
+    fz.lineJoin = 'round';
+    for (const d of dugum){
+      if (d.cokgen.length < 3) continue;
+      fz.beginPath();
+      d.cokgen.forEach((p, i) => i ? fz.lineTo(p[0], p[1]) : fz.moveTo(p[0], p[1]));
+      fz.closePath();
+      fz.globalAlpha = d.soluk ? 0.3 : 1;
+      fz.strokeStyle = '#00000030'; fz.lineWidth = 3; fz.stroke();
+      fz.strokeStyle = '#FFFFFFD0'; fz.lineWidth = 1.2; fz.stroke();
+    }
+    fz.globalAlpha = 1;
+  }
+
+  /* ═══ Kase: duvar, içeriye düşen gölge, dışarıya düşen gölge ═══
+     Gölgeli bölge = kase ∖ (kase, güneşin tersine gölge boyu kadar kaydırılmış).
+     Güneşle birlikte her karede yeniden çiziliyor. */
+  const KENAR = 9;                                     // duvarın üst yüzü, px
+  const KOYU = matchMedia('(prefers-color-scheme: dark)');
+  function golgeCiz(){
+    const { x:cx, y:cy, R } = kase, L = ISIK.golge, ux = ISIK.ux, uy = ISIK.uy;
+    const kx = cx - ux * L, ky = cy - uy * L;          // kaydırılmış kase
+    const koyu = KOYU.matches;
+    const guc = 0.35 + 0.65 * Math.min(1, ISIK.li);    // güneş zayıfken gölge de yumuşar
+
+    // dış gölge: duvarın dışına, zemine
+    zz.clearRect(0, 0, W, H);
+    zz.save();
+    zz.filter = 'blur(10px)';
+    zz.beginPath();
+    const dis = Math.min(L * 0.6, R * 0.32);
+    zz.arc(cx - ux * dis, cy - uy * dis, R + KENAR, 0, Math.PI * 2);
+    zz.fillStyle = koyu ? 'rgba(0,0,0,' + (0.55 * guc) + ')' : 'rgba(60,45,25,' + (0.22 * guc) + ')';
+    zz.fill();
+    zz.restore();
+    zz.beginPath(); zz.arc(cx, cy, R + KENAR, 0, Math.PI * 2);
+    zz.fillStyle = koyu ? '#2A2D31' : '#E3D9C8'; zz.fill();
+
+    // iç gölge: köpüğün üstüne
+    gz.clearRect(0, 0, W, H);
+    gz.save();
+    gz.beginPath(); gz.arc(cx, cy, R, 0, Math.PI * 2); gz.clip();
+    gz.filter = 'blur(7px)';
+    gz.beginPath();
+    gz.rect(cx - R * 3, cy - R * 3, R * 6, R * 6);
+    gz.arc(kx, ky, R, 0, Math.PI * 2, true);
+    gz.fillStyle = koyu ? 'rgba(0,0,0,' + (0.5 * guc) + ')' : 'rgba(45,32,18,' + (0.34 * guc) + ')';
+    gz.fill('evenodd');
+    gz.restore();
+
+    // duvarın üst yüzü: güneşe bakan yarısı daha açık
+    const yuz = gz.createLinearGradient(cx + ux * R, cy + uy * R, cx - ux * R, cy - uy * R);
+    yuz.addColorStop(0, koyu ? '#4A4D52' : '#FBF6EC');
+    yuz.addColorStop(1, koyu ? '#24272B' : '#D8CDB9');
+    gz.beginPath();
+    gz.arc(cx, cy, R + KENAR, 0, Math.PI * 2);
+    gz.arc(cx, cy, R, 0, Math.PI * 2, true);
+    gz.fillStyle = yuz; gz.fill();
+    gz.beginPath(); gz.arc(cx, cy, R + 0.5, 0, Math.PI * 2);
+    gz.strokeStyle = koyu ? '#00000088' : '#00000033'; gz.lineWidth = 1.2; gz.stroke();
+    gz.beginPath(); gz.arc(cx, cy, R + KENAR - 0.5, 0, Math.PI * 2);
+    gz.strokeStyle = koyu ? '#FFFFFF22' : '#FFFFFFAA'; gz.lineWidth = 1; gz.stroke();
+  }
+
+  const modAd = document.getElementById('modAd');
+  let onceki = performance.now(), sonIsik = 0;
+  function dongu(now){
+    const dt = Math.min((now - onceki) / 1000, 0.05); onceki = now;
+    if (!AZ_HAREKET) sunPhase = (sunPhase + dt / ORBIT) % 1;
+    const mi = Math.min(MODES.length - 1, Math.floor(sunPhase * MODES.length));
+    if (mi !== modeIdx){
+      modeIdx = mi; modAd.textContent = MODES[mi].n;
+      if (sesBasladi) modeChord();
+    }
+    const hiz = adim(false, false);
+    if (hiz > 0.03 || tutulan) uyanik = 90;
+    /* Yansıma, hücreyle AYNI karede güncelleniyor: önceden hücre her karede,
+       yansıma 50 ms'de bir yerleşiyordu; aradaki karelerde yansıma kutuyla
+       birlikte kayıp geri sıçrıyordu, titreme oydu. */
+    let isikTazele = false;
+    if (uyanik > 0){ uyanik--; geometri(); filmCiz(); isikTazele = true; }
+    if (now - sonIsik > 50){ sonIsik = now; gunes(); golgeCiz(); isikTazele = true; }
+    if (isikTazele) isik();
+    requestAnimationFrame(dongu);
+  }
+
+  /* ═══ Sürükleme, üzerine gelme, tıklama ═══ */
+  let son = null, yol = 0;
+  dugum.forEach(d => {
+    d.el.addEventListener('pointerdown', e => {
+      tutulan = d; yol = 0; son = { x:e.clientX, y:e.clientY };
+      d.el.setPointerCapture(e.pointerId);
+      d.el.classList.add('surukle');
+      uyandir();
+    });
+    d.el.addEventListener('pointermove', e => {
+      if (tutulan !== d) return;
+      const dx = e.clientX - son.x, dy = e.clientY - son.y;
+      yol += Math.hypot(dx, dy);
+      d.x += dx; d.y += dy;
+      son = { x:e.clientX, y:e.clientY };
+    });
+    const birak = () => {
+      if (tutulan !== d) return;
+      tutulan = null; d.el.classList.remove('surukle');
+      if (yol < 6) ac_(d);
+      uyandir();
+    };
+    d.el.addEventListener('pointerup', birak);
+    d.el.addEventListener('pointercancel', () => { tutulan = null; d.el.classList.remove('surukle'); });
+    d.el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ac_(d); } });
+    const gel = () => { if (ustunde !== d){ ustunde = d; hedefler(); pluck(d); } };
+    const git = () => { if (ustunde === d && !tutulan){ ustunde = null; hedefler(); } };
+    d.el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') gel(); });
+    d.el.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') git(); });
+    d.el.addEventListener('focus', gel);
+    d.el.addEventListener('blur', git);
+  });
+
+  /* ═══ Bölüm süzgeci ═══ */
+  document.querySelectorAll('.chip').forEach(ch => {
+    ch.addEventListener('click', () => {
+      secili = secili === ch.dataset.cat ? null : ch.dataset.cat;
+      document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.cat === secili)));
+      dugum.forEach(d => { d.soluk = !!secili && d.is.kat !== secili; d.el.classList.toggle('soluk', d.soluk); });
+      hedefler();
     });
   });
-  document.getElementById('stageClose').addEventListener('click', () => {
-    sahneKayit.durdur();
-    if (aktif === sahneKayit) aktif = null;
+
+  /* ═══ Pano ═══ */
+  const pano = document.getElementById('pano'), perde = document.getElementById('perde');
+  const sahne = document.getElementById('sahne');
+  let acikDugum = null;
+
+  function ac_(d){
+    const is = d.is;
+    sahne.innerHTML = '';
+    const f = document.createElement('iframe');
+    f.src = adres(is.kind, is.id);
+    f.title = is.ad2 || is.ad;
+    f.allow = is.kind === 'tritonet' ? 'midi; autoplay; fullscreen'
+                                     : 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+    f.allowFullscreen = true;
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    sahne.appendChild(f);
+    sahne.className = 'sahne' + (is.kind === 'tritonet' ? ' tri' : '');
+
+    document.getElementById('panoRozet').textContent = is.rozet;
+    const ad = document.getElementById('panoAd');
+    ad.innerHTML = '';
+    if (is.link){ const a = document.createElement('a'); a.href = is.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = is.ad2 || is.ad; ad.appendChild(a); }
+    else ad.textContent = is.ad2 || is.ad;
+    document.getElementById('panoMeta').textContent = is.meta;
+    document.getElementById('panoDesc').textContent = is.desc;
+    const secim = document.getElementById('panoSecim');
+    secim.innerHTML = ''; secim.hidden = !is.secim;
+    (is.secim || []).forEach(([etiket, vid]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = etiket;
+      b.setAttribute('aria-pressed', String(vid === is.id));
+      b.addEventListener('click', () => {
+        is.id = vid;
+        secim.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        const fr = sahne.querySelector('iframe'); if (fr) fr.src = adres('yt', vid);
+      });
+      secim.appendChild(b);
+    });
+
+    pano.style.transformOrigin = (d.x - (W/2 - pano.offsetWidth/2)) + 'px ' + (d.y - (H/2 - pano.offsetHeight/2)) + 'px';
+    pano.classList.add('acik');
+    perde.classList.add('acik');
+    acikDugum = d;
+    kisik = true; seviyeyiAyarla(1.2);       // video çalarken köpük susar
+    document.getElementById('panoKapat').focus({ preventScroll:true });
+  }
+
+  /* Kapatınca çerçeve DOM'dan kaldırılır: çapraz kaynaklı bir oynatıcıyı
+     susturmanın güvenilir tek yolu bu. Köpüğün sesi geri gelir. */
+  function kapat(){
+    if (!acikDugum) return;
+    sahne.innerHTML = '';
+    pano.classList.remove('acik');
+    perde.classList.remove('acik');
+    const d = acikDugum; acikDugum = null;
+    kisik = false; seviyeyiAyarla(1.4);
+    d.el.focus({ preventScroll:true });
+  }
+  document.getElementById('panoKapat').addEventListener('click', kapat);
+  perde.addEventListener('click', kapat);
+  addEventListener('keydown', e => { if (e.key === 'Escape') kapat(); });
+
+  /* ═══ Başlat ═══ */
+  tuvalBoyut();
+  engelleriOlc();
+  yerlestir();
+  for (let i = 0; i < 400; i++) adim(true, true);
+  geometri(); filmCiz(); gunes(); isik(); golgeCiz();
+  addEventListener('resize', () => {
+    tuvalBoyut(); engelleriOlc(); olcekle();
+    for (let i = 0; i < 160; i++) adim(true, true);
+    geometri(); filmCiz(); gunes(); isik(); golgeCiz();
   });
+  if (document.fonts) document.fonts.ready.then(() => { engelleriOlc(); olcekle(); });
+  requestAnimationFrame(dongu);
 })();
 </script>
 </body>
